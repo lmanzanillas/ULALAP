@@ -81,7 +81,7 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
   fSourceShape->SetGuidance("Sets source shape type.");
   fSourceShape->SetParameterName("Shape",true,true);
   fSourceShape->SetDefaultValue("Point");
-  fSourceShape->SetCandidates("Sphere Cylinder Point");
+  fSourceShape->SetCandidates("Sphere Cylinder Point Box");
 
   // particle direction
   fSourceDirection = new G4UIcmdWith3Vector("/ULALAP/gun/direction",this);

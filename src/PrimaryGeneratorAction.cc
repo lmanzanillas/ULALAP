@@ -72,9 +72,9 @@ void PrimaryGeneratorAction::SetCentreCoords(G4ThreeVector coordsOfCentre)
 void PrimaryGeneratorAction::SetSourceBoxXYZ(G4ThreeVector sizeBoxXYZ)
 {
   BoxXYZ = sizeBoxXYZ;
-  size_source_x = BoxXYZ.x()/cm;
-  size_source_y = BoxXYZ.y()/cm;
-  size_source_z = BoxXYZ.z()/cm;
+  size_source_x = BoxXYZ.x();
+  size_source_y = BoxXYZ.y();
+  size_source_z = BoxXYZ.z();
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction::GeneratePointsInVolume()
