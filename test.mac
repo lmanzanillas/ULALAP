@@ -1,0 +1,29 @@
+#just in case, it shoud be true by default
+/process/em/fluo true
+/process/em/auger true
+/process/em/augerCascade true 
+/process/em/pixe true
+
+#/run/numberOfThreads 4
+#/G4SOS/det/setOutputDirectory /nfs/tegile/work/experiences/detecteurs/manzanillas/LEAPS_INNOV/Geant4_output/ 
+/G4SOS/det/setDetectorType 5
+/G4SOS/det/setSetupName run_1
+#select output format, options are: csv root hdf5
+/G4SOS/det/setDataType csv
+/G4SOS/det/setNTargetSamples 1
+/G4SOS/det/setGeDetectorThickness 6.99 mm
+/G4SOS/det/setGeDetectorLength 36. mm
+/G4SOS/det/setGeDetectorWidth 36. mm
+/G4SOS/det/setCollimatorThickness 1. mm
+/G4SOS/det/setCollimatorMat titanium_grade1
+/G4SOS/det/setContactThickness 300. nm
+/G4SOS/det/setBeWindowRadius 26.0 mm
+#Set the position of the collimator, a values between -37 and 37 mm (size of samples)
+#Choise of source type: 0 gamma,1 Fe-55,2 Cs-137; 1 Bi-207; 2 Sr-90; 3 e-
+
+/run/initialize
+/G4SOS/gun/sourceType 1
+/G4SOS/gun/sourceDiameter 0.1 mm
+#/G4SOS/gun/sourceEnergy 60.0  keV
+
+/run/beamOn 9000000
