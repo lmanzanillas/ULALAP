@@ -1,4 +1,4 @@
-# X-ray matter simulatons
+# Particle matter interaction simulatons with Geant4
 
 
 
