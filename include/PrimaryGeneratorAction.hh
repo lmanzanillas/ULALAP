@@ -3,6 +3,7 @@
 
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
+#include "G4ParticleMomentum.hh"
 #include "globals.hh"
 
 class G4ParticleGun;
@@ -37,7 +38,8 @@ public:
 	void  SetCentreCoords(G4ThreeVector coordsOfCentre);
         void  SetPosDisShape(G4String shapeType);
         void  SetSourceShape(G4String shapeType);
-        void GeneratePointsInVolume();
+        void  GeneratePointsInVolume();
+	void  GenerateDirection(G4ThreeVector d_vector);
 
 	G4int GetParticleType(void){return particleType;};
 	G4int GetSourceGeometry(void){return fSourceGeometry;};
@@ -63,6 +65,7 @@ private:
 	G4int           fSourceDirectionType;
 	G4int           fSourceGeometry;
 	G4double	fSourceEnergy;
+	G4ParticleMomentum     direction;
 	DetectorConstruction*      fDetector;
 	G4double		fPhotonWavelength;
 	PrimaryGeneratorMessenger* fGunMessenger;
@@ -72,6 +75,8 @@ private:
 	G4String SourcePosType;
 	G4String Shape;
 	G4double HalfZ;
+	G4double MinTheta, MaxTheta, MinPhi, MaxPhi;
+        G4double Phi;
 	G4ThreeVector CentreCoords;
 };
 

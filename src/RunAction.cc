@@ -65,22 +65,22 @@ G4String RunAction::GetFolderName()
       sourceString = "Fe55";
       break;
     case 2:
-      sourceString = "Cs-137";
+      sourceString = "Cs137";
       break;
     case 3:
-      sourceString = "Bi-207";
+      sourceString = "Bi207";
       break;
     case 4:
-      sourceString = "Sr-90";
+      sourceString = "Sr90";
       break;
     case 5:
-      sourceString = "Am-241";
+      sourceString = "Am241";
       break;
     case 6:
-      sourceString = "optical_photon";
+      sourceString = "electron";
       break;
     case 7:
-      sourceString = "photon";
+      sourceString = "optical_photon";
       break;
     case 8:
       sourceString = "neutron";
@@ -126,7 +126,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan = G4AnalysisManager::Instance();
   //fMan->SetDefaultFileType("Hdf5");
 
-  fMan->SetNtupleMerging(true);
+  //fMan->SetNtupleMerging(true);
   fMan->SetFirstNtupleId(1);
   
   

@@ -57,12 +57,10 @@ That will show you the current geomtry. To run an event just do:
 ```
 /run/beamOn 1
 ```
-Then you can use a macro in batch mode (for example test.mac) if you are running thousands of events. To change the settings as energy of photons, degree of polarization or angle of polarization, etc just modify the test.mac file  
+Then you can use a macro in batch mode (for example test.mac) if you are running thousands of events. To change the settings as energy of particle, etc just modify the test.mac file  
 
 ```
 #just in case, it shoud be true by default
-
-#Uncomment this line to set the output directory, by default you will save the file in the same build directory
 
 /run/beamOn 9000000
 

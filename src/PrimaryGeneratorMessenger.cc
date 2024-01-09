@@ -6,6 +6,7 @@
 #include "G4UIcmdWithADouble.hh"
 #include "G4UIcmdWithAnInteger.hh"
 #include "G4UIcmdWith3VectorAndUnit.hh"
+#include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4SystemOfUnits.hh"
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -82,6 +83,12 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
   fSourceShape->SetDefaultValue("Point");
   fSourceShape->SetCandidates("Sphere Cylinder Point");
 
+  // particle direction
+  fSourceDirection = new G4UIcmdWith3Vector("/ULALAP/gun/direction",this);
+  fSourceDirection->SetGuidance("Set momentum direction.");
+  fSourceDirection->SetGuidance("Direction needs not to be a unit vector.");
+  fSourceDirection->SetParameterName("Px","Py","Pz",true,true);
+  fSourceDirection->SetRange("Px != 0 || Py != 0 || Pz != 0");
 
 
 }
@@ -100,7 +107,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fSourcePosition;
   delete fSourceShape;
   delete fSourceDiameter;
-
+  delete fSourceDirection;
   //delete fAction;//debug
 }
 
@@ -134,6 +141,9 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
   }
   if(command == fSourceShape){
   	fAction->SetSourceShape(newValue);
+  }
+  if(command == fSourceDirection) {
+  	fAction->GenerateDirection(fSourceDirection->GetNew3VectorValue(newValue));
   }
 }
 

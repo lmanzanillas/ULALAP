@@ -43,6 +43,7 @@ target_link_libraries(ULALAP ${Geant4_LIBRARIES} )
 #
 set(ULALAP_SCRIPTS
     vis.mac
+    test.mac
     gui.mac
     )
 

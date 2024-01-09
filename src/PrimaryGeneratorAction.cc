@@ -31,10 +31,15 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	position = zero;
 	CentreCoords = zero;
 	BoxXYZ = zero;
+	direction = G4ParticleMomentum(1., 0., 0.);
 	Radius = 0.1*m;
 	SourcePosType = "Volume";
         Shape = "Point";
         HalfZ = 0.;
+	MinTheta = 0.;
+	MaxTheta = pi;
+	MinPhi = 0.;
+	MaxPhi = twopi;
         size_source_x = 50.;
         size_source_y = 10.;
         size_source_z = 10.;
@@ -67,9 +72,9 @@ void PrimaryGeneratorAction::SetCentreCoords(G4ThreeVector coordsOfCentre)
 void PrimaryGeneratorAction::SetSourceBoxXYZ(G4ThreeVector sizeBoxXYZ)
 {
   BoxXYZ = sizeBoxXYZ;
-  size_source_x = BoxXYZ[0];
-  size_source_y = BoxXYZ[1];
-  size_source_z = BoxXYZ[2];
+  size_source_x = BoxXYZ.x()/cm;
+  size_source_y = BoxXYZ.y()/cm;
+  size_source_z = BoxXYZ.z()/cm;
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction::GeneratePointsInVolume()
@@ -124,11 +129,50 @@ void PrimaryGeneratorAction::GeneratePointsInVolume()
   RandPos.setY(y);
   RandPos.setZ(z);
   position = CentreCoords + RandPos;
-
 }
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
+{
+  G4double rndm, rndm2;
+  G4double px, py, pz;
 
-// Randomises placement and momentum vectors for required sources.
+  G4double sintheta, sinphi, costheta, cosphi;
+  rndm = G4UniformRand();
+  costheta = std::cos(MinTheta) - rndm * (std::cos(MinTheta)
+                                - std::cos(MaxTheta));
+  sintheta = std::sqrt(1. - costheta*costheta);
+  
+  rndm2 = G4UniformRand();
+  Phi = MinPhi + (MaxPhi - MinPhi) * rndm2; 
+  sinphi = std::sin(Phi);
+  cosphi = std::cos(Phi);
 
+  px = -sintheta * cosphi;
+  py = -sintheta * sinphi;
+  pz = -costheta;
+
+  G4double ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+  px = px/ResMag;
+  py = py/ResMag;
+  pz = pz/ResMag;
+
+  direction.setX(px);
+  direction.setY(py);
+  direction.setZ(pz);
+  if(fSourceDirectionType == 0){
+	  px = new_direction.x();
+	  py = new_direction.y();
+	  pz = new_direction.z();
+	  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+	  px = px/ResMag;
+	  py = py/ResMag;
+	  pz = pz/ResMag; 
+	  direction.setX(px);
+	  direction.setY(py);
+	  direction.setZ(pz);
+  }
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
 	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
@@ -137,22 +181,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4int Z=0, A=0;
 	G4ParticleDefinition* ion;
 	GeneratePointsInVolume();
-        //Define a more realistic source geometry
-        G4double theta = 2. * pi * G4UniformRand()*rad;
-	//G4cout<<" r "<<r<<" theta: "<<theta<<" x "<<x_sourceframe<<" y "<<y_sourceframe<<G4endl;
-
-	//For random direction in order to optimize we generate random point in a sphere, but we are interested only in the values close to phi = 180 degrees, which is why we use random()/20 -1
-        theta = 2. * pi * G4UniformRand()*rad;
-        G4double phi = acos(G4UniformRand()/20. -1.);
-	G4double x_direction = sin(phi)*cos(theta);
-	G4double y_direction = sin(phi)*sin(theta);
-	G4double z_direction = cos(phi);
-  	G4ThreeVector direction = G4ThreeVector(0,-1,0);
-
-
-	if(fSourceDirectionType == 1){
-		direction = G4ThreeVector(x_direction,y_direction,z_direction);
-	}
+	GenerateDirection(direction);
 
 	switch (particleType) {
 		case 0:
@@ -208,7 +237,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("gamma"));
 			fParticleGun->SetParticleEnergy(59.5*keV);
 			fParticleGun->SetParticlePosition(position);
-			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(x_direction,y_direction,z_direction));
+			fParticleGun->SetParticleMomentumDirection(direction);
 			//fParticleGun->SetParticleDefinition(ion);
 			//fParticleGun->SetParticleCharge(ionCharge);
 			break;
@@ -216,12 +245,12 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("e-"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
-			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0,0,-1));
+			fParticleGun->SetParticleMomentumDirection(direction);
  			break;
 		case 7:
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("opticalphoton"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
-			fParticleGun->SetParticlePosition(G4ThreeVector(fPositionX,fPositionY,fPositionZ));
+			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
 			break;
 		case 8:
