@@ -14,7 +14,7 @@
 DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 :G4UImessenger(),
  fDetector(Det),
- fG4SOSDir(0),
+ fULALAPDir(0),
  fDetDir(0),
  commandSetWorldMaterial(0),
  commandSetDetectorType(0),
@@ -35,71 +35,71 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  commandSetDataType(0),
  commandSetOutputDirectory(0)
  {
-  fDetDir = new G4UIdirectory("/G4SOS/det/");
+  fDetDir = new G4UIdirectory("/ULALAP/det/");
   fDetDir->SetGuidance("detector construction commands");
 
-  commandSetCollimatorMaterial = new G4UIcmdWithAString("/G4SOS/det/setCollimatorMat",this);
+  commandSetCollimatorMaterial = new G4UIcmdWithAString("/ULALAP/det/setCollimatorMat",this);
   commandSetCollimatorMaterial->SetGuidance("Select material of the collimator.");
   commandSetCollimatorMaterial->SetParameterName("choice",false);
   commandSetCollimatorMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetCollimatorMaterial->SetToBeBroadcasted(false);
 
-  commandSetTargetMaterial = new G4UIcmdWithAString("/G4SOS/det/setGeDetectorMat",this);
+  commandSetTargetMaterial = new G4UIcmdWithAString("/ULALAP/det/setGeDetectorMat",this);
   commandSetTargetMaterial->SetGuidance("Select material of the target.");
   commandSetTargetMaterial->SetParameterName("choice",false);
   commandSetTargetMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetTargetMaterial->SetToBeBroadcasted(false);
 
-  commandSetShiledingMaterial = new G4UIcmdWithAString("/G4SOS/det/setSampleMaterial",this);
+  commandSetShiledingMaterial = new G4UIcmdWithAString("/ULALAP/det/setSampleMaterial",this);
   commandSetShiledingMaterial->SetGuidance("Select material of the sample.");
   commandSetShiledingMaterial->SetParameterName("choice",false);
   commandSetShiledingMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetShiledingMaterial->SetToBeBroadcasted(false);
 
 
-  commandSetGeContainerMaterial = new G4UIcmdWithAString("/G4SOS/det/setGeContainerMat",this);
+  commandSetGeContainerMaterial = new G4UIcmdWithAString("/ULALAP/det/setGeContainerMat",this);
   commandSetGeContainerMaterial->SetGuidance("Select material of the ge container.");
   commandSetGeContainerMaterial->SetParameterName("choice",false);
   commandSetGeContainerMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetGeContainerMaterial->SetToBeBroadcasted(false);
 
-  commandSetGeContainerMaterialCoating = new G4UIcmdWithAString("/G4SOS/det/setGeContainerMatCoating",this);
+  commandSetGeContainerMaterialCoating = new G4UIcmdWithAString("/ULALAP/det/setGeContainerMatCoating",this);
   commandSetGeContainerMaterialCoating->SetGuidance("Select material of the ge container coating.");
   commandSetGeContainerMaterialCoating->SetParameterName("choice",false);
   commandSetGeContainerMaterialCoating->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetGeContainerMaterialCoating->SetToBeBroadcasted(false);
 
-  commandSetDetectorName = new G4UIcmdWithAString("/G4SOS/det/setGeDetectorName",this);
+  commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setGeDetectorName",this);
   commandSetDetectorName->SetGuidance("Select name of detector.");
   commandSetDetectorName->SetParameterName("choice",false);
   commandSetDetectorName->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetDetectorName->SetToBeBroadcasted(false);
 
-  commandSetSetupName = new G4UIcmdWithAString("/G4SOS/det/setSetupName",this);
+  commandSetSetupName = new G4UIcmdWithAString("/ULALAP/det/setSetupName",this);
   commandSetSetupName->SetGuidance("Select name of setup.");
   commandSetSetupName->SetParameterName("choice",false);
   commandSetSetupName->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetSetupName->SetToBeBroadcasted(false);
 
-  commandSetDataType = new G4UIcmdWithAString("/G4SOS/det/setDataType",this);
+  commandSetDataType = new G4UIcmdWithAString("/ULALAP/det/setDataType",this);
   commandSetDataType->SetGuidance("Select format of data: csv, hdf5, root.");
   commandSetDataType->SetParameterName("choice",false);
   commandSetDataType->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetDataType->SetToBeBroadcasted(false);
 
-  commandSetOutputDirectory = new G4UIcmdWithAString("/G4SOS/det/setOutputDirectory",this);
+  commandSetOutputDirectory = new G4UIcmdWithAString("/ULALAP/det/setOutputDirectory",this);
   commandSetOutputDirectory->SetGuidance("Set output directory");
   commandSetOutputDirectory->SetParameterName("choice",false);
   commandSetOutputDirectory->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetOutputDirectory->SetToBeBroadcasted(false);
 
-  commandSetWorldMaterial = new G4UIcmdWithAString("/G4SOS/det/setWorldMat",this);
+  commandSetWorldMaterial = new G4UIcmdWithAString("/ULALAP/det/setWorldMat",this);
   commandSetWorldMaterial->SetGuidance("Select material of the world.");
   commandSetWorldMaterial->SetParameterName("choice",false);
   commandSetWorldMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetWorldMaterial->SetToBeBroadcasted(false);
 
-  commandSetGeDetectorLength = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setGeDetectorLength",this);
+  commandSetGeDetectorLength = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorLength",this);
   commandSetGeDetectorLength->SetGuidance("Set length of target samples");
   commandSetGeDetectorLength->SetParameterName("SampleLength",false);
   commandSetGeDetectorLength->SetRange("SampleLength>0.");
@@ -107,7 +107,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetGeDetectorLength->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetGeDetectorLength->SetToBeBroadcasted(false);
 
-  commandSetGeDetectorThickness = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setGeDetectorThickness",this);
+  commandSetGeDetectorThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorThickness",this);
   commandSetGeDetectorThickness->SetGuidance("Set thickness of target samples");
   commandSetGeDetectorThickness->SetParameterName("SampleThickness",false);
   commandSetGeDetectorThickness->SetRange("SampleThickness>0.");
@@ -115,7 +115,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetGeDetectorThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetGeDetectorThickness->SetToBeBroadcasted(false);
 
-  commandSetGeDetectorWidth = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setGeDetectorWidth",this);
+  commandSetGeDetectorWidth = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorWidth",this);
   commandSetGeDetectorWidth->SetGuidance("Set width of target samples");
   commandSetGeDetectorWidth->SetParameterName("SampleWidth",false);
   commandSetGeDetectorWidth->SetRange("SampleWidth>0.");
@@ -123,7 +123,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetGeDetectorWidth->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetGeDetectorWidth->SetToBeBroadcasted(false);
 
-  commandSetshieldingThickness = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setshieldingThickness",this);
+  commandSetshieldingThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setshieldingThickness",this);
   commandSetshieldingThickness->SetGuidance("Set thickness of Al contact");
   commandSetshieldingThickness->SetParameterName("shieldingThickness",false);
   commandSetshieldingThickness->SetRange("shieldingThickness>0.");
@@ -131,7 +131,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetshieldingThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetshieldingThickness->SetToBeBroadcasted(false);
 
-  commandSetBeWindowRadius = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setBeWindowRadius",this);
+  commandSetBeWindowRadius = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setBeWindowRadius",this);
   commandSetBeWindowRadius->SetGuidance("Set radius of Be Window");
   commandSetBeWindowRadius->SetParameterName("WindowRadius",false);
   commandSetBeWindowRadius->SetRange("WindowRadius>0.");
@@ -139,7 +139,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetBeWindowRadius->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetBeWindowRadius->SetToBeBroadcasted(false);
 
-  commandSetDistanceCollimatorDetector = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setDistanceCollimatorDetector",this);
+  commandSetDistanceCollimatorDetector = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setDistanceCollimatorDetector",this);
   commandSetDistanceCollimatorDetector->SetGuidance("Set distance collimator detector");
   commandSetDistanceCollimatorDetector->SetParameterName("CollimatorDistance",false);
   commandSetDistanceCollimatorDetector->SetRange("CollimatorDistance>0.");
@@ -147,7 +147,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetDistanceCollimatorDetector->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetDistanceCollimatorDetector->SetToBeBroadcasted(false);
 
-  commandSetDistanceSampleWindow = new G4UIcmdWithADoubleAndUnit("/G4SOS/det/setDistanceSampleWindow",this);
+  commandSetDistanceSampleWindow = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setDistanceSampleWindow",this);
   commandSetDistanceSampleWindow->SetGuidance("Set distance sample to window");
   commandSetDistanceSampleWindow->SetParameterName("SampleDistance",false);
   commandSetDistanceSampleWindow->SetRange("SampleDistance>0.");
@@ -156,7 +156,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetDistanceSampleWindow->SetToBeBroadcasted(false);
 
 
-  commandSetDetectorType = new G4UIcmdWithAnInteger("/G4SOS/det/setDetectorType",this);
+  commandSetDetectorType = new G4UIcmdWithAnInteger("/ULALAP/det/setDetectorType",this);
   commandSetDetectorType->SetGuidance("Set detector type");
   commandSetDetectorType->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetDetectorType->SetToBeBroadcasted(false);
@@ -169,7 +169,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 DetectorMessenger::~DetectorMessenger()
 {
   delete fDetDir;
-  delete fG4SOSDir;
+  delete fULALAPDir;
   delete commandSetWorldMaterial;
   delete commandSetDetectorType;
   delete commandSetGeDetectorLength;

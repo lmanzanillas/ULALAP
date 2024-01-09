@@ -29,7 +29,7 @@ class DetectorMessenger: public G4UImessenger
     DetectorConstruction*      fDetector;
 
 
-    G4UIdirectory*             fG4SOSDir;
+    G4UIdirectory*             fULALAPDir;
     G4UIdirectory*             fDetDir;
 
     G4UIcmdWithAString*         commandSetWorldMaterial;
