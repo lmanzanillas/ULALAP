@@ -75,9 +75,9 @@ fd2LogicVolume(nullptr)
   halfSizeCavernFD2X = 100.*m;
   fSetupName = "DUNE";
   fDataType = "csv";
-  halfDetectorLength = 62.0*m;
-  halfDetectorThickness = 14.0*m;
-  halfDetectorWidth = 15.1*m;
+  halfDetectorLength = 62.0/2.0*m;
+  halfDetectorThickness = 14.0/2.0*m;
+  halfDetectorWidth = 15.1/2.0*m;
   cryostatThicknessPrimMembraneSS = 1.2*mm;
   cryostatThicknessSecondaryBarrierAl = 0.8*mm;
   cryostatThicknessVaporBarrierSS = 12.0*mm;

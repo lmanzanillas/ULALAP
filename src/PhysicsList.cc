@@ -195,7 +195,7 @@
 PhysicsList::PhysicsList() : G4VUserPhysicsList() 
 {
 
-  defaultCutValue     = 10.0*micrometer; //
+  defaultCutValue     = 100.0*micrometer; //
   cutForGamma         = defaultCutValue;
   cutForElectron      = 100.0*micrometer;
   cutForPositron      = defaultCutValue;
@@ -218,7 +218,7 @@ PhysicsList::PhysicsList() : G4VUserPhysicsList()
    
   G4DeexPrecoParameters* deex =
     G4NuclearLevelData::GetInstance()->GetParameters();
-  deex->SetCorrelatedGamma(false);
+  deex->SetCorrelatedGamma(true);
   deex->SetStoreAllLevels(true);
   deex->SetIsomerProduction(true);
   deex->SetDeexChannelsType(fEvaporation);

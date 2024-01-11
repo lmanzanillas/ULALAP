@@ -45,15 +45,12 @@ public:
 	G4int GetSourceGeometry(void){return fSourceGeometry;};
 	G4double GetSourceEnergy(void){return fSourceEnergy;};
 	G4String GetParticleName(void){return fParticleName;};
-	G4double GetSourcePositionX(void){return fPositionX;};
-	G4double GetSourcePositionY(void){return fPositionY;};
-	G4double GetSourcePositionZ(void){return fPositionZ;};
+	G4double GetSourcePositionX(void){return CentreCoords.x();};
+	G4double GetSourcePositionY(void){return CentreCoords.y();};
+	G4double GetSourcePositionZ(void){return CentreCoords.z();};
 	G4double GetSourceDiameter(void){return 2*Radius;};
 
 private:
-	G4double fPositionX;
-	G4double fPositionY;
-	G4double fPositionZ;
 	G4double size_source_x;
 	G4double size_source_y;
 	G4double size_source_z;

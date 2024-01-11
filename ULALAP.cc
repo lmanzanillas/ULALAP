@@ -104,7 +104,7 @@ int main(int argc,char** argv)
    runManager-> SetUserInitialization(new PhysicsList());
 
   //test, next line
-  G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState( true );
+  //G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState( true );
   // User action initialization
   runManager->SetUserInitialization(new ActionInitialization(det));
   runManager->Initialize();

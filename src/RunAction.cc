@@ -89,7 +89,7 @@ G4String RunAction::GetFolderName()
 
   G4cout << sourceString << G4endl;
 
-  G4String positionX ="_x_source_"+std::to_string((int)fPrimary->GetSourcePositionX())+"mm";
+  G4String positionSource ="_x_y_z_"+std::to_string((int)(fPrimary->GetSourcePositionX()/cm))+"_"+std::to_string((int)(fPrimary->GetSourcePositionY()/cm))+"_"+std::to_string((int)(fPrimary->GetSourcePositionZ()/cm))+"_cm";
   G4String sourceEnergy =std::to_string((int)(1000. * fPrimary->GetSourceEnergy()))+"_keV";
 
   fTimer->Start();
@@ -98,7 +98,7 @@ G4String RunAction::GetFolderName()
   G4String s_setup_type = s_shileding_material + "_setup_" + std::to_string((int)fDetector->GetDetectorType());
 
   fFolderName = fDetector->GetDetectorOutputDataDirectory()+sourceString+"_"+sourceEnergy
-	  +positionX 
+	  +positionSource 
 	  +s_setup_type
 	  +"";
 
