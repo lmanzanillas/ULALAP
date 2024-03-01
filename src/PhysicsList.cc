@@ -178,6 +178,10 @@
 #include "G4ParticleHPInelastic.hh"
 #include "G4ParticleHPInelasticData.hh"
 
+#include "G4HadronElasticPhysicsHP.hh"
+#include "G4HadronElasticPhysicsXS.hh"
+#include "G4HadronPhysicsFTFP_BERT_HP.hh"
+
 // Stopping processes
 #include "G4HadronStoppingProcess.hh"
 #include "G4HadronicAbsorptionBertini.hh"
@@ -213,9 +217,11 @@ PhysicsList::PhysicsList() : G4VUserPhysicsList()
   param->SetPixe(true);
   param->SetAuger(true);
 
-  G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(0.1*picosecond);
+  G4NuclideTable::GetInstance()->SetThresholdOfHalfLife(1.*picosecond);
   G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*eV);
-   
+ 
+  //comment ot check effect on gamma spectrum
+  /*  
   G4DeexPrecoParameters* deex =
     G4NuclearLevelData::GetInstance()->GetParameters();
   deex->SetCorrelatedGamma(true);
@@ -224,7 +230,8 @@ PhysicsList::PhysicsList() : G4VUserPhysicsList()
   deex->SetDeexChannelsType(fEvaporation);
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
                 /std::log(2.));
-
+   
+   */
 
   //G4EmParameters::Instance()->AddPhysics("World","G4RadioactiveDecay");
   //G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
@@ -526,6 +533,15 @@ void PhysicsList::ConstructOp()
 
 void PhysicsList::ConstructHad() 
 {
+  //test
+  //G4int verb = 1;
+  //RegisterPhysics( new G4HadronElasticPhysicsXS(verb));
+  //RegisterPhysics( new G4HadronPhysicsFTFP_BERT_HP(verb));
+  //G4VPhysicsConstructor* hadXS = new G4HadronElasticPhysicsXS;
+  //G4VPhysicsConstructor* hadBert = new G4HadronPhysicsFTFP_BERT_HP;
+  //hadXS->ConstructProcess();
+  //hadBert->ConstructProcess();
+  
   //Elastic models
   G4HadronElastic* elastic_lhep0 = new G4HadronElastic();
   G4ChipsElasticModel* elastic_chip = new G4ChipsElasticModel();
@@ -813,6 +829,7 @@ void PhysicsList::ConstructHad()
 	  pmanager->AddDiscreteProcess( theInelasticProcess );
 	}
     }
+    
 }
 
 // Decays ///////////////////////////////////////////////////////////////////

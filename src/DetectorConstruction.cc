@@ -105,6 +105,7 @@ fd2LogicVolume(nullptr)
 DetectorConstruction::~DetectorConstruction(){
   //delete physicWorldBox;
   delete fDetectorMessenger;
+  delete materialConstruction;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
