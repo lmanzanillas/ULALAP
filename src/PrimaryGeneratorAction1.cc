@@ -31,7 +31,7 @@
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "PrimaryGeneratorActionGammasNeutronAr.hh"
+#include "PrimaryGeneratorAction1.hh"
 #include "PrimaryGeneratorAction.hh"
 
 #include "G4Event.hh"
@@ -46,7 +46,10 @@
 
 PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
 : fParticleGun(gun)
-{ }
+{ 
+   //E levels and probs
+   InitFunction();
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels)
@@ -54,7 +57,8 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
   G4double rand_toy = G4UniformRand();
   G4int next_level = -99;
   unsigned int vecSize = vec_probs.size();
-  G4double min = -99.0;
+  G4double min = -999.0;
+  G4cout<<"rand "<<rand_toy<<" vecSize: "<<vecSize<<G4endl;
   for(unsigned int i = 0; i < vecSize; ++i)
   {
 	if (i == 0){
@@ -63,8 +67,9 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
         else{
             min = vec_probs[i-1];
 	}
-	if (min < rand_toy < vec_probs[i]){
+	if (min < rand_toy and rand_toy < vec_probs[i]){
             next_level = i;
+	    G4cout<<"i: "<<i<<" min: "<<min<<" vec_probs[i] "<<vec_probs[i]<<" next_level "<<next_level<<" vec[next]: "<<vec_levels[next_level]<<G4endl;
             break;
 	}
   }
@@ -76,7 +81,7 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
 void PrimaryGeneratorAction1::InitFunction()
 { 
 
-  vec_E_levels = {0.0, 167.11, 515.77, 1033.94, 1353.71, 2397.9, 2733.1, 2948.5, 3009.8, 3326.3, 3968.1, 4270.0, 6098.9};
+  vec_E_levels = {0.0, 167.11, 516.10, 1034.70, 1353.71, 2397.9, 2733.1, 2948.5, 3009.8, 3326.3, 3968.1, 4270.0, 6098.9};
 
   vec_probs = { {0.0},
 		{1.0},
@@ -107,71 +112,42 @@ void PrimaryGeneratorAction1::InitFunction()
   		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} };
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
+{
+  G4ThreeVector positionG(0.,0.,0.);
+  G4ThreeVector directionG(1.,0.,0.);
+  G4double timeG = 0*s;
+  G4PrimaryVertex* vertexG = new G4PrimaryVertex(positionG, timeG);
+  G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
+  G4PrimaryParticle* particleG = new G4PrimaryParticle(particleDefinition);
+  particleG->SetMomentumDirection(directionG);
+  particleG->SetKineticEnergy(Eg*keV);
+  vertexG->SetPrimary(particleG);
+  return vertexG;
+  
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
 {
   G4int n = vec_probs.size(); 
-  //cout << v[n - 1] << endl; 
+  G4cout << n <<G4endl; 
   G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]) - 1;
   G4double Eg = vec_E_levels[n-1] - vec_E_levels[new_level];
   G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
-  //First gamma
+  myVertex = GenerateVertex(Eg);
+  anEvent->AddPrimaryVertex(myVertex);
+  //
 
-  while (new_level != 0){
+  while (new_level > 0){
         G4int previous_level = new_level;
         new_level = GetNextLevel(vec_probs[new_level],vec_levels[new_level]) - 1;
         Eg = vec_E_levels[previous_level] - vec_E_levels[new_level];
-	G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
+	myVertex = GenerateVertex(Eg);
+	anEvent->AddPrimaryVertex(myVertex);
+	G4cout<<"Li: "<<vec_E_levels[previous_level]<<" Lf: "<<vec_E_levels[new_level]<<" new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
   }
-  const G4double r = 2*mm;
-  const G4double zmax = 8*mm;   
   
-  //vertex 1 uniform on cylinder
-  //
-  G4double alpha = twopi*G4UniformRand();  //alpha uniform in (0, 2*pi)
-  G4double ux = std::cos(alpha);
-  G4double uy = std::sin(alpha);
-  G4double z = zmax*(2*G4UniformRand() - 1);  //z uniform in (-zmax, +zmax)
-        
-  fParticleGun->SetParticlePosition(G4ThreeVector(r*ux,r*uy,z));
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(ux,uy,0));    
-  fParticleGun->SetParticleEnergy(1*MeV);
-  fParticleGun->GeneratePrimaryVertex(anEvent);
   
-  //vertex 2 at opposite
-  //
-  alpha += pi;
-  ux = std::cos(alpha);
-  uy = std::sin(alpha);        
-  fParticleGun->SetParticlePosition(G4ThreeVector(r*ux,r*uy,z));
-  
-  //particle 2 at vertex 2
-  //
-  const G4double dalpha = 10*deg;
-  ux = std::cos(alpha + dalpha);
-  uy = std::sin(alpha + dalpha);        
-  
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(ux,uy,0));    
-  fParticleGun->SetParticleEnergy(1*keV);
-  fParticleGun->GeneratePrimaryVertex(anEvent);
-   
-  //particle 3 at vertex 3 (same as vertex 2)
-  //
-  ux = std::cos(alpha - dalpha);
-  uy = std::sin(alpha - dalpha);        
-  
-  fParticleGun->SetParticleMomentumDirection(G4ThreeVector(ux,uy,0));    
-  fParticleGun->SetParticleEnergy(1*GeV);
-  fParticleGun->GeneratePrimaryVertex(anEvent);
-  
-  // randomize time zero of anEvent
-  //
-  G4double tmin = 0*s, tmax = 10*s;
-  G4double t0 = tmin + (tmax - tmin)*G4UniformRand();
-  G4PrimaryVertex* aVertex = anEvent->GetPrimaryVertex();
-  while (aVertex) {
-    aVertex->SetT0(t0);
-    aVertex = aVertex->GetNext();
-  }
 }
 
 

@@ -10,6 +10,7 @@ class G4ParticleGun;
 class G4Event;
 class PrimaryGeneratorMessenger;
 class DetectorConstruction;
+class PrimaryGeneratorAction1;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -26,6 +27,9 @@ public:
 
 public:
 	virtual void GeneratePrimaries(G4Event*);
+
+	PrimaryGeneratorAction1*  GetAction1() { return fAction1; };
+
 	void  SetSourceType(G4int newType);
 	void  SetSourceDirectionType(G4int newType);
 	void  SetSourceGeometry(G4int newType);
@@ -51,6 +55,9 @@ public:
 	G4double GetSourceDiameter(void){return 2*Radius;};
 
 private:
+
+	PrimaryGeneratorAction1* fAction1 = nullptr;
+
 	G4double size_source_x;
 	G4double size_source_y;
 	G4double size_source_z;

@@ -35,6 +35,7 @@
 #define PrimaryGeneratorAction1_h 1
 
 #include "G4VUserPrimaryGeneratorAction.hh"
+#include "G4PrimaryVertex.hh"
 #include "globals.hh"
 #include <vector>
 
@@ -51,6 +52,7 @@ class PrimaryGeneratorAction1
 
   public:
     void GeneratePrimaries(G4Event*);
+    G4PrimaryVertex* GenerateVertex(G4double);
     G4int GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels);
 
   private:
@@ -59,6 +61,7 @@ class PrimaryGeneratorAction1
     std::vector<G4double> vec_E_levels;
     std::vector<std::vector<G4double>> vec_probs;
     std::vector<std::vector<G4int>> vec_levels;
+    G4PrimaryVertex* myVertex;
 
   private:
     void InitFunction();

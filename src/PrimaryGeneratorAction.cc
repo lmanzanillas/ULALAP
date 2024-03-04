@@ -1,6 +1,8 @@
 #include "PrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 
+#include "PrimaryGeneratorAction1.hh"
+
 #include "G4MTRunManager.hh"
 
 #include "Randomize.hh"
@@ -27,6 +29,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fPrimaryMessenger = new PrimaryGeneratorMessenger(this);
 	G4int n_particle = 1;
 	fParticleGun = new G4ParticleGun(n_particle);
+	fAction1 = new PrimaryGeneratorAction1(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
 	CentreCoords = zero;
@@ -55,6 +58,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
+	delete fAction1;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -189,6 +193,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 1:
 			Z = 26;
@@ -199,6 +204,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
 			fParticleGun->SetParticleDefinition(ion);
 			fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 2:
 			Z = 55;
@@ -209,6 +215,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
 			fParticleGun->SetParticleDefinition(ion);
 			fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 3:
 			Z = 83;
@@ -219,6 +226,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
 			fParticleGun->SetParticleDefinition(ion);
 			fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 4:
 			Z = 38;
@@ -229,6 +237,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
 			fParticleGun->SetParticleDefinition(ion);
 			fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 5:
 			//Z = 95;
@@ -240,28 +249,34 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(direction);
 			//fParticleGun->SetParticleDefinition(ion);
 			//fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 6:
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("e-"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 7:
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("opticalphoton"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 8:
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("neutron"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
+		case 9:
+			fAction1->GeneratePrimaries(anEvent);
+    			break;
 
 	}
-	fParticleGun->GeneratePrimaryVertex(anEvent);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -288,13 +303,13 @@ void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 
 void PrimaryGeneratorAction::SetSourceType(G4int newType)
 {
-	if (newType <= 8 && newType >= 0)
+	if (newType <= 9 && newType >= 0)
 	{
 		particleType = newType;
 	}
 	else
 	{
-		G4cerr << "The option is out of the possible values (0-8)!" << G4endl;
+		G4cerr << "The option is out of the possible values (0-9)!" << G4endl;
 		G4cerr << "The default option (0) is set!" << G4endl;
 		particleType = 0;
 	}
