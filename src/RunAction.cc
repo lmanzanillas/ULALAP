@@ -157,6 +157,12 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan->CreateNtupleDColumn("vertex",myVertex);
   fMan->CreateNtupleDColumn("gammas",mygammas);
   fMan->FinishNtuple();
+
+  fMan->CreateNtuple("Primaries","Primaries");
+  fMan->CreateNtupleIColumn("EventID");
+  fMan->CreateNtupleIColumn("pdgID");
+  fMan->CreateNtupleDColumn("KinE");
+  fMan->FinishNtuple();
 }
 
 void RunAction::SetFileName(G4String fileName)

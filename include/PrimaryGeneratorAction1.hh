@@ -52,11 +52,13 @@ class PrimaryGeneratorAction1
 
   public:
     void GeneratePrimaries(G4Event*);
+    void GeneratePosition();
     G4PrimaryVertex* GenerateVertex(G4double);
     G4int GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels);
 
   private:
     G4ParticleGun*  fParticleGun = nullptr;
+    G4ThreeVector position;
 
     std::vector<G4double> vec_E_levels;
     std::vector<std::vector<G4double>> vec_probs;

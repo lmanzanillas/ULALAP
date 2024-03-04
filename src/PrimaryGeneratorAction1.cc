@@ -49,6 +49,8 @@ PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
 { 
    //E levels and probs
    InitFunction();
+   G4ThreeVector zero(0., 0., 0.);
+   position = zero;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -58,7 +60,7 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
   G4int next_level = -99;
   unsigned int vecSize = vec_probs.size();
   G4double min = -999.0;
-  G4cout<<"rand "<<rand_toy<<" vecSize: "<<vecSize<<G4endl;
+  //G4cout<<"rand "<<rand_toy<<" vecSize: "<<vecSize<<G4endl;
   for(unsigned int i = 0; i < vecSize; ++i)
   {
 	if (i == 0){
@@ -69,7 +71,7 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
 	}
 	if (min < rand_toy and rand_toy < vec_probs[i]){
             next_level = i;
-	    G4cout<<"i: "<<i<<" min: "<<min<<" vec_probs[i] "<<vec_probs[i]<<" next_level "<<next_level<<" vec[next]: "<<vec_levels[next_level]<<G4endl;
+	    //G4cout<<"i: "<<i<<" min: "<<min<<" vec_probs[i] "<<vec_probs[i]<<" next_level "<<next_level<<" vec[next]: "<<vec_levels[next_level]<<G4endl;
             break;
 	}
   }
@@ -112,12 +114,30 @@ void PrimaryGeneratorAction1::InitFunction()
   		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} };
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void PrimaryGeneratorAction1::GeneratePosition()
+{  
+  //To do: read the ar volume dims and use that as info instead of hard coding.... 
+  G4double xg = (G4UniformRand() - 0.5)*60.*m;
+  G4double yg = (G4UniformRand() - 0.5)*10.*m;
+  G4double zg = (G4UniformRand() - 0.5)*10.*m;
+  position.setX(xg);
+  position.setY(yg);
+  position.setZ(zg);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
 {
-  G4ThreeVector positionG(0.,0.,0.);
-  G4ThreeVector directionG(1.,0.,0.);
+  G4double theta = 2. * pi * G4UniformRand()*rad;
+  G4double phi = acos(G4UniformRand() -1.);
+  G4double ux = sin(phi)*cos(theta);
+  G4double uy = sin(phi)*sin(theta);
+  G4double uz = cos(phi);
+
+
+
+  G4ThreeVector directionG(ux,uy,uz);
   G4double timeG = 0*s;
-  G4PrimaryVertex* vertexG = new G4PrimaryVertex(positionG, timeG);
+  G4PrimaryVertex* vertexG = new G4PrimaryVertex(position, timeG);
   G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
   G4PrimaryParticle* particleG = new G4PrimaryParticle(particleDefinition);
   particleG->SetMomentumDirection(directionG);
@@ -130,21 +150,21 @@ G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
 void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
 {
   G4int n = vec_probs.size(); 
-  G4cout << n <<G4endl; 
+  //G4cout << n <<G4endl; 
   G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]) - 1;
   G4double Eg = vec_E_levels[n-1] - vec_E_levels[new_level];
-  G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
+  //G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
+  GeneratePosition();
   myVertex = GenerateVertex(Eg);
   anEvent->AddPrimaryVertex(myVertex);
-  //
-
+  //Loop until we reach the ground level
   while (new_level > 0){
         G4int previous_level = new_level;
         new_level = GetNextLevel(vec_probs[new_level],vec_levels[new_level]) - 1;
         Eg = vec_E_levels[previous_level] - vec_E_levels[new_level];
 	myVertex = GenerateVertex(Eg);
 	anEvent->AddPrimaryVertex(myVertex);
-	G4cout<<"Li: "<<vec_E_levels[previous_level]<<" Lf: "<<vec_E_levels[new_level]<<" new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
+	//G4cout<<"Li: "<<vec_E_levels[previous_level]<<" Lf: "<<vec_E_levels[new_level]<<" new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
   }
   
   

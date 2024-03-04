@@ -33,6 +33,7 @@ void EventAction::BeginOfEventAction(const G4Event* myEvent)
 	G4ThreeVector zero(0.,0.,0.);
 	vertex = zero;
 	vertex_3d = {0., 0., 0.};
+	
 	//mygammas.clear();
 	if (myEvent->GetEventID() % 10000 == 0)
 		G4cout << "starting event no.: " << myEvent->GetEventID() << G4endl;
@@ -85,6 +86,27 @@ void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector){
 
 void EventAction::EndOfEventAction(const G4Event* myEvent)
 {
+	G4int nV = myEvent->GetNumberOfPrimaryVertex();
+	G4PrimaryVertex* Vertex;
+	G4PrimaryParticle* PrimParticle;
+	G4int pdgID =-999;
+	G4double kinE = -99.9;
+	for(G4int v = 0 ; v < nV; ++v ){
+		//G4cout<<" starting for loop: "<<v<<G4endl;
+		Vertex = myEvent->GetPrimaryVertex(v);
+		G4int particlesInVertex = Vertex->GetNumberOfParticle();
+		for (G4int p = 0; p < particlesInVertex; ++p ){
+			PrimParticle = Vertex->GetPrimary(p);
+			pdgID = PrimParticle->GetPDGcode();
+			kinE = PrimParticle->GetKineticEnergy()/keV;
+	        	//G4cout<<" pdg: "<<pdgID<<" kinE: "<<kinE<<G4endl;	
+			auto analysisManager = G4AnalysisManager::Instance();
+			analysisManager->FillNtupleIColumn(3, 0, eventNumber);
+			analysisManager->FillNtupleIColumn(3, 1, pdgID);
+			analysisManager->FillNtupleDColumn(3, 2, kinE);
+			analysisManager->AddNtupleRow(3);
+		}
+	}
 	if (myEvent->GetEventID() % 10000 == 0)
 		G4cout << "finish event no.: " << myEvent->GetEventID() << G4endl;
 

@@ -50,6 +50,7 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
 	G4int StepNo = theTrack->GetCurrentStepNumber();
 	G4int trackIDCapture = -1;
 
+
   	if(!process_name.compare("nCapture")){
      		G4double time_finish = theStep->GetPostStepPoint()->GetGlobalTime();
 		fEventAction->SetTimeCapture(time_finish/us);
