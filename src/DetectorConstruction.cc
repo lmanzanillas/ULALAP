@@ -95,9 +95,6 @@ fd2LogicVolume(nullptr)
   data_output_directory = "./";  
   fd2Material = G4Material::GetMaterial("G4_lAr");
   fShieldingMaterial = G4Material::GetMaterial("G4_POLYETHYLENE");
-  fWorldMaterial = G4Material::GetMaterial("G4_Galactic");
-  materialGeContainer = G4Material::GetMaterial("Aluminium");
-  materialGeContainerCoating = G4Material::GetMaterial("Aluminium");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -141,17 +138,17 @@ void DetectorConstruction::SetDetectorType(G4int value){
 }
 
 //Sets dimmensions of target, thickness corresponds to the Z coordinate, Length to x.
-void DetectorConstruction::SetGeDetectorLength(G4double value){
+void DetectorConstruction::SetLArDetectorLength(G4double value){
   halfDetectorLength = (value/2.)*mm;
   //UpdateGeometry();
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
-void DetectorConstruction::SetGeDetectorThickness(G4double value){
+void DetectorConstruction::SetLArDetectorThickness(G4double value){
   halfDetectorThickness = (value/2.)*mm;
   //UpdateGeometry();
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
-void DetectorConstruction::SetGeDetectorWidth(G4double value){
+void DetectorConstruction::SetLArDetectorWidth(G4double value){
   halfDetectorWidth = (value/2.)*mm;
   //UpdateGeometry();
   G4RunManager::GetRunManager()->ReinitializeGeometry();
@@ -160,46 +157,6 @@ void DetectorConstruction::SetGeDetectorWidth(G4double value){
 void DetectorConstruction::SetshieldingThickness(G4double value){
   shieldingThickness = (value/1.)*mm;
   //UpdateGeometry();
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-//Set sample dimmensions
-void DetectorConstruction::SetSampleLength(G4double value){
-  cryostatThicknessPrimMembraneSS = (value/2.)*mm;
-  //UpdateGeometry();
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-void DetectorConstruction::SetSampleThickness(G4double value){
-  cryostatThicknessSecondaryBarrierAl = (value/2.)*mm;
-  //UpdateGeometry();
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-void DetectorConstruction::SetSampleWidth(G4double value){
-  cryostatThicknessVaporBarrierSS = (value/2.)*mm;
-  //UpdateGeometry();
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-void DetectorConstruction::SetBeWindowRadius(G4double value){
-  cryostatThicknessInnerPU = value*mm;
-  //UpdateGeometry();
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-//Collimator thickness
-void DetectorConstruction::SetcryostatThicknessPrimMembraneSS(G4double value){
-  cryostatThicknessPrimMembraneSS = value*mm;
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-//Collimator to detector distance
-void DetectorConstruction::SetDistanceCollimatorDetector(G4double value){
-  cryostatThicknessInnerPlywood = value*mm;
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-}
-
-//Sample to window distance
-void DetectorConstruction::SetDistanceSampleWindow(G4double value){
-  cryostatThicknessOuterPlywood = value*mm;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
@@ -221,41 +178,7 @@ void DetectorConstruction::SetTargetMaterial(G4String materialChoice)
   G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
 }
 
-//Sets material of Ge Container
-void DetectorConstruction::SetGeContainerMaterial(G4String materialChoice)
-{
-  // search the material by its name
-  G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
-
-  if (pttoMaterial) {
-    materialGeContainer = pttoMaterial;
-    if(logicGeContainer)logicGeContainer->SetMaterial(materialGeContainer);
-    G4cout<<" material container: "<<materialGeContainer->GetName()<<G4endl;  
-  } else {
-    G4cout << "\n--> warning from DetectorConstruction::SetMaterial : "
-           << materialChoice << " not found" << G4endl;
-  }
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-  G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
-}
-
 //Sets material of Ge Container coating
-void DetectorConstruction::SetGeContainerMaterialCoating(G4String materialChoice)
-{
-  // search the material by its name
-  G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
-
-  if (pttoMaterial) {
-    materialGeContainerCoating = pttoMaterial;
-    if(logicGeContainerCoating)logicGeContainerCoating->SetMaterial(materialGeContainerCoating);
-    G4cout<<" material container coating: "<<materialGeContainerCoating->GetName()<<G4endl;  
-  } else {
-    G4cout << "\n--> warning from DetectorConstruction::SetMaterial : "
-           << materialChoice << " not found" << G4endl;
-  }
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-  G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
-}
 
 void DetectorConstruction::SetDetectorName(G4String detectorNAME)
 {
@@ -315,22 +238,6 @@ void DetectorConstruction::SetWorldMaterial(G4String materialChoice)
   //G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
 }
 
-void DetectorConstruction::SetCollimatorMaterial(G4String materialChoice)
-{
-  // search the material by its name
-  G4Material* pttoMaterial =
-     G4NistManager::Instance()->FindOrBuildMaterial(materialChoice);
-  if (pttoMaterial) {
-    fShieldingMaterial = pttoMaterial;
-    if ( logicSteelSupport ) { logicSteelSupport->SetMaterial(fShieldingMaterial); }
-  } else {
-    G4cout << "\n--> warning from DetectorConstruction::SetMaterial : "
-           << materialChoice << " not found" << G4endl;
-  }
-  G4RunManager::GetRunManager()->ReinitializeGeometry();
-  //G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
-}
-
 
 /*
 Defines materials used in simulation. Sets material properties for PEN and other optical components.
@@ -340,28 +247,7 @@ void DetectorConstruction::DefineMaterials(){
   //materialConstruction = new PenMaterials;
   materialConstruction-> Construct();
   materialAir = G4Material::GetMaterial("Air");
-  materialBialkali = G4Material::GetMaterial("Bialkali");
-  fGlass = G4Material::GetMaterial("BorosilicateGlass");
-  PenMaterial = G4Material::GetMaterial("PEN");
-  PVTMaterial = G4Material::GetMaterial("PVT_structure");
-  materialSi = G4Material::GetMaterial("G4_Si");
-  materialGe = G4Material::GetMaterial("G4_Ge");
-  materialTriggerFoilEJ212 = G4Material::GetMaterial("EJ212");
-  Pstyrene = G4Material::GetMaterial("Polystyrene");
-  materialPMMA = G4Material::GetMaterial("PMMA");
-  fVacuum = G4Material::GetMaterial("G4_Galactic");
-  materialGreaseEJ550 = G4Material::GetMaterial("Grease");
-  materialTeflon = G4Material::GetMaterial("G4_TEFLON");
-  materialVikuiti = G4Material::GetMaterial("Vikuiti");
-  materialTitanium = G4Material::GetMaterial("titanium_grade1");
-  materialCollimatorCoating = G4Material::GetMaterial("Aluminium");
-  materialSample = G4Material::GetMaterial("Iron");
-  materialBeWindow = G4Material::GetMaterial("G4_Be");
-  materialKaptonWindow = G4Material::GetMaterial("G4_KAPTON");
   materialSteel = G4Material::GetMaterial("Steel_EN8");
-  materialSupportPins = G4Material::GetMaterial("PEEK");
-  materialContacts = G4Material::GetMaterial("Aluminium");
-  materialPolyethylene = G4Material::GetMaterial("G4_POLYETHYLENE");
   materialSS304L = G4Material::GetMaterial("Steel_SS304L");
   materialPUfoam = G4Material::GetMaterial("PU_foam");
   materialPlywood = G4Material::GetMaterial("Plywood");

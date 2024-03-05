@@ -50,6 +50,8 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
 	G4int StepNo = theTrack->GetCurrentStepNumber();
 	G4int trackIDCapture = -1;
 
+        G4double edepStep = theStep->GetTotalEnergyDeposit()/keV;
+
 
   	if(!process_name.compare("nCapture")){
      		G4double time_finish = theStep->GetPostStepPoint()->GetGlobalTime();
@@ -62,7 +64,6 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
     	}
 	
 
-       G4double edepStep = theStep->GetTotalEnergyDeposit()/keV;
        if(process_name == "RadioactiveDecay" )
        {
 	        G4double partEnergy = theStep->GetPreStepPoint()->GetKineticEnergy()/keV;

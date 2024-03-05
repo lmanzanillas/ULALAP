@@ -199,9 +199,9 @@
 PhysicsList::PhysicsList() : G4VUserPhysicsList() 
 {
 
-  defaultCutValue     = 100.0*micrometer; //
+  defaultCutValue     = 1.0*mm; //
   cutForGamma         = defaultCutValue;
-  cutForElectron      = 100.0*micrometer;
+  cutForElectron      = 1.0*mm;
   cutForPositron      = defaultCutValue;
 
   VerboseLevel = 1;

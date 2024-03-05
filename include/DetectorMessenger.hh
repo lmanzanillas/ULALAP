@@ -34,19 +34,14 @@ class DetectorMessenger: public G4UImessenger
 
     G4UIcmdWithAString*         commandSetWorldMaterial;
     G4UIcmdWithAnInteger*       commandSetDetectorType;
-    G4UIcmdWithADoubleAndUnit*  commandSetGeDetectorLength;
-    G4UIcmdWithADoubleAndUnit*  commandSetGeDetectorThickness;
-    G4UIcmdWithADoubleAndUnit*  commandSetGeDetectorWidth;
+    G4UIcmdWithADoubleAndUnit*  commandSetLArDetectorLength;
+    G4UIcmdWithADoubleAndUnit*  commandSetLArDetectorThickness;
+    G4UIcmdWithADoubleAndUnit*  commandSetLArDetectorWidth;
     G4UIcmdWithADoubleAndUnit*  commandSetshieldingThickness;
     G4UIcmdWithADoubleAndUnit*  commandSetBeWindowRadius;
     G4UIcmdWithADoubleAndUnit*  commandSetcryostatThickness;
-    G4UIcmdWithADoubleAndUnit*  commandSetDistanceCollimatorDetector;
-    G4UIcmdWithADoubleAndUnit*  commandSetDistanceSampleWindow;
-    G4UIcmdWithAString*         commandSetCollimatorMaterial;
     G4UIcmdWithAString*         commandSetTargetMaterial;
     G4UIcmdWithAString*         commandSetShiledingMaterial;
-    G4UIcmdWithAString*         commandSetGeContainerMaterial;
-    G4UIcmdWithAString*         commandSetGeContainerMaterialCoating;
     G4UIcmdWithAString*         commandSetDetectorName;
     G4UIcmdWithAString*         commandSetSetupName;
     G4UIcmdWithAString*         commandSetDataType;

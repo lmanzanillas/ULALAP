@@ -62,23 +62,15 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void UpdateGeometry();
     //static G4VPhysicalVolume* GetPhysicalVolumeByName(const G4String &name);
     void SetSize  (G4double);
-    void SetCollimatorMaterial(G4String);
     void SetTargetMaterial(G4String);
-    void SetGeContainerMaterial(G4String);
-    void SetGeContainerMaterialCoating(G4String);
     void SetShiledingMaterial(G4String);
     void SetOutputDirectory(G4String);
     void SetWorldMaterial(G4String);
     void SetDetectorType(G4int);
-    void SetGeDetectorLength(G4double);
-    void SetGeDetectorThickness(G4double);
-    void SetGeDetectorWidth(G4double);
+    void SetLArDetectorLength(G4double);
+    void SetLArDetectorThickness(G4double);
+    void SetLArDetectorWidth(G4double);
     void SetshieldingThickness(G4double);
-    void SetSampleLength(G4double);
-    void SetSampleThickness(G4double);
-    void SetSampleWidth(G4double);
-    void SetBeWindowRadius(G4double);
-    void SetDetectorCollimatorX(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
     void SetDistanceCollimatorDetector(G4double);
     void SetDistanceSampleWindow(G4double);
@@ -181,56 +173,14 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicMetalWindowBack;
     G4LogicalVolume* logicMetalTube;
     G4LogicalVolume* logicWorldBox;
-    G4LogicalVolume* logicGeContainer;
-    G4LogicalVolume* logicGeContainerCoating;
-    G4LogicalVolume* logicSupportPins;
-    G4LogicalVolume* logicGeCapot;
 
-    G4VSolid* solidBeWindow;
-    G4VSolid* solidKaptonWindow;
-    G4VSolid* solidMetalWindow;
-    G4VSolid* solidMetalWindowBack;
-    G4VSolid* solidMetalTube;
-    G4VSolid* solidGeContainer;
-    G4VSolid* solidGeContainerCoating;
-    G4VSolid* solidSupportPins;
-    G4VSolid* solidGeCapotPrimitive;
-    G4VSolid* solidGeCapot;
-    G4VSolid* solidBoxCapotInner;
-    
 
     G4VPhysicalVolume* physicWorldBox;
-    G4VPhysicalVolume* physicPenCryostatBox;
-    G4VPhysicalVolume* physicSourceContainer;
-    G4VPhysicalVolume* physicCollimator;
 
 
 
-    G4Material* PVTMaterial;
-    G4Material* PenMaterial;
-    G4Material* materialBialkali;
-    G4Material* materialSi;
-    G4Material* materialBeWindow;
-    G4Material* materialKaptonWindow;
-    G4Material* materialGe;
     G4Material* materialAir;
-    G4Material* fVacuum;
-    G4Material* materialTriggerFoilEJ212;
-    G4Material* Pstyrene;
-    G4Material* fGlass;
-    G4Material* materialPMMA;
-    G4Material* materialGreaseEJ550;
-    G4Material* materialTeflon;
-    G4Material* materialVikuiti;
     G4Material* materialPolyethylene;
-    G4Material* materialTitanium;
-    G4Material* materialCollimatorCoating;
-    G4Material* materialContacts;
-    G4Material* materialSample;
-    G4Material* materialMetalTube;
-    G4Material* materialSupportPins;
-    G4Material* materialGeContainer;
-    G4Material* materialGeContainerCoating;
 
     G4int fDetectorType;
     G4double fDetectorCollimatorX;

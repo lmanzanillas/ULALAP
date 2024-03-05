@@ -99,7 +99,7 @@ void PrimaryGeneratorAction1::InitFunction()
 		{1.0},
 	  	{0.0, 0.0, 0.1161, 0.1187, 0.6691, 0.767, 0.8091, 0.8491, 0.86, 0.946, 0.99, 1.0} };
 
-  vec_levels = {{1},
+  vec_levels = {{0},
 		{1},
 		{2, 1},
 		{3, 2},
@@ -150,8 +150,7 @@ G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
 void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
 {
   G4int n = vec_probs.size(); 
-  //G4cout << n <<G4endl; 
-  G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]) - 1;
+  G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]);
   G4double Eg = vec_E_levels[n-1] - vec_E_levels[new_level];
   //G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
   GeneratePosition();
