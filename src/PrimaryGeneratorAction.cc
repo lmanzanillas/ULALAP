@@ -2,6 +2,7 @@
 #include "PrimaryGeneratorMessenger.hh"
 
 #include "PrimaryGeneratorAction1.hh"
+#include "PrimaryGeneratorAction2.hh"
 
 #include "G4MTRunManager.hh"
 
@@ -30,6 +31,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	G4int n_particle = 1;
 	fParticleGun = new G4ParticleGun(n_particle);
 	fAction1 = new PrimaryGeneratorAction1(fParticleGun);
+	fAction2 = new PrimaryGeneratorAction2(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
 	CentreCoords = zero;
@@ -59,6 +61,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
 	delete fAction1;
+	delete fAction2;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -275,6 +278,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		case 9:
 			fAction1->GeneratePrimaries(anEvent);
     			break;
+		case 10:
+			fAction2->GeneratePrimaries(anEvent);
+    			break;
 
 	}
 }
@@ -303,7 +309,7 @@ void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 
 void PrimaryGeneratorAction::SetSourceType(G4int newType)
 {
-	if (newType <= 9 && newType >= 0)
+	if (newType <= 10 && newType >= 0)
 	{
 		particleType = newType;
 	}

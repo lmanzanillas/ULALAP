@@ -11,6 +11,7 @@ class G4Event;
 class PrimaryGeneratorMessenger;
 class DetectorConstruction;
 class PrimaryGeneratorAction1;
+class PrimaryGeneratorAction2;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -29,6 +30,7 @@ public:
 	virtual void GeneratePrimaries(G4Event*);
 
 	PrimaryGeneratorAction1*  GetAction1() { return fAction1; };
+	PrimaryGeneratorAction2*  GetAction2() { return fAction2; };
 
 	void  SetSourceType(G4int newType);
 	void  SetSourceDirectionType(G4int newType);
@@ -57,6 +59,7 @@ public:
 private:
 
 	PrimaryGeneratorAction1* fAction1 = nullptr;
+	PrimaryGeneratorAction2* fAction2 = nullptr;
 
 	G4double size_source_x;
 	G4double size_source_y;

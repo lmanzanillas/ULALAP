@@ -43,130 +43,144 @@
 #include "Randomize.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 PrimaryGeneratorAction2::PrimaryGeneratorAction2(G4ParticleGun* gun)
 : fParticleGun(gun)
-{ 
-   //E levels and probs
-   InitFunction();
-   G4ThreeVector zero(0., 0., 0.);
-   position = zero;
+{    
+  // energy distribution
+  //
+  InitFunction();
+  G4ThreeVector zero(0., 0., 0.);
+  position = zero;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4int PrimaryGeneratorAction2::GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels)
-{
-  G4double rand_toy = G4UniformRand();
-  G4int next_level = -99;
-  unsigned int vecSize = vec_probs.size();
-  G4double min = -999.0;
-  //G4cout<<"rand "<<rand_toy<<" vecSize: "<<vecSize<<G4endl;
-  for(unsigned int i = 0; i < vecSize; ++i)
-  {
-	if (i == 0){
-            min = 0.0;
-	}
-        else{
-            min = vec_probs[i-1];
-	}
-	if (min < rand_toy and rand_toy < vec_probs[i]){
-            next_level = i;
-	    //G4cout<<"i: "<<i<<" min: "<<min<<" vec_probs[i] "<<vec_probs[i]<<" next_level "<<next_level<<" vec[next]: "<<vec_levels[next_level]<<G4endl;
-            break;
-	}
-  }
-  return vec_levels[next_level];
-
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PrimaryGeneratorAction2::InitFunction()
-{ 
-
-  vec_E_levels = {0.0, 167.11, 516.10, 1034.70, 1353.71, 2397.9, 2733.1, 2948.5, 3009.8, 3326.3, 3968.1, 4270.0, 6098.9};
-
-  vec_probs = { {0.0},
-		{1.0},
-		{0.2188, 1.0},
-		{0.4413, 1.0},
-		{0.1613, 0.9677, 1.0},
-		{0.6494, 0.9545, 1.0},
-		{0.0826, 1.0},
-		{0.0482, 0.3976, 1.0},
-		{1.0},
-		{0.1037, 0.1308, 0.9282, 1.0},
-		{0.5917, 1.0},
-		{1.0},
-	  	{0.0, 0.0, 0.1161, 0.1187, 0.6691, 0.767, 0.8091, 0.8491, 0.86, 0.946, 0.99, 1.0} };
-
-  vec_levels = {{0},
-		{1},
-		{2, 1},
-		{3, 2},
-		{3, 2, 1},
-		{5, 3, 2},
-		{5, 2},
-		{5, 3, 2},
-		{2},
-		{5, 4, 3, 2},
-		{5, 3},
-		{2},
-  		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} };
-}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction2::GeneratePosition()
 {  
-  //To do: read the ar volume dims and use that as info instead of hard coding.... 
+  //To do: read the LAr volume dims and use that as info instead of hard coding.... 
   G4double xg = (G4UniformRand() - 0.5)*60.*m;
   G4double yg = (G4UniformRand() - 0.5)*10.*m;
-  G4double zg = (G4UniformRand() - 0.5)*10.*m;
+  G4double zg = 20.*m;
   position.setX(xg);
   position.setY(yg);
   position.setZ(zg);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4PrimaryVertex* PrimaryGeneratorAction2::GenerateVertex(G4double Eg)
-{
-  G4double theta = 2. * pi * G4UniformRand()*rad;
-  G4double phi = acos(G4UniformRand() -1.);
-  G4double ux = sin(phi)*cos(theta);
-  G4double uy = sin(phi)*sin(theta);
-  G4double uz = cos(phi);
 
-
-
-  G4ThreeVector directionG(ux,uy,uz);
-  G4double timeG = 0*s;
-  G4PrimaryVertex* vertexG = new G4PrimaryVertex(position, timeG);
-  G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("gamma");
-  G4PrimaryParticle* particleG = new G4PrimaryParticle(particleDefinition);
-  particleG->SetMomentumDirection(directionG);
-  particleG->SetKineticEnergy(Eg*keV);
-  vertexG->SetPrimary(particleG);
-  return vertexG;
-  
-}
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
 {
-  G4int n = vec_probs.size(); 
-  G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]);
-  G4double Eg = vec_E_levels[n-1] - vec_E_levels[new_level];
-  //G4cout<<"new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
+  // uniform solid angle
+  G4double cosAlpha = 1. - 2*G4UniformRand();   //cosAlpha uniform in [-1,+1]
+  G4double sinAlpha = std::sqrt(1. - cosAlpha*cosAlpha);
+  G4double psi      = twopi*G4UniformRand();   //psi uniform in [0, 2*pi]  
+  G4ThreeVector dir(sinAlpha*std::cos(psi),sinAlpha*std::sin(psi),cosAlpha);
+  //Generate random position
   GeneratePosition();
-  myVertex = GenerateVertex(Eg);
-  anEvent->AddPrimaryVertex(myVertex);
-  //Loop until we reach the ground level
-  while (new_level > 0){
-        G4int previous_level = new_level;
-        new_level = GetNextLevel(vec_probs[new_level],vec_levels[new_level]) - 1;
-        Eg = vec_E_levels[previous_level] - vec_E_levels[new_level];
-	myVertex = GenerateVertex(Eg);
-	anEvent->AddPrimaryVertex(myVertex);
-	//G4cout<<"Li: "<<vec_E_levels[previous_level]<<" Lf: "<<vec_E_levels[new_level]<<" new level: "<<new_level<<" Eg: "<<Eg<<G4endl;
-  }
-  
-  
+  //set energy from a tabulated distribution
+  //G4double energy = RejectAccept();
+  G4double energy = InverseCumul();  
+  G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("muon"); 
+  fParticleGun->SetParticleDefinition(particleDefinition);
+  fParticleGun->SetParticlePosition(position);
+  fParticleGun->SetParticleMomentumDirection(dir);
+  fParticleGun->SetParticleEnergy(energy);    
+
+  //create vertex
+  //   
+  fParticleGun->GeneratePrimaryVertex(anEvent);
 }
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+void PrimaryGeneratorAction2::InitFunction()
+{
+  // tabulated function 
+  // Y is assumed positive, linear per segment, continuous
+  //
+  fNPoints = 16;
+  const G4double xx[] = 
+    { 37*keV, 39*keV, 45*keV,  51*keV,  57*keV,  69*keV,  71*keV,  75*keV, 
+      83*keV, 91*keV, 97*keV, 107*keV, 125*keV, 145*keV, 159*keV, 160*keV }; 
+      
+  const G4double yy[] =
+    { 0.000,  0.077,  0.380,  2.044, 5.535, 15.077, 12.443, 14.766,
+     17.644, 18.518, 17.772, 14.776, 8.372,  3.217,  0.194,  0.000 };
+  
+  //copy arrays in std::vector and compute fMax
+  //
+  fX.resize(fNPoints); fY.resize(fNPoints);
+  fYmax = 0.;
+  for (G4int j=0; j<fNPoints; j++) {
+    fX[j] = xx[j]; fY[j] = yy[j];
+    if (fYmax < fY[j]) fYmax = fY[j];
+  };
+     
+  //compute slopes
+  //
+  fSlp.resize(fNPoints);
+  for (G4int j=0; j<fNPoints-1; j++) { 
+    fSlp[j] = (fY[j+1] - fY[j])/(fX[j+1] - fX[j]);
+  };
+  
+  //compute cumulative function
+  //
+  fYC.resize(fNPoints);  
+  fYC[0] = 0.;
+  for (G4int j=1; j<fNPoints; j++) {
+    fYC[j] = fYC[j-1] + 0.5*(fY[j] + fY[j-1])*(fX[j] - fX[j-1]);
+  };     
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4double PrimaryGeneratorAction2::RejectAccept()
+{
+  // tabulated function 
+  // Y is assumed positive, linear per segment, continuous
+  // (see Particle Data Group: pdg.lbl.gov --> Monte Carlo techniques)
+  // 
+  G4double Xrndm = 0., Yrndm = 0., Yinter = -1.;
+  
+  while (Yrndm > Yinter) {
+    //choose a point randomly
+    Xrndm = fX[0] + G4UniformRand()*(fX[fNPoints-1] - fX[0]);
+    Yrndm = G4UniformRand()*fYmax;
+    //find bin
+    G4int j = fNPoints-2;
+    while ((fX[j] > Xrndm) && (j > 0)) j--;
+    //compute Y(x_rndm) by linear interpolation
+    Yinter = fY[j] + fSlp[j]*(Xrndm - fX[j]);
+  };
+  return Xrndm;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+G4double PrimaryGeneratorAction2::InverseCumul()
+{
+  // tabulated function
+  // Y is assumed positive, linear per segment, continuous 
+  // --> cumulative function is second order polynomial
+  // (see Particle Data Group: pdg.lbl.gov --> Monte Carlo techniques)
+  
+  //choose y randomly
+  G4double Yrndm = G4UniformRand()*fYC[fNPoints-1];
+  //find bin
+  G4int j = fNPoints-2;
+  while ((fYC[j] > Yrndm) && (j > 0)) j--;
+  //y_rndm --> x_rndm :  fYC(x) is second order polynomial
+  G4double Xrndm = fX[j];
+  G4double a = fSlp[j];
+  if (a != 0.) {
+    G4double b = fY[j]/a, c = 2*(Yrndm - fYC[j])/a;
+    G4double delta = b*b + c;
+    G4int sign = 1; if (a < 0.) sign = -1;
+    Xrndm += sign*std::sqrt(delta) - b;    
+  } else if (fY[j] > 0.) {
+    Xrndm += (Yrndm - fYC[j])/fY[j];
+  };
+  return Xrndm;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 
 

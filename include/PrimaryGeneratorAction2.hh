@@ -43,7 +43,6 @@ class G4ParticleGun;
 class G4Event;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 class PrimaryGeneratorAction2
 {
   public:
@@ -51,25 +50,28 @@ class PrimaryGeneratorAction2
    ~PrimaryGeneratorAction2() = default;
 
   public:
-    void GeneratePrimaries(G4Event*);
-    void GeneratePosition();
-    G4PrimaryVertex* GenerateVertex(G4double);
-    G4int GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels);
+   void GeneratePrimaries(G4Event*);
+   void GeneratePosition();
 
-  private:
-    G4ParticleGun*  fParticleGun = nullptr;
+  public:        
+    G4double RejectAccept();
+    G4double InverseCumul();            
+    
+  private:    
+    G4ParticleGun*         fParticleGun = nullptr;
+ 
+    G4int                  fNPoints = 0; //nb of points
+    std::vector<G4double>  fX;           //abscisses X
+    std::vector<G4double>  fY;           //values of Y(X)
+    std::vector<G4double>  fSlp;         //slopes
+    std::vector<G4double>  fYC;          //cumulative function of Y
+    G4double               fYmax = 0.;   //max(Y)
     G4ThreeVector position;
 
-    std::vector<G4double> vec_E_levels;
-    std::vector<std::vector<G4double>> vec_probs;
-    std::vector<std::vector<G4int>> vec_levels;
-    G4PrimaryVertex* myVertex;
-
   private:
-    void InitFunction();
+    void InitFunction();                        
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif
-

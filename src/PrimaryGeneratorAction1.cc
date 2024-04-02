@@ -51,6 +51,7 @@ PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
    InitFunction();
    G4ThreeVector zero(0., 0., 0.);
    position = zero;
+   GeneratePosition();
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

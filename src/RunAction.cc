@@ -88,6 +88,9 @@ G4String RunAction::GetFolderName()
     case 9:
       sourceString = "GammasArNeutronCapture";
       break;
+    case 10:
+      sourceString = "Muon";
+      break;
   }
 
   G4cout << sourceString << G4endl;
