@@ -23,15 +23,15 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file eventgenerator/particleGun/src/PrimaryGeneratorAction1.cc
-/// \brief Implementation of the PrimaryGeneratorAction1 class
+/// \file eventgenerator/particleGun/src/PrimaryGeneratorAction2.cc
+/// \brief Implementation of the PrimaryGeneratorAction2 class
 //
 //
 // 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-#include "PrimaryGeneratorAction1.hh"
+#include "PrimaryGeneratorAction2.hh"
 #include "PrimaryGeneratorAction.hh"
 
 #include "G4Event.hh"
@@ -43,8 +43,8 @@
 #include "Randomize.hh"
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//Initialize the vector conaining the information about probabilities
-PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
+
+PrimaryGeneratorAction2::PrimaryGeneratorAction2(G4ParticleGun* gun)
 : fParticleGun(gun)
 { 
    //E levels and probs
@@ -54,9 +54,7 @@ PrimaryGeneratorAction1::PrimaryGeneratorAction1(G4ParticleGun* gun)
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//This function will compute what is the next level that an excited Argon nuclei will go before reaching the ground state after capturing a thermal neutron
-//The function needs two vector of same size containing the probabilties and another with the levels
-G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels)
+G4int PrimaryGeneratorAction2::GetNextLevel(std::vector<G4double> vec_probs,std::vector<G4int> vec_levels)
 {
   G4double rand_toy = G4UniformRand();
   G4int next_level = -99;
@@ -65,14 +63,12 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
   //G4cout<<"rand "<<rand_toy<<" vecSize: "<<vecSize<<G4endl;
   for(unsigned int i = 0; i < vecSize; ++i)
   {
-	//The aproach is to use the the probalities between 0 and 1, then we just need to initialize the min of the first iteration to 0.0 
 	if (i == 0){
             min = 0.0;
 	}
         else{
             min = vec_probs[i-1];
 	}
-	//check if the random number satifies the condition and if yes use that level and stop the computations
 	if (min < rand_toy and rand_toy < vec_probs[i]){
             next_level = i;
 	    //G4cout<<"i: "<<i<<" min: "<<min<<" vec_probs[i] "<<vec_probs[i]<<" next_level "<<next_level<<" vec[next]: "<<vec_levels[next_level]<<G4endl;
@@ -84,12 +80,11 @@ G4int PrimaryGeneratorAction1::GetNextLevel(std::vector<G4double> vec_probs,std:
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//Just store the information in vectors
-void PrimaryGeneratorAction1::InitFunction()
+void PrimaryGeneratorAction2::InitFunction()
 { 
-  //energy levels
+
   vec_E_levels = {0.0, 167.11, 516.10, 1034.70, 1353.71, 2397.9, 2733.1, 2948.5, 3009.8, 3326.3, 3968.1, 4270.0, 6098.9};
-  //probabilities
+
   vec_probs = { {0.0},
 		{1.0},
 		{0.2188, 1.0},
@@ -103,7 +98,7 @@ void PrimaryGeneratorAction1::InitFunction()
 		{0.5917, 1.0},
 		{1.0},
 	  	{0.0, 0.0, 0.1161, 0.1187, 0.6691, 0.767, 0.8091, 0.8491, 0.86, 0.946, 0.99, 1.0} };
-  //levels that are available for enxt iteration
+
   vec_levels = {{0},
 		{1},
 		{2, 1},
@@ -119,9 +114,9 @@ void PrimaryGeneratorAction1::InitFunction()
   		{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11} };
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PrimaryGeneratorAction1::GeneratePosition()
+void PrimaryGeneratorAction2::GeneratePosition()
 {  
-  //To do: read the LAr volume dims and use that as info instead of hard coding.... 
+  //To do: read the ar volume dims and use that as info instead of hard coding.... 
   G4double xg = (G4UniformRand() - 0.5)*60.*m;
   G4double yg = (G4UniformRand() - 0.5)*10.*m;
   G4double zg = (G4UniformRand() - 0.5)*10.*m;
@@ -130,8 +125,7 @@ void PrimaryGeneratorAction1::GeneratePosition()
   position.setZ(zg);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//Function to generate random vertex
-G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
+G4PrimaryVertex* PrimaryGeneratorAction2::GenerateVertex(G4double Eg)
 {
   G4double theta = 2. * pi * G4UniformRand()*rad;
   G4double phi = acos(G4UniformRand() -1.);
@@ -153,7 +147,7 @@ G4PrimaryVertex* PrimaryGeneratorAction1::GenerateVertex(G4double Eg)
   
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
+void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
 {
   G4int n = vec_probs.size(); 
   G4int new_level = GetNextLevel(vec_probs[n-1],vec_levels[n-1]);
@@ -163,7 +157,6 @@ void PrimaryGeneratorAction1::GeneratePrimaries(G4Event* anEvent)
   myVertex = GenerateVertex(Eg);
   anEvent->AddPrimaryVertex(myVertex);
   //Loop until we reach the ground level
-  //Add a gamma with the correct energy
   while (new_level > 0){
         G4int previous_level = new_level;
         new_level = GetNextLevel(vec_probs[new_level],vec_levels[new_level]) - 1;
