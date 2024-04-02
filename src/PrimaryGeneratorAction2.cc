@@ -72,7 +72,7 @@ void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
   G4double cosAlpha = 1. - 2*G4UniformRand();   //cosAlpha uniform in [-1,+1]
   G4double sinAlpha = std::sqrt(1. - cosAlpha*cosAlpha);
   G4double psi      = twopi*G4UniformRand();   //psi uniform in [0, 2*pi]  
-  G4ThreeVector dir(sinAlpha*std::cos(psi),sinAlpha*std::sin(psi),cosAlpha);
+  G4ThreeVector dir(sinAlpha*std::cos(psi),sinAlpha*std::sin(psi),-1);//we will consider only muons going down (ux,uy,-1) 
   //Generate random position
   GeneratePosition();
   //set energy from a tabulated distribution
@@ -94,10 +94,11 @@ void PrimaryGeneratorAction2::InitFunction()
 {
   // tabulated function 
   // Y is assumed positive, linear per segment, continuous
+  // Here we need to add the data for muons reaching the DUNE detectors
   //
   fNPoints = 16;
   const G4double xx[] = 
-    { 37*keV, 39*keV, 45*keV,  51*keV,  57*keV,  69*keV,  71*keV,  75*keV, 
+    { 30*keV, 39*keV, 45*keV,  51*keV,  57*keV,  69*keV,  71*keV,  75*keV, 
       83*keV, 91*keV, 97*keV, 107*keV, 125*keV, 145*keV, 159*keV, 160*keV }; 
       
   const G4double yy[] =
