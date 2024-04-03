@@ -10,6 +10,7 @@ class G4ParticleGun;
 class G4Event;
 class PrimaryGeneratorMessenger;
 class DetectorConstruction;
+class PrimaryGeneratorAction0;
 class PrimaryGeneratorAction1;
 class PrimaryGeneratorAction2;
 
@@ -29,6 +30,7 @@ public:
 public:
 	virtual void GeneratePrimaries(G4Event*);
 
+	PrimaryGeneratorAction0*  GetAction0() { return fAction0; };
 	PrimaryGeneratorAction1*  GetAction1() { return fAction1; };
 	PrimaryGeneratorAction2*  GetAction2() { return fAction2; };
 
@@ -58,6 +60,7 @@ public:
 
 private:
 
+	PrimaryGeneratorAction0* fAction0 = nullptr;
 	PrimaryGeneratorAction1* fAction1 = nullptr;
 	PrimaryGeneratorAction2* fAction2 = nullptr;
 

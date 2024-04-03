@@ -1,6 +1,7 @@
 #include "PrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 
+#include "PrimaryGeneratorAction0.hh"
 #include "PrimaryGeneratorAction1.hh"
 #include "PrimaryGeneratorAction2.hh"
 
@@ -30,6 +31,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fPrimaryMessenger = new PrimaryGeneratorMessenger(this);
 	G4int n_particle = 1;
 	fParticleGun = new G4ParticleGun(n_particle);
+	fAction0 = new PrimaryGeneratorAction0(fParticleGun);
 	fAction1 = new PrimaryGeneratorAction1(fParticleGun);
 	fAction2 = new PrimaryGeneratorAction2(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
@@ -60,6 +62,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
 {
 	delete fParticleGun;
+	delete fAction0;
 	delete fAction1;
 	delete fAction2;
 }
@@ -189,6 +192,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4ParticleDefinition* ion;
 	GeneratePointsInVolume();
 	GenerateDirection(direction);
+	G4double RandNb = G4UniformRand();
 
 	switch (particleType) {
 		case 0:
@@ -276,8 +280,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 9:
-			fAction1->GeneratePrimaries(anEvent);
-    			break;
+ 			if (RandNb < 0.05){
+				fAction0->GeneratePrimaries(anEvent);
+			}
+			else{
+				fAction1->GeneratePrimaries(anEvent);
+			}
+			break;
 		case 10:
 			fAction2->GeneratePrimaries(anEvent);
     			break;
