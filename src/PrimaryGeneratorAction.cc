@@ -280,7 +280,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 9:
- 			if (RandNb < 0.05){
+ 			if (RandNb < 0.035){
 				fAction0->GeneratePrimaries(anEvent);
 			}
 			else{

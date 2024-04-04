@@ -78,7 +78,7 @@ void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
   //set energy from a tabulated distribution
   //G4double energy = RejectAccept();
   G4double energy = InverseCumul();  
-  G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("muon"); 
+  G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu+"); 
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticlePosition(position);
   fParticleGun->SetParticleMomentumDirection(dir);
@@ -97,13 +97,21 @@ void PrimaryGeneratorAction2::InitFunction()
   // Here we need to add the data for muons reaching the DUNE detectors
   //
   fNPoints = 16;
-  const G4double xx[] = 
-    { 30*keV, 39*keV, 45*keV,  51*keV,  57*keV,  69*keV,  71*keV,  75*keV, 
-      83*keV, 91*keV, 97*keV, 107*keV, 125*keV, 145*keV, 159*keV, 160*keV }; 
+  const G4double xx[] =   
+	{ 1.070*GeV, 1.382*GeV, 1.702*GeV, 2.077*GeV, 2.708*GeV, 3.368*GeV, 4.186*GeV, 5.013*GeV, 
+	  6.353*GeV, 8.362*GeV, 11.324*GeV, 15.627*GeV, 21.363*GeV, 28.929*GeV, 38.804*GeV, 54.062*GeV,
+	  79.723*GeV, 114.271*GeV, 175.022*GeV, 253.256*GeV, 346.209*GeV, 442.911*GeV, 582.960*GeV, 704.578*GeV,
+	  835.586*GeV, 972.352*GeV, 1131.504*GeV, 1341.893*GeV, 1576.395*GeV, 1851.877*GeV, 2154.988*GeV, 2460.641*GeV,
+	  2809.648*GeV, 3147.939*GeV, 3560.535*GeV, 4065.546*GeV, 4598.412*GeV, 5250.630*GeV, 6052.426*GeV, 6781.159*GeV, 
+	  7816.674*GeV, 8841.196*GeV, 9812.302*GeV, 11636.774*GeV, 12317.423*GeV, 14746.742*GeV } ;
       
   const G4double yy[] =
-    { 0.000,  0.077,  0.380,  2.044, 5.535, 15.077, 12.443, 14.766,
-     17.644, 18.518, 17.772, 14.776, 8.372,  3.217,  0.194,  0.000 };
+	{ 4.373e-11, 5.642e-11, 6.917e-11, 8.479e-11, 1.024e-10, 1.256e-10, 1.527e-10, 1.820e-10,
+	  2.232e-10, 2.837e-10, 3.687e-10, 4.791e-10, 6.047e-10, 7.744e-10, 9.494e-10, 1.181e-9, 
+	  1.417e-9, 1.627e-9, 1.724e-9, 1.638e-9, 1.469e-9, 1.251e-9, 9.918e-10, 8.149e-10, 6.597e-10, 
+	  5.305e-10, 4.264e-10, 3.306e-10, 2.418e-10, 1.781e-10, 1.312e-10, 1.010e-10, 7.658e-11, 
+	  5.937e-11, 4.373e-11, 3.367e-11, 2.461e-11, 1.813e-11, 1.297e-11, 9.217e-12, 6.741e-12, 
+	  4.824e-12, 3.477e-12, 2.543e-12, 1.819e-12, 1.321e-12 };
   
   //copy arrays in std::vector and compute fMax
   //
