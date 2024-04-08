@@ -95,13 +95,13 @@ int main(int argc,char** argv)
   //
   // Physics list
   // Physics list factory
-  //G4PhysListFactory factory;
-  //G4VModularPhysicsList* physList = nullptr;
+  G4PhysListFactory factory;
+  G4VModularPhysicsList* physList = nullptr;
   // Reference PhysicsList via its name
-  //G4String physListName = "Shileding";
-  //physList = factory.GetReferencePhysList(physListName);
-  //runManager->SetUserInitialization(physList);
-   runManager-> SetUserInitialization(new PhysicsList());
+  G4String physListName = "FTFP_BERT_HP";
+  physList = factory.GetReferencePhysList(physListName);
+  runManager->SetUserInitialization(physList);
+  //runManager-> SetUserInitialization(new PhysicsList());
 
   //test, next line
   //G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState( true );

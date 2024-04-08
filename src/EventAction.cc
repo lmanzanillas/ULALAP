@@ -70,6 +70,17 @@ void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, 
         }
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void EventAction::AddInfoSecondaries(G4String creator, G4int atNumber, G4int pdgCode,G4double energy){
+	auto analysisManager = G4AnalysisManager::Instance();
+	analysisManager->FillNtupleIColumn(4, 0, eventNumber);
+	analysisManager->FillNtupleSColumn(4, 1, creator);
+	analysisManager->FillNtupleIColumn(4, 2, atNumber);
+	analysisManager->FillNtupleIColumn(4, 3, pdgCode);
+	analysisManager->FillNtupleDColumn(4, 4, energy);
+	analysisManager->AddNtupleRow(4);
+}
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector){

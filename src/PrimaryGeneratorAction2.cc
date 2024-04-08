@@ -57,9 +57,9 @@ PrimaryGeneratorAction2::PrimaryGeneratorAction2(G4ParticleGun* gun)
 void PrimaryGeneratorAction2::GeneratePosition()
 {  
   //To do: read the LAr volume dims and use that as info instead of hard coding.... 
-  G4double xg = (G4UniformRand() - 0.5)*60.*m;
+  G4double xg = (G4UniformRand() - 0.5)*50.*m;
   G4double yg = (G4UniformRand() - 0.5)*10.*m;
-  G4double zg = 20.*m;
+  G4double zg = 12.*m;
   position.setX(xg);
   position.setY(yg);
   position.setZ(zg);

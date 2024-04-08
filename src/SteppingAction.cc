@@ -4,6 +4,7 @@
 #include "G4SDManager.hh"
 #include "G4EventManager.hh"
 #include "G4ProcessManager.hh"
+#include "G4VProcess.hh"
 #include "G4Track.hh"
 #include "G4Step.hh"
 #include "G4Event.hh"
@@ -35,7 +36,7 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
 {
 	//auto analysisManager = G4AnalysisManager::Instance();
 	G4Track* theTrack = theStep->GetTrack();
-  	G4ParticleDefinition* particleType = theTrack->GetDefinition();
+  	G4ParticleDefinition* particleDef = theTrack->GetDefinition();
 	//G4cout << "Particle ID: " << particleType->GetParticleName() << " parent ID: "<< theTrack->GetParentID() << G4endl;
 	fExpectedNextStatus = Undefined;
 
@@ -43,8 +44,16 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
 	G4VPhysicalVolume* thePrePV = thePrePoint->GetPhysicalVolume();
 	//G4TouchableHistory* theTouchable = (G4TouchableHistory*)(thePrePoint->GetTouchable());
 	//step->GetTrack()->GetParentID();
-	//G4StepStatus PreStepStatus = thePrePoint->GetStepStatus();
-       
+        G4String processCreator = "NoProcess";
+ 	
+        G4int atNumber = particleDef->GetAtomicNumber();  
+        G4int pdgCode = particleDef->GetPDGEncoding();
+        G4double energy = theTrack->GetKineticEnergy();
+        if(theTrack->GetCurrentStepNumber() == 1 && theTrack->GetCreatorProcess() && thePrePV->GetName()=="target_1" && particleDef->GetParticleType() == "nucleus" && particleDef->GetParticleSubType() == "generic" && atNumber != 18){
+		       
+        	       processCreator = theTrack -> GetCreatorProcess ()  -> GetProcessName();
+                       fEventAction->AddInfoSecondaries(processCreator,atNumber,pdgCode,energy);
+ 	}
 
         G4String process_name = theStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
 	G4int StepNo = theTrack->GetCurrentStepNumber();
@@ -83,18 +92,26 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
    	for(size_t lp1=0;lp1<(*fSecondary).size(); lp1++)
   	{ 
      		// Retrieve particle
-     		const G4ParticleDefinition* particleName = (*fSecondary)[lp1] -> GetDefinition();     
+     		const G4ParticleDefinition* particleDefi = (*fSecondary)[lp1] -> GetDefinition();    
+                //G4int atNumber = particleDefi->GetAtomicNumber();  
+                //G4int pdgCode = particleDefi->GetPDGEncoding();
+         	G4String process = (*fSecondary)[lp1]-> GetCreatorProcess()-> GetProcessName();  
+           	energy = (*fSecondary)[lp1]  -> GetKineticEnergy();   
+                //We don't save here electrons or gammas since there are a lot of them, we save below the relevant gammas from n capture and radioactive decay
+                //If for some reason you want electrons and gammas, just adapt it in the next line
+                //if(thePrePV->GetName()=="target_1" && particleDefi->GetParticleType() == "nucleus" && particleDefi->GetParticleSubType() == "generic" && atNumber != 18){
+                //       fEventAction->AddInfoSecondaries(process,atNumber,pdgCode,energy);
+ 		//}
 
-		if (particleName == G4Gamma::Definition())
+		if (particleDefi == G4Gamma::Definition())
     		{
-         		G4String process = (*fSecondary)[lp1]-> GetCreatorProcess()-> GetProcessName();  
      	 		G4double time_finish = theStep->GetPostStepPoint()->GetGlobalTime();
       
          		//Retrieve the process originating it
 		        //G4cout << "creator process " << process << G4endl;
          		if (process == "RadioactiveDecay" || process == "nCapture")
         		{
-           			G4double energy = (*fSecondary)[lp1]  -> GetKineticEnergy();   
+           			//energy = (*fSecondary)[lp1]  -> GetKineticEnergy();   
 		   		gamma_vector.push_back(energy/keV);
 	   			//G4cout<<"E gamma: "<<energy/keV<<" time: "<<time_finish/us<<G4endl;
          		}

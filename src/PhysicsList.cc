@@ -534,13 +534,13 @@ void PhysicsList::ConstructOp()
 void PhysicsList::ConstructHad() 
 {
   //test
-  //G4int verb = 1;
+  G4int verb = 1;
   //RegisterPhysics( new G4HadronElasticPhysicsXS(verb));
   //RegisterPhysics( new G4HadronPhysicsFTFP_BERT_HP(verb));
   //G4VPhysicsConstructor* hadXS = new G4HadronElasticPhysicsXS;
-  //G4VPhysicsConstructor* hadBert = new G4HadronPhysicsFTFP_BERT_HP;
+  G4VPhysicsConstructor* hadBert = new G4HadronPhysicsFTFP_BERT_HP;
   //hadXS->ConstructProcess();
-  //hadBert->ConstructProcess();
+  hadBert->ConstructProcess();
   
   //Elastic models
   G4HadronElastic* elastic_lhep0 = new G4HadronElastic();

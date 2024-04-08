@@ -166,6 +166,14 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan->CreateNtupleIColumn("pdgID");
   fMan->CreateNtupleDColumn("KinE");
   fMan->FinishNtuple();
+
+  fMan->CreateNtuple("Secondaries","Secondaries");
+  fMan->CreateNtupleIColumn("EventID");
+  fMan->CreateNtupleSColumn("creator");
+  fMan->CreateNtupleIColumn("atNumber");
+  fMan->CreateNtupleIColumn("pdgCode");
+  fMan->CreateNtupleDColumn("energy");
+  fMan->FinishNtuple();
 }
 
 void RunAction::SetFileName(G4String fileName)
