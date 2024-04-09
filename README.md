@@ -49,11 +49,12 @@ source setup_geant4.sh
 when you start a new session
 
 ## Some key numbers
-Cavern box filled with air starts at x= +/-33944, y= +/-10494, z= +/- 9944
+Values are in cm
+Cavern box filled with air starts at x= +/-3394.4, y= +/-1049.4, z= +/- 994.4
 
-Shielding ends at x= +/-32944, y= +/-9494, z= +/-8944
+Shielding ends at x= +/-3294.4, y= +/-949.4, z= +/-894.4
 
-LAr Volume ends at x= +/-31000 y= +/-7550, z= +/-7000 
+LAr Volume ends at x= +/-3100.0 y= +/-755.0, z= +/-700.0 
 ## Installing the sofwtware 
 
 If is the first time that you are using it, you can just clone it by doing: 
