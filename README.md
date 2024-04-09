@@ -50,7 +50,9 @@ when you start a new session
 
 ## Some key numbers
 Cavern box filled with air starts at x= +/-33944, y= +/-10494, z= +/- 9944
+
 Shielding ends at x= +/-32944, y= +/-9494, z= +/-8944
+
 LAr Volume ends at x= +/-31000 y= +/-7550, z= +/-7000 
 ## Installing the sofwtware 
 
