@@ -46,15 +46,16 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
 	//step->GetTrack()->GetParentID();
         G4String processCreator = "NoProcess";
  	
-        G4int atNumber = particleDef->GetAtomicNumber();  
         G4int pdgCode = particleDef->GetPDGEncoding();
         G4double energy = theTrack->GetKineticEnergy();
         if(theTrack->GetCurrentStepNumber() == 1 && theTrack->GetCreatorProcess() && thePrePV->GetName()=="target_1" && particleDef->GetParticleType() == "nucleus" && particleDef->GetParticleSubType() == "generic"){
 		       
+                       G4int atNumber = particleDef->GetAtomicNumber();  
+                       G4int atMass = particleDef->GetAtomicMass();  
      		       G4double time_nuclei = theStep->GetPostStepPoint()->GetGlobalTime()/us;
      		       G4ThreeVector position_nuclei = theStep->GetPostStepPoint()->GetPosition();
         	       processCreator = theTrack -> GetCreatorProcess ()  -> GetProcessName();
-                       fEventAction->AddInfoSecondaries(processCreator,atNumber,pdgCode,energy,position_nuclei.x()/cm,position_nuclei.y()/cm,position_nuclei.z()/cm,time_nuclei);
+                       fEventAction->AddInfoSecondaries(processCreator,atNumber,atMass,pdgCode,energy,position_nuclei.x()/cm,position_nuclei.y()/cm,position_nuclei.z()/cm,time_nuclei);
  	}
 
         G4String process_name = theStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();

@@ -22,7 +22,7 @@ class EventAction : public G4UserEventAction
     virtual void BeginOfEventAction(const G4Event* event);
     virtual void EndOfEventAction(const G4Event* event);
     virtual void AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE);
-    virtual void AddInfoSecondaries(G4String creator, G4int atNumber, G4int pdgCode, G4double energy, G4double xn, G4double yn, G4double zn, G4double time_nuclei);
+    virtual void AddInfoSecondaries(G4String creator, G4int atNumber, G4int atMass, G4int pdgCode, G4double energy, G4double xn, G4double yn, G4double zn, G4double time_nuclei);
     virtual void AddInfoCaptureGammas(std::vector<G4double> gamma_vector);
     virtual void SetTimeCapture(G4double t_value_c);
     virtual void SetTimeDecay(G4double t_value_d);

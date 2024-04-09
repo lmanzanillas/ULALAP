@@ -171,6 +171,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan->CreateNtupleIColumn("EventID");
   fMan->CreateNtupleSColumn("creator");
   fMan->CreateNtupleIColumn("atNumber");
+  fMan->CreateNtupleIColumn("atMass");
   fMan->CreateNtupleIColumn("pdgCode");
   fMan->CreateNtupleDColumn("energy");
   fMan->CreateNtupleDColumn("xn");
