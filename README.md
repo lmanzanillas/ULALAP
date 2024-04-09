@@ -49,7 +49,8 @@ source setup_geant4.sh
 when you start a new session
 
 ## Some key numbers
-Values are in cm
+Values are in cm. 
+
 Cavern box filled with air starts at x= +/-3394.4, y= +/-1049.4, z= +/- 994.4
 
 Shielding ends at x= +/-3294.4, y= +/-949.4, z= +/-894.4
