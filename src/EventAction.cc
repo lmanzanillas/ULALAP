@@ -33,7 +33,21 @@ void EventAction::BeginOfEventAction(const G4Event* myEvent)
 	G4ThreeVector zero(0.,0.,0.);
 	vertex = zero;
 	vertex_3d = {0., 0., 0.};
-	
+       
+        G4int nV = myEvent->GetNumberOfPrimaryVertex();
+	G4PrimaryVertex* Vertex;
+	G4PrimaryParticle* PrimParticle;
+	primPDG =-999;
+	for(G4int v = 0 ; v < nV; ++v ){
+		Vertex = myEvent->GetPrimaryVertex(v);
+		G4int particlesInVertex = Vertex->GetNumberOfParticle();
+		for (G4int p = 0; p < particlesInVertex; ++p ){
+			PrimParticle = Vertex->GetPrimary(p);
+			primPDG = PrimParticle->GetPDGcode();
+		}
+	}
+	//G4cout<<"pdg: "<<primPDG<<G4endl;
+
 	//mygammas.clear();
 	if (myEvent->GetEventID() % 10000 == 0)
 		G4cout << "starting event no.: " << myEvent->GetEventID() << G4endl;
@@ -58,7 +72,8 @@ void EventAction::SetVertex(G4ThreeVector v_vertex){
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE){
-	if (depE > 1.0){
+	//G4cout<<"pdg: "<<primPDG<<G4endl;
+	if (depE > 1.0 && abs(primPDG) != 13 ){
 		auto analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillNtupleIColumn(1, 0, eventNumber);
 		analysisManager->FillNtupleDColumn(1, 1, xF);
@@ -71,13 +86,17 @@ void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, 
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void EventAction::AddInfoSecondaries(G4String creator, G4int atNumber, G4int pdgCode,G4double energy){
+void EventAction::AddInfoSecondaries(G4String creator, G4int atNumber, G4int pdgCode,G4double energy, G4double xn, G4double yn, G4double zn, G4double tn){
 	auto analysisManager = G4AnalysisManager::Instance();
 	analysisManager->FillNtupleIColumn(4, 0, eventNumber);
 	analysisManager->FillNtupleSColumn(4, 1, creator);
 	analysisManager->FillNtupleIColumn(4, 2, atNumber);
 	analysisManager->FillNtupleIColumn(4, 3, pdgCode);
 	analysisManager->FillNtupleDColumn(4, 4, energy);
+	analysisManager->FillNtupleDColumn(4, 5, xn);
+	analysisManager->FillNtupleDColumn(4, 6, yn);
+	analysisManager->FillNtupleDColumn(4, 7, zn);
+	analysisManager->FillNtupleDColumn(4, 8, tn);
 	analysisManager->AddNtupleRow(4);
 }
 

@@ -368,9 +368,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //The experimental cavern
   G4Box* cavernBox = new G4Box("CavernBox",box_air_cavern_x, box_air_cavern_y, box_air_cavern_z);
   logicCavern = new G4LogicalVolume(cavernBox,materialAir,"Cavern",0,0,0);
-  //Shileding 
+  //Printing key coordinates
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x<<" y "<<box_air_cavern_y<<" z "<<box_air_cavern_z<<G4endl;
   G4cout<<"Start of shielding x: "<<box_shileding_outer_x<<" y "<<box_shileding_outer_y<<" z "<<box_shileding_outer_z<<G4endl;
+  G4cout<<"LAr Volume x: "<<halfDetectorLength<<" y "<<halfDetectorWidth<<" z "<<halfDetectorThickness<<G4endl;
+  //Shileding 
   G4Box* shieldingBoxOuter = new G4Box("b_shileding_outer", box_shileding_outer_x, box_shileding_outer_y, box_shileding_outer_z);
   logicshieldingBoxOuter = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
 

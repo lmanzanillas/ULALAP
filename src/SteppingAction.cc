@@ -49,10 +49,12 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
         G4int atNumber = particleDef->GetAtomicNumber();  
         G4int pdgCode = particleDef->GetPDGEncoding();
         G4double energy = theTrack->GetKineticEnergy();
-        if(theTrack->GetCurrentStepNumber() == 1 && theTrack->GetCreatorProcess() && thePrePV->GetName()=="target_1" && particleDef->GetParticleType() == "nucleus" && particleDef->GetParticleSubType() == "generic" && atNumber != 18){
+        if(theTrack->GetCurrentStepNumber() == 1 && theTrack->GetCreatorProcess() && thePrePV->GetName()=="target_1" && particleDef->GetParticleType() == "nucleus" && particleDef->GetParticleSubType() == "generic"){
 		       
+     		       G4double time_nuclei = theStep->GetPostStepPoint()->GetGlobalTime()/us;
+     		       G4ThreeVector position_nuclei = theStep->GetPostStepPoint()->GetPosition();
         	       processCreator = theTrack -> GetCreatorProcess ()  -> GetProcessName();
-                       fEventAction->AddInfoSecondaries(processCreator,atNumber,pdgCode,energy);
+                       fEventAction->AddInfoSecondaries(processCreator,atNumber,pdgCode,energy,position_nuclei.x()/cm,position_nuclei.y()/cm,position_nuclei.z()/cm,time_nuclei);
  	}
 
         G4String process_name = theStep->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName();
@@ -93,15 +95,8 @@ void SteppingAction::UserSteppingAction(const G4Step * theStep)
   	{ 
      		// Retrieve particle
      		const G4ParticleDefinition* particleDefi = (*fSecondary)[lp1] -> GetDefinition();    
-                //G4int atNumber = particleDefi->GetAtomicNumber();  
-                //G4int pdgCode = particleDefi->GetPDGEncoding();
          	G4String process = (*fSecondary)[lp1]-> GetCreatorProcess()-> GetProcessName();  
            	energy = (*fSecondary)[lp1]  -> GetKineticEnergy();   
-                //We don't save here electrons or gammas since there are a lot of them, we save below the relevant gammas from n capture and radioactive decay
-                //If for some reason you want electrons and gammas, just adapt it in the next line
-                //if(thePrePV->GetName()=="target_1" && particleDefi->GetParticleType() == "nucleus" && particleDefi->GetParticleSubType() == "generic" && atNumber != 18){
-                //       fEventAction->AddInfoSecondaries(process,atNumber,pdgCode,energy);
- 		//}
 
 		if (particleDefi == G4Gamma::Definition())
     		{

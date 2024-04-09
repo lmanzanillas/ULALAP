@@ -173,6 +173,10 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan->CreateNtupleIColumn("atNumber");
   fMan->CreateNtupleIColumn("pdgCode");
   fMan->CreateNtupleDColumn("energy");
+  fMan->CreateNtupleDColumn("xn");
+  fMan->CreateNtupleDColumn("yn");
+  fMan->CreateNtupleDColumn("zn");
+  fMan->CreateNtupleDColumn("tn");
   fMan->FinishNtuple();
 }
 
