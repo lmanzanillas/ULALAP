@@ -39,7 +39,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetTargetMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetTargetMaterial->SetToBeBroadcasted(false);
 
-  commandSetShiledingMaterial = new G4UIcmdWithAString("/ULALAP/det/setSampleMaterial",this);
+  commandSetShiledingMaterial = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterial",this);
   commandSetShiledingMaterial->SetGuidance("Select material of the sample.");
   commandSetShiledingMaterial->SetParameterName("choice",false);
   commandSetShiledingMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -148,7 +148,7 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    }
 
    if( command == commandSetShiledingMaterial ){
-	fDetector->SetShiledingMaterial(newValue);
+	fDetector->SetShieldingMaterial(newValue);
    }
 
 

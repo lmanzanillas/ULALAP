@@ -63,7 +63,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     //static G4VPhysicalVolume* GetPhysicalVolumeByName(const G4String &name);
     void SetSize  (G4double);
     void SetTargetMaterial(G4String);
-    void SetShiledingMaterial(G4String);
+    void SetShieldingMaterial(G4String);
     void SetOutputDirectory(G4String);
     void SetWorldMaterial(G4String);
     void SetDetectorType(G4int);

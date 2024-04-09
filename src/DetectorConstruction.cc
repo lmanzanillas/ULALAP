@@ -196,7 +196,7 @@ void DetectorConstruction::SetDataType(G4String dataType)
 /*
 Sets material of sample.
 */
-void DetectorConstruction::SetShiledingMaterial(G4String materialChoice)
+void DetectorConstruction::SetShieldingMaterial(G4String materialChoice)
 {
   // search the material by its name
   G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
