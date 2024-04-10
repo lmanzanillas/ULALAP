@@ -30,6 +30,11 @@
 // 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//Implementation of the expected muon flux at the DUNE deep
+//Spectrum was taken from: 1811.07912 (Figure 2)
+//The expected mu+/mu- ratio of 1.38 is included
+
+
 
 #include "PrimaryGeneratorAction2.hh"
 #include "PrimaryGeneratorAction.hh"
@@ -41,6 +46,8 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
+
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 PrimaryGeneratorAction2::PrimaryGeneratorAction2(G4ParticleGun* gun)
@@ -97,9 +104,8 @@ void PrimaryGeneratorAction2::InitFunction()
 {
   // tabulated function 
   // Y is assumed positive, linear per segment, continuous
-  // Here we need to add the data for muons reaching the DUNE detectors
   //
-  fNPoints = 16;
+  fNPoints = 46;
   const G4double xx[] =   
 	{ 1.070*GeV, 1.382*GeV, 1.702*GeV, 2.077*GeV, 2.708*GeV, 3.368*GeV, 4.186*GeV, 5.013*GeV, 
 	  6.353*GeV, 8.362*GeV, 11.324*GeV, 15.627*GeV, 21.363*GeV, 28.929*GeV, 38.804*GeV, 54.062*GeV,
