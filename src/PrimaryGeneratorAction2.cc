@@ -77,8 +77,11 @@ void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
   GeneratePosition();
   //set energy from a tabulated distribution
   //G4double energy = RejectAccept();
-  G4double energy = InverseCumul();  
+  G4double energy = InverseCumul(); 
   G4ParticleDefinition* particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu+"); 
+  if ( G4UniformRand() > 0.5798 ){//We know that the ratio mu+/mu- is 1.38, which gives 0.5798 prob of having mu+
+	 particleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu-"); 
+  }
   fParticleGun->SetParticleDefinition(particleDefinition);
   fParticleGun->SetParticlePosition(position);
   fParticleGun->SetParticleMomentumDirection(dir);
