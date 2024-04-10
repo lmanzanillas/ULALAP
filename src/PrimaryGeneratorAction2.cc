@@ -79,7 +79,7 @@ void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
   G4double cosAlpha = 1. - 2*G4UniformRand();   //cosAlpha uniform in [-1,+1]
   G4double sinAlpha = std::sqrt(1. - cosAlpha*cosAlpha);
   G4double psi      = twopi*G4UniformRand();   //psi uniform in [0, 2*pi]  
-  G4ThreeVector dir(sinAlpha*std::cos(psi),sinAlpha*std::sin(psi),-1);//we will consider only muons going down (ux,uy,-1) 
+  G4ThreeVector dir(sinAlpha*std::cos(psi)/20.,sinAlpha*std::sin(psi)/20.,-1);//we will consider only muons going down (small ux, small uy,-1) 
   //Generate random position
   GeneratePosition();
   //set energy from a tabulated distribution
