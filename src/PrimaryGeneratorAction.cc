@@ -4,6 +4,7 @@
 #include "PrimaryGeneratorAction0.hh"
 #include "PrimaryGeneratorAction1.hh"
 #include "PrimaryGeneratorAction2.hh"
+#include "PrimaryGeneratorAction3.hh"
 
 #include "G4MTRunManager.hh"
 
@@ -34,6 +35,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fAction0 = new PrimaryGeneratorAction0(fParticleGun);
 	fAction1 = new PrimaryGeneratorAction1(fParticleGun);
 	fAction2 = new PrimaryGeneratorAction2(fParticleGun);
+	fAction3 = new PrimaryGeneratorAction3(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
 	CentreCoords = zero;
@@ -65,6 +67,7 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 	delete fAction0;
 	delete fAction1;
 	delete fAction2;
+	delete fAction3;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -193,6 +196,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	GeneratePointsInVolume();
 	GenerateDirection(direction);
 	G4double RandNb = G4UniformRand();
+	if(particleType == 11){
+	        fSourceEnergy = fAction3->InverseCumul();
+	}
 
 	switch (particleType) {
 		case 0:
@@ -290,6 +296,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 		case 10:
 			fAction2->GeneratePrimaries(anEvent);
     			break;
+		case 11:
+			fParticleGun->SetParticleDefinition(particleTable->FindParticle("neutron"));
+			fParticleGun->SetParticleEnergy(fSourceEnergy);
+			fParticleGun->SetParticlePosition(position);
+			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
+ 			break;
 
 	}
 }
@@ -318,7 +331,7 @@ void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 
 void PrimaryGeneratorAction::SetSourceType(G4int newType)
 {
-	if (newType <= 10 && newType >= 0)
+	if (newType <= 11 && newType >= 0)
 	{
 		particleType = newType;
 	}
