@@ -386,19 +386,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //1) steel support sttructure
   // to be defined in another file since need to do quite some subtraction operations
   G4int n_h_bars = 5;
-  G4int n_v_bars = 15;
+  G4int n_v_bars_long_side = int(2*box_shileding_outer_x/(200*cm));
+  G4cout<<"n v bars: "<<n_v_bars_long_side<<G4endl;
+  G4int n_v_bars_short_side = int(2*box_shileding_outer_z/(200*cm));
   G4double bar_x = 0.2*m;
   G4double bar_y = box_shileding_outer_y;
   G4double bar_z = 0.5*m;
 
-  G4Box* SteelSupportBarV = new G4Box("b_steel_support_V", bar_x, bar_y, bar_z);
-  logicSteelSupport = new G4LogicalVolume(SteelSupportBarV, materialSteel, "Shielding", 0, 0, 0);
+  G4Box* SteelSupportBarVertical = new G4Box("b_steel_support_V", bar_x, bar_y, bar_z);
+  logicSteelSupport = new G4LogicalVolume(SteelSupportBarVertical, materialSteel, "SteelSupports", 0, 0, 0);
 
-  G4double bar_h_x = (2*box_steel_support_x - 2*n_v_bars*bar_x)/n_v_bars;
-  G4Box* SteelSupportBarH = new G4Box("b_steel_support_H", bar_h_x, bar_x, bar_z);
-  logicSteelSupportH = new G4LogicalVolume(SteelSupportBarH, fShieldingMaterial, "Shielding", 0, 0, 0);
+  G4double bar_h_x = (2*box_steel_support_x - 2*n_v_bars_long_side*bar_x)/n_v_bars_long_side/2.;
+  G4Box* SteelSupportBarHorizontal = new G4Box("b_steel_support_H", bar_h_x, bar_x, bar_z);
+  logicSteelSupportHorizontal = new G4LogicalVolume(SteelSupportBarHorizontal, materialSteel, "SteelSupports", 0, 0, 0);
 
-  G4double xBarSteel = bar_x + box_plywood_outer_x;
+  G4double xBarSteel = bar_z + box_plywood_outer_x;//using bar_z since we use a rotation of 90 degrees, z->x
   G4double yBarSteel = bar_y + box_plywood_outer_y;
   G4double zBarSteel = bar_z + box_plywood_outer_z;
   // 2) box vapor barrier 
@@ -435,8 +437,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
 
-  G4RotationMatrix* rotationMatrixSample = new G4RotationMatrix();
-  rotationMatrixSample->rotateY(45.*deg);
+  G4RotationMatrix* rotationMatrixSteelSupports = new G4RotationMatrix();
+  rotationMatrixSteelSupports->rotateY(90.*deg);
 
   // ============================================================= Detectors =============================================================
   
@@ -461,18 +463,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicCryoOuterPUfoam->SetVisAttributes(visPUfoam);
   logicCryoInnerPUfoam->SetVisAttributes(visPUfoam);
 
-  G4VisAttributes* vis_cryo_SS_support = new G4VisAttributes(cyan);
+  G4VisAttributes* vis_cryo_SS_support = new G4VisAttributes(red);
   vis_cryo_SS_support->SetForceSolid(true);
   vis_cryo_SS_support->SetVisibility(true);
   vis_cryo_SS_support->SetForceWireframe(true);
   vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
   logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
-  logicSteelSupportH->SetVisAttributes(vis_cryo_SS_support);
+  logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
 
 
-  G4double pitch_x = 2*box_steel_support_x/15;
+  G4double pitch_x = 2*box_steel_support_x/n_v_bars_long_side;
   G4double pitch_y = 2*box_steel_support_y/5;
-  G4double pitch_z = 2*box_steel_support_z/5;
+  G4double pitch_z = 2*box_steel_support_z/6;
 
   G4double origin_x = - box_steel_support_x + pitch_x/2;
   G4double origin_y = - box_steel_support_y + pitch_y/2;
@@ -512,7 +514,41 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"inner_shielding_"+std::to_string(1),
 		logicshieldingBoxOuter,false,1,false);
 	 //place many copies of steel bar support inside shielding inner
-	 for(int i =1 ; i <= n_v_bars; i++){
+	 //vertical bas short sides +/- x
+	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
+		pos_z = origin_z + (i-1)*pitch_x;
+ 		//side x+ 
+		 new G4PVPlacement(rotationMatrixSteelSupports,
+                  G4ThreeVector(xBarSteel,0,pos_z),
+                  logicSteelSupport,
+                  "SS_support_xp_"+std::to_string(i),
+                  logicshieldingBoxInner,false,1,false);
+ 		//side x- 
+		 new G4PVPlacement(rotationMatrixSteelSupports,
+                  G4ThreeVector(-xBarSteel,0,pos_z),
+                  logicSteelSupport,
+                  "SS_support_xm_"+std::to_string(i),
+                  logicshieldingBoxInner,false,1,false);
+         }
+	 //horizontal bars short sides
+         for(int i =1 ; i < n_v_bars_short_side ; i++){
+	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
+		for(int j=1; j <= n_h_bars; j++){
+	                pos_y = origin_y + (j-1)*pitch_y;
+			new G4PVPlacement(rotationMatrixSteelSupports,
+                                G4ThreeVector(xBarSteel, pos_y, pos_z),
+                                logicSteelSupportHorizontal,
+                                "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
+                                logicshieldingBoxInner,false,1,false);
+			new G4PVPlacement(rotationMatrixSteelSupports,
+                                G4ThreeVector(-xBarSteel, pos_y, pos_z),
+                                logicSteelSupportHorizontal,
+                                "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
+                                logicshieldingBoxInner,false,1,false);
+		}
+	}
+	 //vertical bas long sides +/- z
+	 for(int i =1 ; i <= n_v_bars_long_side; i++){
 	        pos_x = origin_x + (i-1)*pitch_x;
 
 		new G4PVPlacement(0, 
@@ -527,19 +563,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  "SS_support_zm_"+std::to_string(i),
 		  logicshieldingBoxInner,false,1,false);
 	 }
-	 //horizontal bars
-         for(int i =1 ; i < n_v_bars - 1; i++){
+	 //horizontal bars long sides
+         for(int i =1 ; i < n_v_bars_long_side; i++){
 	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
 		for(int j=1; j <= n_h_bars; j++){
 	                pos_y = origin_y + (j-1)*pitch_y;
 			new G4PVPlacement(0, 
 		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
-			  	logicSteelSupportH,
+			  	logicSteelSupportHorizontal,
 			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
 			  	logicshieldingBoxInner,false,1,false);
 			new G4PVPlacement(0, 
 		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
-			  	logicSteelSupportH,
+			  	logicSteelSupportHorizontal,
 			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
 			  	logicshieldingBoxInner,false,1,false);
 		}

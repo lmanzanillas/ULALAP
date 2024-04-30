@@ -153,7 +153,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Box* CryostatBox;
 
     G4LogicalVolume* logicSteelSupport;
-    G4LogicalVolume* logicSteelSupportH;
+    G4LogicalVolume* logicSteelSupportHorizontal;
     G4LogicalVolume* logicRockBox;
     G4LogicalVolume* logicCavern;
     G4LogicalVolume* logicshieldingBoxOuter;
