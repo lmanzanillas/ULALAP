@@ -16,6 +16,7 @@
 #include "G4Sphere.hh"
 #include "G4Cons.hh"
 #include "G4Torus.hh"
+#include "G4EllipticalTube.hh"
 #include "G4Hype.hh"
 
 #include "G4Transform3D.hh"
@@ -76,8 +77,11 @@ fd2LogicVolume(nullptr)
   fSetupName = "DUNE";
   fDataType = "csv";
   halfDetectorLength = 62.0/2.0*m;
+  halfDetectorLengthActiveAr = 60.0/2.0*m;
   halfDetectorThickness = 14.0/2.0*m;
+  halfDetectorThicknessActiveAr = 13.0/2.0*m;
   halfDetectorWidth = 15.1/2.0*m;
+  halfDetectorWidthActiveAr = 13.0/2.0*m;
   cryostatThicknessPrimMembraneSS = 1.2*mm;
   cryostatThicknessSecondaryBarrierAl = 0.8*mm;
   cryostatThicknessVaporBarrierSS = 12.0*mm;
@@ -440,11 +444,50 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   fd2DetectorBox = new G4Box("target", halfDetectorLength, halfDetectorWidth, halfDetectorThickness);
   fd2LogicVolume = new G4LogicalVolume(fd2DetectorBox,fd2Material, "target",0,0,0);
 
+  //Field Cage
+  //Longer lateral Wide
+  G4EllipticalTube* EllipTubeWideLong = new G4EllipticalTube("EllipTubeWideLong",5.*mm,23.*mm,halfDetectorLengthActiveAr);
+  G4EllipticalTube* EllipTubeWideLongInner = new G4EllipticalTube("EllipTubeWideLongInner", 4.*mm,19.0*mm,halfDetectorLengthActiveAr + 1.0*m);
+  G4Box* FCBoxLongWide = new G4Box("FCBoxLongWide",5*mm,10.*mm,halfDetectorLengthActiveAr + 1.*m);
+  G4VSolid* fSolidFCLongWide ;
+  fSolidFCLongWide = new G4SubtractionSolid("FieldCageWide", EllipTubeWideLong, EllipTubeWideLongInner, 0, G4ThreeVector(0.,0.,0.));
+  fSolidFCLongWide = new G4SubtractionSolid("FieldCageWide", fSolidFCLongWide, FCBoxLongWide, 0, G4ThreeVector(7.*mm,0.,0.));
+  G4LogicalVolume* fLogicFCLongWide = new G4LogicalVolume(fSolidFCLongWide,materialAlCryostat,"FieldCageWide");
+  //Longer lateral Slim
+  G4EllipticalTube* EllipTubeSlimLong = new G4EllipticalTube("EllipTubeSlimLong",5.*mm,7.5*mm,halfDetectorLengthActiveAr);
+  G4EllipticalTube* EllipTubeSlimLongInner = new G4EllipticalTube("EllipTubeSlimLongInner", 4.*mm,4.0*mm,halfDetectorLengthActiveAr + 1.0*m);
+  G4Box* FCBoxLongSlim = new G4Box("FCBoxLongSlim",3*mm,3.*mm,halfDetectorLengthActiveAr + 1.*m);
+  G4VSolid* fSolidFCLongSlim ;
+  fSolidFCLongSlim = new G4SubtractionSolid("FieldCageSlim", EllipTubeSlimLong, EllipTubeSlimLongInner, 0, G4ThreeVector(0.,0.,0.));
+  fSolidFCLongSlim = new G4SubtractionSolid("FieldCageSlim", fSolidFCLongSlim, FCBoxLongSlim, 0, G4ThreeVector(3.*mm,0.,0.));
+  G4LogicalVolume* fLogicFCLongSlim = new G4LogicalVolume(fSolidFCLongSlim,materialAlCryostat,"FieldCageSlim");
+  //Short lateral Wide
+  G4EllipticalTube* EllipTubeWideShort = new G4EllipticalTube("EllipTubeWideShort",5.*mm,23.*mm,halfDetectorWidthActiveAr);
+  G4EllipticalTube* EllipTubeWideShortInner = new G4EllipticalTube("EllipTubeWideShortInner", 4.*mm,19.0*mm,halfDetectorWidthActiveAr + 1.0*m);
+  G4Box* FCBoxShortWide = new G4Box("FCBoxShortWide",5*mm,10.*mm,halfDetectorWidthActiveAr + 1.0*m);
+  G4VSolid* fSolidFCShortWide ;
+  fSolidFCShortWide = new G4SubtractionSolid("FieldCageWide", EllipTubeWideShort, EllipTubeWideShortInner, 0, G4ThreeVector(0.,0.,0.));
+  fSolidFCShortWide = new G4SubtractionSolid("FieldCageWide", fSolidFCShortWide, FCBoxShortWide, 0, G4ThreeVector(7.*mm,0.,0.));
+  G4LogicalVolume* fLogicFCShortWide = new G4LogicalVolume(fSolidFCShortWide,materialAlCryostat,"FieldCageWide");
+  //Short lateral Slim
+  G4EllipticalTube* EllipTubeSlimShort = new G4EllipticalTube("EllipTubeSlimShort",5.*mm,7.5*mm,halfDetectorWidthActiveAr);
+  G4EllipticalTube* EllipTubeSlimShortInner = new G4EllipticalTube("EllipTubeSlimShortInner", 4.*mm,4.0*mm,halfDetectorWidthActiveAr + 1.0*m);
+  G4Box* FCBoxShortSlim = new G4Box("FCBoxShortSlim",3*mm,3.*mm,halfDetectorWidthActiveAr + 1.*m);
+  G4VSolid* fSolidFCShortSlim ;
+  fSolidFCShortSlim = new G4SubtractionSolid("FieldCageSlim", EllipTubeSlimShort, EllipTubeSlimShortInner, 0, G4ThreeVector(0.,0.,0.));
+  fSolidFCShortSlim = new G4SubtractionSolid("FieldCageSlim", fSolidFCShortSlim, FCBoxShortSlim, 0, G4ThreeVector(3.*mm,0.,0.));
+  G4LogicalVolume* fLogicFCShortSlim = new G4LogicalVolume(fSolidFCShortSlim,materialAlCryostat,"FieldCageSlim");
 
 
   G4RotationMatrix* rotationMatrixSteelSupportsShortSides = new G4RotationMatrix();
   rotationMatrixSteelSupportsShortSides->rotateY(90.*deg);
 
+  G4RotationMatrix* rotationMatrixFCzp = new G4RotationMatrix();
+  rotationMatrixFCzp->rotateY(-90.*deg);
+  G4RotationMatrix* rotationMatrixFCzm = new G4RotationMatrix();
+  rotationMatrixFCzm->rotateY(90.*deg);
+  G4RotationMatrix* rotationMatrixFCx = new G4RotationMatrix();
+  rotationMatrixFCx->rotateY(180.*deg);
   // ============================================================= Detectors =============================================================
   
   G4cout<<" mySteelSupport size x "<<mySteelSupport.GetCollimatorSizeX()<<" thickness "<<thick_support<<G4endl;
@@ -454,6 +497,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4VisAttributes* visAttr = new G4VisAttributes();
   visAttr->SetVisibility(false);
   logicWorldBox->SetVisAttributes(visAttr);
+  logicSteelSupport->SetVisAttributes(visAttr);
+  logicSteelSupportTop->SetVisAttributes(visAttr);
+  logicSteelSupportHorizontal->SetVisAttributes(visAttr);
+  fLogicFCLongWide->SetVisAttributes(visAttr);
+  fLogicFCLongSlim->SetVisAttributes(visAttr);
 
   //Detector
   G4VisAttributes* visualAttributesGeDetector = new G4VisAttributes(G4Colour::Blue());
@@ -469,13 +517,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicCryoInnerPUfoam->SetVisAttributes(visPUfoam);
 
   G4VisAttributes* vis_cryo_SS_support = new G4VisAttributes(red);
-  vis_cryo_SS_support->SetForceSolid(true);
+  //vis_cryo_SS_support->SetForceSolid(true);
   vis_cryo_SS_support->SetVisibility(true);
-  vis_cryo_SS_support->SetForceWireframe(true);
-  vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
-  logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
-  logicSteelSupportTop->SetVisAttributes(vis_cryo_SS_support);
-  logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
+  //vis_cryo_SS_support->SetForceWireframe(true);
+  //vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
+  //vis_cryo_SS_support->SetForceLineSegmentsPerCircle (80);
+  //logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
+  //logicSteelSupportTop->SetVisAttributes(vis_cryo_SS_support);
+  //logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
+   //fLogicFCLongWide->SetVisAttributes(vis_cryo_SS_support);
+  // fLogicFCLongSlim->SetVisAttributes(vis_cryo_SS_support);
+   fLogicFCShortSlim->SetVisAttributes(vis_cryo_SS_support);
+   fLogicFCShortWide->SetVisAttributes(vis_cryo_SS_support);
 
 
   G4double pitch_x = 2*box_steel_support_x/n_v_bars_long_side;
@@ -485,6 +538,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double origin_x = - box_steel_support_x + pitch_x/2;
   G4double origin_y = - box_steel_support_y + pitch_y/2;
   G4double origin_z = - box_steel_support_z + pitch_z/2;
+
+  G4double FCpitch = 60*mm;
+  G4int nFCbars = 110;
 
   G4double pos_x, pos_y, pos_z;
   //  ============================================================= Place volumes =============================================================
@@ -650,6 +706,114 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
+ 	 //Field cage inside iquid argon
+         //Longer lateral
+        
+        for(int i =1 ; i < 42; i++){
+        	pos_y =  FCpitch * i ; 
+		new G4PVPlacement(rotationMatrixFCzp,
+			G4ThreeVector(0,pos_y,halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		new G4PVPlacement(rotationMatrixFCzp,
+			G4ThreeVector(0,-pos_y,halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		new G4PVPlacement(rotationMatrixFCzm,
+			G4ThreeVector(0,pos_y,-halfDetectorThicknessActiveAr - 7.*mm),
+  			fLogicFCLongWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+		
+		new G4PVPlacement(rotationMatrixFCzm,
+			G4ThreeVector(0,-pos_y,-halfDetectorThicknessActiveAr - 7.*mm),
+  			fLogicFCLongWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+	        //short sides up
+        	new G4PVPlacement(0,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 7.*mm,pos_y,0),
+  			fLogicFCShortWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+        	new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(halfDetectorLengthActiveAr + 7.*mm,pos_y,0),
+  			fLogicFCShortWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+		//short sides down
+        	new G4PVPlacement(0,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 7.*mm,-pos_y,0),
+  			fLogicFCShortWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+        	new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(halfDetectorLengthActiveAr + 7.*mm,-pos_y,0),
+  			fLogicFCShortWide,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+
+	}
+        for(int i =42 ; i < nFCbars; i++){
+
+        	pos_y =  FCpitch * i ; 
+		new G4PVPlacement(rotationMatrixFCzp,
+			G4ThreeVector(0,pos_y,halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		   new G4PVPlacement(rotationMatrixFCzp,
+			G4ThreeVector(0,-pos_y,halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		  new G4PVPlacement(rotationMatrixFCzm,
+			G4ThreeVector(0,pos_y,-halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		  new G4PVPlacement(rotationMatrixFCzm,
+			G4ThreeVector(0,-pos_y,-halfDetectorThicknessActiveAr + 7.*mm),
+  			fLogicFCLongSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		//Short sides up
+		new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(halfDetectorLengthActiveAr + 7.*mm, pos_y,0),
+  			fLogicFCShortSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 7.*mm, pos_y,0),
+  			fLogicFCShortSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+		//Short sides down
+		new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(halfDetectorLengthActiveAr + 7.*mm, -pos_y,0),
+  			fLogicFCShortSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+
+		new G4PVPlacement(rotationMatrixFCx,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 7.*mm, -pos_y,0),
+  			fLogicFCShortSlim,     //its logical volume
+			"FC1",
+  			fd2LogicVolume,	false, 0, true);
+	}
+         
             
      break;
    //Detector + sample

@@ -120,8 +120,11 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double halfSizeCavernFD2Z;
 
     G4double halfDetectorLength;
+    G4double halfDetectorLengthActiveAr;
     G4double halfDetectorThickness;
+    G4double halfDetectorThicknessActiveAr;
     G4double halfDetectorWidth;
+    G4double halfDetectorWidthActiveAr;
     G4double shieldingThickness;
     G4double cryostatThicknessPrimMembraneSS;
     G4double cryostatThicknessSecondaryBarrierAl;
