@@ -272,13 +272,22 @@ void UlalapMaterials::Construct()
     // ------------------------------------------------------------------------
     // Epoxy (binders)
     // ------------------------------------------------------------------------
-    G4Material * Epoxy = new G4Material("Epoxy",1*g/cm3,4,kStateSolid);
+    G4Material * Epoxy = new G4Material("Epoxy",1.2*g/cm3,4,kStateSolid);
     Epoxy->AddElement(C,2);
     Epoxy->AddElement(H,6);
     Epoxy->AddElement(O,1);
     Epoxy->AddElement(Si,1);
     
-       
+    //FR4
+    G4Material* FR4 = new G4Material("FR4"  , density=1.86*g/cm3, ncomponents=2);
+    FR4->AddMaterial(nistManager->FindOrBuildMaterial("G4_SILICON_DIOXIDE"), 0.528);
+    FR4->AddMaterial(Epoxy, 0.472);
+    
+    //Acrylic
+    G4Material* Acrylic = new G4Material ("Acrylic", density= 1.15*g/cm3, ncomponents=3);
+    Acrylic->AddElement(C,natoms=5);
+    Acrylic->AddElement(H,natoms=8);
+    Acrylic->AddElement(O,natoms=2);   
     //lead for shielding
     G4Material* lead = new G4Material("Lead", 11.340*g/cm3, nel=1);
     lead->AddElement(Pb,1);

@@ -149,6 +149,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialPlywood;
     G4Material* materialAlCryostat;
     G4Material* materialRock;
+    G4Material* materialFR4;
+    G4Material* materialAcrylic;
     G4String fSetupName;
     G4Box* fWorldBox;
     G4Box* fd2DetectorBox;

@@ -251,10 +251,12 @@ void DetectorConstruction::DefineMaterials(){
   //materialConstruction = new PenMaterials;
   materialConstruction-> Construct();
   materialAir = G4Material::GetMaterial("Air");
+  materialFR4 = G4Material::GetMaterial("FR4");
   materialSteel = G4Material::GetMaterial("Steel_EN8");
   materialSS304L = G4Material::GetMaterial("Steel_SS304L");
   materialPUfoam = G4Material::GetMaterial("PU_foam");
   materialPlywood = G4Material::GetMaterial("Plywood");
+  materialAcrylic = G4Material::GetMaterial("Acrylic");
   materialAlCryostat = G4Material::GetMaterial("Aluminium_6061");
   materialRock = G4Material::GetMaterial("G4_CONCRETE");
 
@@ -443,7 +445,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //LAr volume
   fd2DetectorBox = new G4Box("target", halfDetectorLength, halfDetectorWidth, halfDetectorThickness);
   fd2LogicVolume = new G4LogicalVolume(fd2DetectorBox,fd2Material, "target",0,0,0);
-
+  //Cathode
+  G4Box* BoxCathode = new G4Box("BoxCathode",halfDetectorLengthActiveAr,0.5*mm,halfDetectorWidthActiveAr);
+  G4LogicalVolume* fLogicCathode = new G4LogicalVolume(BoxCathode,materialSS304L,"cathode");
+  //Arapuca
+  G4double arapuca_x = 65.*cm;
+  G4double arapuca_y = 1.*cm;
+  G4double arapuca_z = 65.*cm;
+  
+  G4double pitch_x_arapuca = arapuca_x * 4.;
+  G4double pitch_z_arapuca = arapuca_z * 4.;
+  G4int arapuca_row_x[21] = { 0, 2, 4, 1, 3, 2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3}; 
+  
+  
+  
+  G4Box* BoxArapuca = new G4Box("BoxAnode",arapuca_x/2,arapuca_y/2,arapuca_z/2);
+  G4LogicalVolume* fLogicArapuca = new G4LogicalVolume(BoxArapuca,materialAcrylic,"arapuca");
+  //Anodes
+  G4Box* BoxAnode = new G4Box("BoxAnode",halfDetectorLengthActiveAr,3.2*mm,halfDetectorWidthActiveAr);
+  G4LogicalVolume* fLogicAnode = new G4LogicalVolume(BoxAnode,materialFR4,"anode");
   //Field Cage
   //Longer lateral Wide
   G4EllipticalTube* EllipTubeWideLong = new G4EllipticalTube("EllipTubeWideLong",5.*mm,23.*mm,halfDetectorLengthActiveAr);
@@ -515,6 +535,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   visPUfoam->SetVisibility(true);
   logicCryoOuterPUfoam->SetVisAttributes(visPUfoam);
   logicCryoInnerPUfoam->SetVisAttributes(visPUfoam);
+
+  //Arapuca
+  G4VisAttributes* vis_arapuca = new G4VisAttributes(lblue);
+  vis_arapuca->SetForceSolid(true);
+  vis_arapuca->SetVisibility(true);
+  fLogicArapuca->SetVisAttributes(vis_arapuca);
+
+  G4VisAttributes* vis_anode = new G4VisAttributes(orange);
+  vis_anode->SetForceSolid(true);
+  vis_anode->SetVisibility(true);
+  fLogicAnode->SetVisAttributes(vis_anode);
 
   G4VisAttributes* vis_cryo_SS_support = new G4VisAttributes(red);
   //vis_cryo_SS_support->SetForceSolid(true);
@@ -706,6 +737,45 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
+	//Anode
+	new G4PVPlacement(0,
+                G4ThreeVector(0,halfDetectorWidthActiveAr + 10.*mm,0),
+                fLogicAnode,
+                "anode",
+                fd2LogicVolume,false,1,true);
+	new G4PVPlacement(0,
+                G4ThreeVector(0,-halfDetectorWidthActiveAr - 10.*mm,0),
+                fLogicAnode,
+                "anode",
+                fd2LogicVolume,false,1,true);
+	//cathode
+	new G4PVPlacement(0,
+                G4ThreeVector(0,30.*mm,0),
+                fLogicCathode,
+                "cathode",
+                fd2LogicVolume,false,1,true);
+	new G4PVPlacement(0,
+                G4ThreeVector(0,-30.*mm,0),
+                fLogicCathode,
+                "cathode",
+                fd2LogicVolume,false,1,true);
+         //Arapucas in cathode
+        for(int i =1 ; i < 92; i++){
+        	pos_x = -halfDetectorLengthActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
+		for(int k = 1; k < 20; k++){
+			pos_z = -halfDetectorWidthActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
+			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
+			   G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
+			   new G4PVPlacement(0,
+			   G4ThreeVector(pos_x,0,pos_z),
+  			   fLogicArapuca,     //its logical volume
+			   "Arapuca",
+  			   fd2LogicVolume,	false, 0, true);
+			}
+		}
+	}
+		 
+
  	 //Field cage inside iquid argon
          //Longer lateral
         
