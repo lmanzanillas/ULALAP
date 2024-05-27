@@ -65,8 +65,8 @@ void PrimaryGeneratorAction2::GeneratePosition()
 {  
   //To do: read the LAr volume dims and use that as info instead of hard coding.... 
   G4double xg = (G4UniformRand() - 0.5)*50.*m;
-  G4double yg = (G4UniformRand() - 0.5)*10.*m;
-  G4double zg = 12.*m;
+  G4double zg = (G4UniformRand() - 0.5)*10.*m;
+  G4double yg = 12.*m;
   position.setX(xg);
   position.setY(yg);
   position.setZ(zg);
@@ -79,7 +79,7 @@ void PrimaryGeneratorAction2::GeneratePrimaries(G4Event* anEvent)
   G4double cosAlpha = 1. - 2*G4UniformRand();   //cosAlpha uniform in [-1,+1]
   G4double sinAlpha = std::sqrt(1. - cosAlpha*cosAlpha);
   G4double psi      = twopi*G4UniformRand();   //psi uniform in [0, 2*pi]  
-  G4ThreeVector dir(sinAlpha*std::cos(psi)/20.,sinAlpha*std::sin(psi)/20.,-1);//we will consider only muons going down (small ux, small uy,-1) 
+  G4ThreeVector dir(sinAlpha*std::cos(psi)/20.,-1,sinAlpha*std::sin(psi)/20.);//we will consider only muons going down (small ux, small uy,-1) 
   //Generate random position
   GeneratePosition();
   //set energy from a tabulated distribution
