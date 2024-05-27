@@ -4,16 +4,16 @@
 
 ## Getting started
 
-Geant4 simulation project developed at LAPP to study backgrounds in underground liquid argon detectors 
+Geant4 simulation project developed at LAPP to study low energy backgrounds in underground liquid argon detectors 
 
 ## How to use it
 
 - It's highly recommended to use it in a cluster like lxplus, must, cc etc
 - If you want to use it in your local computer you first need to install the geant4 software
-- In lxplus you just need to connect to the cluster and then charge the required modules:
+- If you use it in lxplus you just need to connect to the cluster and then charge the required modules as indicated below
 
 ## How to use it in MUST
-You just need to charge the environment with the required packages. Just put is a setup_g4.sh file the following lines
+You just need to charge the environment with the required packages. Just put in a setup_g4.sh file the following lines
 ```
 export MAMBA_ROOT_PREFIX=/mustfs/CONTAINERS/conda/neutrino/manzanilla
 eval "$(/grid_sw/soft-dev-lapp/LAPPSL7/x86_64/micromamba/latest/micromamba shell hook -s posix)"
@@ -29,6 +29,7 @@ source setup_geant4.sh
 when you start a new session
 
 ## How to use it in LXPLUS
+Put the following lines in a setup_geant4.sh file
 ```
 # Modules:
 source /cvmfs/sft.cern.ch/lcg/contrib/gcc/12/x86_64-centos9/setup.sh #set up compiler
@@ -41,7 +42,7 @@ export LD_LIBRARY_PATH=$BOOST/lib:$LD_LIBRARY_PATH:$ROOT6/lib:$GEANT4/lib64:/usr
 
 ```
 
-You can just add the previous commands in a setup_geant4.sh file and just use 
+Then just source the file
 ```
 source setup_geant4.sh
 
@@ -49,15 +50,20 @@ source setup_geant4.sh
 when you start a new session
 
 ## Some key numbers
+
 Values are in cm. 
 
-Cavern box filled with air starts at x= +/-3394.4, y= +/-1049.4, z= +/- 994.4
+Cavern box filled with air starts at x= +/-3499.4, y= +/-1154.4, z= +/- 1099.4
 
 start of shielding: x= +/- 3284.4, y= +/- 939.4, z= +/- 884.4
  
 Shielding ends at x= +/-3294.4, y= +/-949.4, z= +/-894.4 (DEPENDING ON WHAT THICKNEES YOU CHOOSE!!!)
 
 LAr Volume ends at x= +/-3100.0 y= +/-755.0, z= +/-700.0 
+
+If you want to simulate neutrons from outside the coordinates of your source should be placed between the shielding and the rock of the cavern.
+For instance in x, your x source coordinate should be smaller than 3499 and larger than 3295 (depending on the shielding thickness)
+
 ## Installing the sofwtware 
 
 If is the first time that you are using it, you can just clone it by doing: 
@@ -83,10 +89,9 @@ That will show you the current geometry. To run an event just do:
 ```
 /run/beamOn 1
 ```
-Then you can use a macro in batch mode (for example test.mac) if you are running thousands of events. To change the settings as energy of particle, etc just modify the test.mac file  
+Then you can use a macro in batch mode (for example test.mac) if you are running thousands of events. To change the settings as energy and type of particle, etc just modify the test.mac file  
 
 ```
-#just in case, it shoud be true by default
 
 /run/beamOn 9000000
 
@@ -128,6 +133,6 @@ You can uncomment what is inside the test.mac file if you want to add or modify 
 /run/beamOn 100000
 
 ```
-This will create a .csv file or other format depending on what was your choice where it's stored the hits information position of interaction, number of event, energy ...
+This will create a set of .csv file or other format depending on what was your choice where it's stored the hits information, position of interaction, number of event, energy, etc 
 You can use the code of your choice to analyze the data  
 
