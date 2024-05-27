@@ -4,7 +4,8 @@
 
 ## Getting started
 
-Geant4 simulation project developed at LAPP to study low energy backgrounds in underground liquid argon detectors 
+Geant4 simulation project developed at LAPP to study low energy backgrounds in underground liquid argon detectors. A 10 kton DUNE like module is simulated. 
+![Alt text](images/10kton_LAr_module.png)
 
 ## How to use it
 
