@@ -453,8 +453,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double arapuca_y = 1.*cm;
   G4double arapuca_z = 65.*cm;
   
-  G4double pitch_x_arapuca = arapuca_x * 4.;
-  G4double pitch_z_arapuca = arapuca_z * 4.;
+  G4double pitch_x_arapuca = 2 * halfDetectorLengthActiveAr/20.;
+  G4double pitch_z_arapuca = 2 * halfDetectorWidthActiveAr/2.;
   G4int arapuca_row_x[21] = { 0, 2, 4, 1, 3, 2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3}; 
   
   
@@ -502,6 +502,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4RotationMatrix* rotationMatrixSteelSupportsShortSides = new G4RotationMatrix();
   rotationMatrixSteelSupportsShortSides->rotateY(90.*deg);
 
+  G4RotationMatrix* rotationMatrixArapucaLongX = new G4RotationMatrix();
+  rotationMatrixArapucaLongX->rotateX(90.*deg);
+  G4RotationMatrix* rotationMatrixArapucaShortZ = new G4RotationMatrix();
+  rotationMatrixArapucaShortZ->rotateZ(90.*deg);
   G4RotationMatrix* rotationMatrixFCzp = new G4RotationMatrix();
   rotationMatrixFCzp->rotateY(-90.*deg);
   G4RotationMatrix* rotationMatrixFCzm = new G4RotationMatrix();
@@ -765,7 +769,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		for(int k = 1; k < 20; k++){
 			pos_z = -halfDetectorWidthActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
 			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
-			   G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
+			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
 			   new G4PVPlacement(0,
 			   G4ThreeVector(pos_x,0,pos_z),
   			   fLogicArapuca,     //its logical volume
@@ -774,8 +778,69 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			}
 		}
 	}
-		 
-
+	//Arapucas long sides	 
+	 for(int i =1 ; i <= 20; i++){
+        	pos_x = -halfDetectorLengthActiveAr + (i - 1)*pitch_x_arapuca +  2*arapuca_x;
+		for(int j = 1; j <= 4; j++){
+			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
+			//Top side front
+			new G4PVPlacement(rotationMatrixArapucaLongX,
+			G4ThreeVector(pos_x,pos_y, halfDetectorThicknessActiveAr + 5.*cm),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Top side back
+			new G4PVPlacement(rotationMatrixArapucaLongX,
+			G4ThreeVector(pos_x,pos_y, -halfDetectorThicknessActiveAr - 5.*cm),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Bottom side front
+			new G4PVPlacement(rotationMatrixArapucaLongX,
+			G4ThreeVector(pos_x,-pos_y, halfDetectorThicknessActiveAr + 5.*cm),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Bottom side back
+			new G4PVPlacement(rotationMatrixArapucaLongX,
+			G4ThreeVector(pos_x,-pos_y, -halfDetectorThicknessActiveAr - 5.*cm),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+		}
+	}
+	//Arapucas short sides
+	for(int k = 1; k<=2; k++){
+        	pos_z = -halfDetectorThicknessActiveAr + (k - 1)*pitch_z_arapuca +  4 * arapuca_x;
+		for(int j = 1; j <= 4; j++){
+			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
+			//Top side plus
+			new G4PVPlacement(rotationMatrixArapucaShortZ,
+			G4ThreeVector(halfDetectorLengthActiveAr + 5.*cm,pos_y, pos_z),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Top side minus
+			new G4PVPlacement(rotationMatrixArapucaShortZ,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 5.*cm,pos_y, pos_z),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Bottom side plus
+			new G4PVPlacement(rotationMatrixArapucaShortZ,
+			G4ThreeVector(halfDetectorLengthActiveAr + 5.*cm,-pos_y, pos_z),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+			//Bottom side minus
+			new G4PVPlacement(rotationMatrixArapucaShortZ,
+			G4ThreeVector(-halfDetectorLengthActiveAr - 5.*cm,-pos_y, pos_z),
+  			fLogicArapuca,     //its logical volume
+			"Arapuca",
+  			fd2LogicVolume,	false, 0, true);
+		}
+	}
+			
  	 //Field cage inside iquid argon
          //Longer lateral
         
