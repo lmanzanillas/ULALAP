@@ -90,7 +90,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessInnerPlywood = 10.0*mm;
   cryostatThicknessOuterPlywood = 10.0*mm;
   cryostatThicknessOuterSteelSupport = 1.0*m;
-  shieldingThickness = 18.0*cm;
+  shieldingThickness = 15.0*cm;
   fDetectorType = 0;
   fDetectorName = "FD2";
   fVolName = "World";
@@ -356,13 +356,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double box_shileding_outer_y = box_shileding_inner_y + shieldingThickness;
   G4double box_shileding_outer_z = box_shileding_inner_z + shieldingThickness;
   //Air box
-  G4double box_air_cavern_x = box_shileding_outer_x + 1*m;
-  G4double box_air_cavern_y = box_shileding_outer_y + 1*m;
-  G4double box_air_cavern_z = box_shileding_outer_z + 1*m;
+  G4double box_air_cavern_x = box_shileding_outer_x + 2*m;
+  G4double box_air_cavern_y = box_shileding_outer_y + 2*m;
+  G4double box_air_cavern_z = box_shileding_outer_z + 2*m;
   //Rock box
-  G4double box_rock_x = box_air_cavern_x + 1*m;
-  G4double box_rock_y = box_air_cavern_y + 1*m;
-  G4double box_rock_z = box_air_cavern_z + 1*m;
+  G4double box_rock_x = box_air_cavern_x + 2*m;
+  G4double box_rock_y = box_air_cavern_y + 2*m;
+  G4double box_rock_z = box_air_cavern_z + 2*m;
 
   //World box
   fWorldBox = new G4Box("World",halfSizeCavernFD2X,halfSizeCavernFD2Y,halfSizeCavernFD2Z);
@@ -375,6 +375,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* cavernBox = new G4Box("CavernBox",box_air_cavern_x, box_air_cavern_y, box_air_cavern_z);
   logicCavern = new G4LogicalVolume(cavernBox,materialAir,"Cavern",0,0,0);
   //Printing key coordinates
+  G4cout<<"start of shielding: "<<box_shileding_inner_x/cm<<" y "<<box_shileding_inner_y/cm<<" z "<<box_shileding_inner_z/cm<<G4endl;
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
   G4cout<<"Start of shielding x: "<<box_shileding_outer_x/cm<<" y "<<box_shileding_outer_y/cm<<" z "<<box_shileding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorLength/cm<<" y "<<halfDetectorWidth/cm<<" z "<<halfDetectorThickness/cm<<G4endl;

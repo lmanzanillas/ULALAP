@@ -53,7 +53,9 @@ Values are in cm.
 
 Cavern box filled with air starts at x= +/-3394.4, y= +/-1049.4, z= +/- 994.4
 
-Shielding ends at x= +/-3294.4, y= +/-949.4, z= +/-894.4
+start of shielding: x= +/- 3284.4, y= +/- 939.4, z= +/- 884.4
+ 
+Shielding ends at x= +/-3294.4, y= +/-949.4, z= +/-894.4 (DEPENDING ON WHAT THICKNEES YOU CHOOSE!!!)
 
 LAr Volume ends at x= +/-3100.0 y= +/-755.0, z= +/-700.0 
 ## Installing the sofwtware 
