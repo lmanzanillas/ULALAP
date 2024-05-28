@@ -377,7 +377,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //Printing key coordinates
   G4cout<<"start of shielding: "<<box_shileding_inner_x/cm<<" y "<<box_shileding_inner_y/cm<<" z "<<box_shileding_inner_z/cm<<G4endl;
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
-  G4cout<<"Start of shielding x: "<<box_shileding_outer_x/cm<<" y "<<box_shileding_outer_y/cm<<" z "<<box_shileding_outer_z/cm<<G4endl;
+  G4cout<<"End of shielding x: "<<box_shileding_outer_x/cm<<" y "<<box_shileding_outer_y/cm<<" z "<<box_shileding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorLength/cm<<" y "<<halfDetectorWidth/cm<<" z "<<halfDetectorThickness/cm<<G4endl;
   //Shileding 
   G4Box* shieldingBoxOuter = new G4Box("b_shileding_outer", box_shileding_outer_x, box_shileding_outer_y, box_shileding_outer_z);
