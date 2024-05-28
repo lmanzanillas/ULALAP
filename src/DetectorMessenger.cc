@@ -33,7 +33,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   fDetDir->SetGuidance("detector construction commands");
 
 
-  commandSetTargetMaterial = new G4UIcmdWithAString("/ULALAP/det/setGeDetectorMat",this);
+  commandSetTargetMaterial = new G4UIcmdWithAString("/ULALAP/det/setTargetDetectorMat",this);
   commandSetTargetMaterial->SetGuidance("Select material of the target.");
   commandSetTargetMaterial->SetParameterName("choice",false);
   commandSetTargetMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -47,7 +47,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
 
 
 
-  commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setGeDetectorName",this);
+  commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setDetectorName",this);
   commandSetDetectorName->SetGuidance("Select name of detector.");
   commandSetDetectorName->SetParameterName("choice",false);
   commandSetDetectorName->AvailableForStates(G4State_PreInit,G4State_Idle);
@@ -77,7 +77,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetWorldMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetWorldMaterial->SetToBeBroadcasted(false);
 
-  commandSetLArDetectorLength = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorLength",this);
+  commandSetLArDetectorLength = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setLArVolumeLength",this);
   commandSetLArDetectorLength->SetGuidance("Set length of target samples");
   commandSetLArDetectorLength->SetParameterName("SampleLength",false);
   commandSetLArDetectorLength->SetRange("SampleLength>0.");
@@ -85,7 +85,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetLArDetectorLength->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetLArDetectorLength->SetToBeBroadcasted(false);
 
-  commandSetLArDetectorThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorThickness",this);
+  commandSetLArDetectorThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setLArVolumeThickness",this);
   commandSetLArDetectorThickness->SetGuidance("Set thickness of target samples");
   commandSetLArDetectorThickness->SetParameterName("SampleThickness",false);
   commandSetLArDetectorThickness->SetRange("SampleThickness>0.");
@@ -93,7 +93,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetLArDetectorThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetLArDetectorThickness->SetToBeBroadcasted(false);
 
-  commandSetLArDetectorWidth = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setGeDetectorWidth",this);
+  commandSetLArDetectorWidth = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setLArVolumeWidth",this);
   commandSetLArDetectorWidth->SetGuidance("Set width of target samples");
   commandSetLArDetectorWidth->SetParameterName("SampleWidth",false);
   commandSetLArDetectorWidth->SetRange("SampleWidth>0.");

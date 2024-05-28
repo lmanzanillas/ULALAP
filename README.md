@@ -112,6 +112,8 @@ You can uncomment what is inside the test.mac file if you want to add or modify 
 ```
 #/ULALAP/det/setOutputDirectory /nfs/tegile/work/experiences/detecteurs/manzanillas/LEAPS_INNOV/Geant4_output/ 
 #/ULALAP/det/setDetectorType 5
+#/ULALAP/det/setShieldingMaterial water_borated
+#/ULALAP/det/setshieldingThickness 100 cm
 #select output format, options are: csv root hdf5
 #ULALAP/det/setDataType csv
 /process/had/particle_hp/use_photo_evaporation false
