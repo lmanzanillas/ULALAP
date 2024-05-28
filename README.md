@@ -110,7 +110,8 @@ Then you can use a macro in batch mode (for example test.mac) if you are running
 You can uncomment what is inside the test.mac file if you want to add or modify some setting
 
 ```
-#/ULALAP/det/setOutputDirectory /nfs/tegile/work/experiences/detecteurs/manzanillas/LEAPS_INNOV/Geant4_output/ 
+#/ULALAP/det/setOutputDirectory /nfs/tegile/work/experiences/detecteurs/manzanillas/LEAPS_INNOV/Geant4_output/
+#/ULALAP/det/setDetectorName Name 
 #/ULALAP/det/setDetectorType 5
 #/ULALAP/det/setShieldingMaterial water_borated
 #/ULALAP/det/setshieldingThickness 100 cm
