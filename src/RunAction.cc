@@ -168,6 +168,9 @@ void RunAction::BeginOfRunAction(const G4Run* aRun)
   fMan->CreateNtupleIColumn("EventID");
   fMan->CreateNtupleIColumn("pdgID");
   fMan->CreateNtupleDColumn("KinE");
+  fMan->CreateNtupleDColumn("x");
+  fMan->CreateNtupleDColumn("y");
+  fMan->CreateNtupleDColumn("z");
   fMan->FinishNtuple();
 
   fMan->CreateNtuple("Secondaries","Secondaries");

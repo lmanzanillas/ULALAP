@@ -125,6 +125,7 @@ void EventAction::EndOfEventAction(const G4Event* myEvent)
 	for(G4int v = 0 ; v < nV; ++v ){
 		//G4cout<<" starting for loop: "<<v<<G4endl;
 		Vertex = myEvent->GetPrimaryVertex(v);
+		G4ThreeVector pos = Vertex->GetPosition(); 
 		G4int particlesInVertex = Vertex->GetNumberOfParticle();
 		for (G4int p = 0; p < particlesInVertex; ++p ){
 			PrimParticle = Vertex->GetPrimary(p);
@@ -135,6 +136,9 @@ void EventAction::EndOfEventAction(const G4Event* myEvent)
 			analysisManager->FillNtupleIColumn(3, 0, eventNumber);
 			analysisManager->FillNtupleIColumn(3, 1, pdgID);
 			analysisManager->FillNtupleDColumn(3, 2, kinE);
+			analysisManager->FillNtupleDColumn(3, 3, pos.x());
+			analysisManager->FillNtupleDColumn(3, 4, pos.y());
+			analysisManager->FillNtupleDColumn(3, 5, pos.z());
 			analysisManager->AddNtupleRow(3);
 		}
 	}
