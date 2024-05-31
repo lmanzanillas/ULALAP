@@ -117,9 +117,9 @@ You can uncomment what is inside the test.mac file if you want to add or modify 
 #/ULALAP/det/setshieldingThickness 100 cm
 #select output format, options are: csv root hdf5
 #ULALAP/det/setDataType csv
-/process/had/particle_hp/use_photo_evaporation false
-/process/had/particle_hp/do_not_adjust_final_state false
-/process/had/particle_hp/skip_missing_isotopes false
+/process/had/particle_hp/use_photo_evaporation true
+/process/had/particle_hp/do_not_adjust_final_state true
+/process/had/particle_hp/skip_missing_isotopes true
 #direction type, if 1 isotropic
 #/ULALAP/gun/sourceDirectionType 1
 #direction of the source
