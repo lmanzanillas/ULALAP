@@ -64,6 +64,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetSize  (G4double);
     void SetTargetMaterial(G4String);
     void SetShieldingMaterial(G4String);
+    void SetShieldingMaterialWaffle(G4String);
     void SetOutputDirectory(G4String);
     void SetWorldMaterial(G4String);
     void SetDetectorType(G4int);
@@ -109,6 +110,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material*        GetWorldMaterial()   {return fWorldMaterial;};
     G4Material*        GetTargetMaterial()   {return fd2Material;};
     G4Material*        GetShieldingMaterial()   {return fShieldingMaterial;};
+    G4Material*        GetShieldingMaterialWaffle()   {return materialShieldingWaffle;};
     G4ThreeVector* fSourceVector;
 
     void               DefineMaterials();
@@ -143,6 +145,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* fWorldMaterial;
     G4Material* fd2Material;
     G4Material* fShieldingMaterial;
+    G4Material* materialShieldingWaffle;
     G4Material* materialSS304L;
     G4Material* materialSteel;
     G4Material* materialPUfoam;
@@ -164,6 +167,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicCavern;
     G4LogicalVolume* logicshieldingBoxOuter;
     G4LogicalVolume* logicshieldingBoxInner;
+    G4LogicalVolume* logicshieldingBoxWaffle;
     G4LogicalVolume* logicCryoPrimMembrane;
     G4LogicalVolume* logicCryoInnerPlywood;
     G4LogicalVolume* logicCryoInnerPUfoam;

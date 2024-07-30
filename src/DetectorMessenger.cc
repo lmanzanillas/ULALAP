@@ -24,6 +24,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  commandSetshieldingThickness(0),
  commandSetTargetMaterial(0),
  commandSetShiledingMaterial(0),
+ commandSetShiledingMaterialWaffle(0),
  commandSetDetectorName(0),
  commandSetSetupName(0),
  commandSetDataType(0),
@@ -46,6 +47,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetShiledingMaterial->SetToBeBroadcasted(false);
 
 
+  commandSetShiledingMaterialWaffle = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterialWaffle",this);
+  commandSetShiledingMaterialWaffle->SetGuidance("Select material of the waffle shielding.");
+  commandSetShiledingMaterialWaffle->SetParameterName("choice",false);
+  commandSetShiledingMaterialWaffle->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetShiledingMaterialWaffle->SetToBeBroadcasted(false);
 
   commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setDetectorName",this);
   commandSetDetectorName->SetGuidance("Select name of detector.");
@@ -133,6 +139,7 @@ DetectorMessenger::~DetectorMessenger()
   delete commandSetshieldingThickness;
   delete commandSetTargetMaterial;
   delete commandSetShiledingMaterial;
+  delete commandSetShiledingMaterialWaffle;
   delete commandSetDetectorName;
   delete commandSetSetupName;
   delete commandSetDataType;
@@ -151,6 +158,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	fDetector->SetShieldingMaterial(newValue);
    }
 
+   if( command == commandSetShiledingMaterialWaffle ){
+	fDetector->SetShieldingMaterialWaffle(newValue);
+   }
 
    if( command == commandSetDetectorName ){
 	fDetector->SetDetectorName(newValue);
@@ -163,7 +173,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    if( command == commandSetDataType ){
 	fDetector->SetDataType(newValue);
    }
-
 
    if( command == commandSetOutputDirectory ){
 	fDetector->SetOutputDirectory(newValue);
@@ -188,7 +197,6 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
    if( command == commandSetLArDetectorWidth ){
 	fDetector->SetLArDetectorWidth(commandSetLArDetectorWidth->GetNewDoubleValue(newValue));
    }
-
 
    if( command == commandSetDetectorType ){
 	fDetector->SetDetectorType(commandSetDetectorType->GetNewIntValue(newValue));
