@@ -38,11 +38,11 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit*  commandSetLArDetectorThickness;
     G4UIcmdWithADoubleAndUnit*  commandSetLArDetectorWidth;
     G4UIcmdWithADoubleAndUnit*  commandSetshieldingThickness;
-    G4UIcmdWithADoubleAndUnit*  commandSetBeWindowRadius;
+    G4UIcmdWithADoubleAndUnit*  commandSetWaffleThickness;
     G4UIcmdWithADoubleAndUnit*  commandSetcryostatThickness;
     G4UIcmdWithAString*         commandSetTargetMaterial;
-    G4UIcmdWithAString*         commandSetShiledingMaterial;
-    G4UIcmdWithAString*         commandSetShiledingMaterialWaffle;
+    G4UIcmdWithAString*         commandSetShieldingMaterial;
+    G4UIcmdWithAString*         commandSetShieldingMaterialWaffle;
     G4UIcmdWithAString*         commandSetDetectorName;
     G4UIcmdWithAString*         commandSetSetupName;
     G4UIcmdWithAString*         commandSetDataType;

@@ -22,9 +22,10 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  commandSetLArDetectorThickness(0),
  commandSetLArDetectorWidth(0),
  commandSetshieldingThickness(0),
+ commandSetWaffleThickness(0),
  commandSetTargetMaterial(0),
- commandSetShiledingMaterial(0),
- commandSetShiledingMaterialWaffle(0),
+ commandSetShieldingMaterial(0),
+ commandSetShieldingMaterialWaffle(0),
  commandSetDetectorName(0),
  commandSetSetupName(0),
  commandSetDataType(0),
@@ -40,18 +41,18 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetTargetMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetTargetMaterial->SetToBeBroadcasted(false);
 
-  commandSetShiledingMaterial = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterial",this);
-  commandSetShiledingMaterial->SetGuidance("Select material of the sample.");
-  commandSetShiledingMaterial->SetParameterName("choice",false);
-  commandSetShiledingMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
-  commandSetShiledingMaterial->SetToBeBroadcasted(false);
+  commandSetShieldingMaterial = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterial",this);
+  commandSetShieldingMaterial->SetGuidance("Select material of the sample.");
+  commandSetShieldingMaterial->SetParameterName("choice",false);
+  commandSetShieldingMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetShieldingMaterial->SetToBeBroadcasted(false);
 
 
-  commandSetShiledingMaterialWaffle = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterialWaffle",this);
-  commandSetShiledingMaterialWaffle->SetGuidance("Select material of the waffle shielding.");
-  commandSetShiledingMaterialWaffle->SetParameterName("choice",false);
-  commandSetShiledingMaterialWaffle->AvailableForStates(G4State_PreInit,G4State_Idle);
-  commandSetShiledingMaterialWaffle->SetToBeBroadcasted(false);
+  commandSetShieldingMaterialWaffle = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterialWaffle",this);
+  commandSetShieldingMaterialWaffle->SetGuidance("Select material of the waffle shielding.");
+  commandSetShieldingMaterialWaffle->SetParameterName("choice",false);
+  commandSetShieldingMaterialWaffle->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetShieldingMaterialWaffle->SetToBeBroadcasted(false);
 
   commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setDetectorName",this);
   commandSetDetectorName->SetGuidance("Select name of detector.");
@@ -115,6 +116,14 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetshieldingThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetshieldingThickness->SetToBeBroadcasted(false);
 
+  commandSetWaffleThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setWaffleThickness",this);
+  commandSetWaffleThickness->SetGuidance("Set thickness of waffle");
+  commandSetWaffleThickness->SetParameterName("waffleThickness",false);
+  commandSetWaffleThickness->SetRange("waffleThickness>0.");
+  commandSetWaffleThickness->SetUnitCategory("Length");
+  commandSetWaffleThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetWaffleThickness->SetToBeBroadcasted(false);
+
 
 
   commandSetDetectorType = new G4UIcmdWithAnInteger("/ULALAP/det/setDetectorType",this);
@@ -137,9 +146,10 @@ DetectorMessenger::~DetectorMessenger()
   delete commandSetLArDetectorThickness;
   delete commandSetLArDetectorWidth;
   delete commandSetshieldingThickness;
+  delete commandSetWaffleThickness;
   delete commandSetTargetMaterial;
-  delete commandSetShiledingMaterial;
-  delete commandSetShiledingMaterialWaffle;
+  delete commandSetShieldingMaterial;
+  delete commandSetShieldingMaterialWaffle;
   delete commandSetDetectorName;
   delete commandSetSetupName;
   delete commandSetDataType;
@@ -154,11 +164,11 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	fDetector->SetTargetMaterial(newValue);
    }
 
-   if( command == commandSetShiledingMaterial ){
+   if( command == commandSetShieldingMaterial ){
 	fDetector->SetShieldingMaterial(newValue);
    }
 
-   if( command == commandSetShiledingMaterialWaffle ){
+   if( command == commandSetShieldingMaterialWaffle ){
 	fDetector->SetShieldingMaterialWaffle(newValue);
    }
 
@@ -192,6 +202,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 
    if( command == commandSetshieldingThickness ){
 	fDetector->SetshieldingThickness(commandSetshieldingThickness->GetNewDoubleValue(newValue));
+   }
+
+   if( command == commandSetWaffleThickness ){
+	fDetector->SetWaffleThickness(commandSetWaffleThickness->GetNewDoubleValue(newValue));
    }
 
    if( command == commandSetLArDetectorWidth ){

@@ -98,8 +98,8 @@ fd2LogicVolume(nullptr)
   DefineMaterials();
   data_output_directory = "./";  
   fd2Material = G4Material::GetMaterial("G4_lAr");
-  fShieldingMaterial = G4Material::GetMaterial("G4_POLYETHYLENE");
-  materialShieldingWaffle = G4Material::GetMaterial("G4_POLYETHYLENE");
+  fShieldingMaterial = G4Material::GetMaterial("G4_AIR");
+  materialShieldingWaffle = G4Material::GetMaterial("G4_AIR");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -165,6 +165,11 @@ void DetectorConstruction::SetshieldingThickness(G4double value){
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
+void DetectorConstruction::SetWaffleThickness(G4double value){
+  cryostatThicknessOuterSteelSupport = (value/1.)*mm;
+  //UpdateGeometry();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
 //Sets material of target.
 void DetectorConstruction::SetTargetMaterial(G4String materialChoice)
 {

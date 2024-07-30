@@ -72,6 +72,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetLArDetectorThickness(G4double);
     void SetLArDetectorWidth(G4double);
     void SetshieldingThickness(G4double);
+    void SetWaffleThickness(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
     void SetDistanceCollimatorDetector(G4double);
     void SetDistanceSampleWindow(G4double);
@@ -95,6 +96,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4double GetcryostatThicknessPrimMembraneSS()  {return cryostatThicknessPrimMembraneSS;};
     G4double GetShieldingThickness()  {return shieldingThickness;};
+    G4double GetWaffleThickness()  {return cryostatThicknessOuterSteelSupport;};
     G4double GetGeDetectorLength()  {return halfDetectorLength*2.0;};
     G4double GetGeDetectorThickness()  {return halfDetectorThickness*2.0;};
     G4double GetGeDetectorWidth()  {return halfDetectorWidth*2.0;};

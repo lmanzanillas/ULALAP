@@ -120,6 +120,9 @@ You can uncomment what is inside the test.mac file if you want to add or modify 
 /process/had/particle_hp/use_photo_evaporation true
 /process/had/particle_hp/do_not_adjust_final_state true
 /process/had/particle_hp/skip_missing_isotopes true
+#uncoment if you want to use detector option 1 with shielding in the waffle
+#/ULALAP/det/setDetectorType 1
+#/ULALAP/det/setShieldingMaterialWaffle G4_WATER
 #direction type, if 1 isotropic
 #/ULALAP/gun/sourceDirectionType 1
 #direction of the source
