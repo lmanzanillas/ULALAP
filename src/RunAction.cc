@@ -104,8 +104,8 @@ G4String RunAction::GetFolderName()
   fTimer->Start();
   G4String s_shileding_thickness ="_shileding_" + std::to_string((int)round(fDetector->GetShieldingThickness()/cm)) + "cm";
   G4String s_shileding_material =s_shileding_thickness + "_" + fDetector->GetShieldingMaterial()->GetName();
-  G4String s_waffle_thick = std::to_string((int)round(fDetector->GetWaffleThickness()/cm)) + "cm";
-  G4String s_shielding_waffle_material = "_WaffleMat_" + fDetector->GetShieldingMaterialWaffle()->GetName();
+  G4String s_waffle_thick = std::to_string((int)round(fDetector->GetWaffleThickness()/cm)) + "cm_";
+  G4String s_shielding_waffle_material = "_WaffleMat_" + s_waffle_thick + fDetector->GetShieldingMaterialWaffle()->GetName();
   G4String s_setup_type = s_shileding_material + s_shielding_waffle_material + "_setup_" + std::to_string((int)fDetector->GetDetectorType());
 
   fFolderName = fDetector->GetDetectorOutputDataDirectory()+sourceString+"_"+sourceEnergy
