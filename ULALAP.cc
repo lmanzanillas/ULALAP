@@ -98,7 +98,9 @@ int main(int argc,char** argv)
   G4PhysListFactory factory;
   G4VModularPhysicsList* physList = nullptr;
   // Reference PhysicsList via its name
+  //G4String physListName = "Shielding";
   G4String physListName = "FTFP_BERT_HP";
+  //G4String physListName = "QGSP_BIC_HP_EMZ";
   physList = factory.GetReferencePhysList(physListName);
   runManager->SetUserInitialization(physList);
   //runManager-> SetUserInitialization(new PhysicsList());
