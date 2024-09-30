@@ -1,20 +1,23 @@
 #!/bin/sh
-thick=25
-material=G4_WATER
-for job_number in {1..10..1} 
+det_type=0 
+thick=75
+thick_waffle=100
+material_shield_waffle=G4_AIR
+material_shielding=G4_WATER
+for job_number in {1..20..1} 
 do
 	echo ${job_number}
         cd /pbs/home/l/lmanzani/ulalap_g4/build/
-	FILE_MAC="n_mac_${job_number}_${material}_${thick}.mac"
+	FILE_MAC="n_mac_${job_number}_waffle_${material_shield_waffle}_${thick_waffle}_shield_${thick}_${material_shielding}.mac"
 	/bin/cat <<EOM >$FILE_MAC
 
 /ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
 /ULALAP/det/setSetupName file_${job_number}
-/ULALAP/det/setDetectorType 1
-/ULALAP/det/setShieldingMaterialWaffle ${material}
-/ULALAP/det/setWaffleThickness ${thick} cm
-/ULALAP/det/setShieldingMaterial G4_AIR
-/ULALAP/det/setshieldingThickness 1 cm
+/ULALAP/det/setDetectorType ${det_type}
+/ULALAP/det/setShieldingMaterialWaffle ${material_shield_waffle}
+#/ULALAP/det/setWaffleThickness ${thick_waffle} cm
+/ULALAP/det/setShieldingMaterial ${material_shielding}
+/ULALAP/det/setshieldingThickness ${thick} cm
 #select output format, options are: csv root hdf5
 #ULALAP/det/setDataType csv
 /process/had/particle_hp/use_photo_evaporation true
@@ -34,11 +37,11 @@ do
 #size of the box in cm for x y z
 /ULALAP/gun/BoxXYZ 1 1500 1400
 #number of events
-/run/beamOn 2000000
+/run/beamOn 500000
 
 
 EOM
-	FILEJOB="job_muon_${job_number}_${material}_${thick}.sh"
+	FILEJOB="job_muon_${job_number}_${material_shield_waffle}_${thick_waffle}_shield_${thick}_${material_shielding}.sh"
 	
         /bin/cat <<EOM >$FILEJOB
 #!/bin/bash
