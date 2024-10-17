@@ -184,6 +184,20 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
 	  direction.setY(py);
 	  direction.setZ(pz);
   }
+  if(fSourceDirectionType == 2){
+	  px = new_direction.x();
+	  py = new_direction.y() + (rndm - 0.5)/3.;
+	  pz = new_direction.z() + (rndm2 - 0.5)/3.;
+	  G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
+	  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+	  px = px/ResMag;
+	  py = py/ResMag;
+	  pz = pz/ResMag; 
+	  direction.setX(px);
+	  direction.setY(py);
+	  direction.setZ(pz);
+	  G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
+  }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
@@ -346,13 +360,13 @@ void PrimaryGeneratorAction::SetSourceType(G4int newType)
 void PrimaryGeneratorAction::SetSourceDirectionType(G4int newType)
 {
 
-	if (newType <= 1 && newType >= 0)
+	if (newType <= 2 && newType >= 0)
 	{
 		fSourceDirectionType = newType;
 	}
 	else
 	{
-		G4cerr << "The option is out of the possible values (0-1)!" << G4endl;
+		G4cerr << "The option is out of the possible values (0-2)!" << G4endl;
 		G4cerr << "The default option (0) is set!" << G4endl;
 		particleType = 0;
 	}
