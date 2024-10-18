@@ -143,7 +143,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
   	fAction->SetSourceShape(newValue);
   }
   if(command == fSourceDirection) {
-  	fAction->GenerateDirection(fSourceDirection->GetNew3VectorValue(newValue));
+  	fAction->SetParticleDirection(fSourceDirection->GetNew3VectorValue(newValue));
   }
 }
 

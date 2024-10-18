@@ -41,6 +41,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	CentreCoords = zero;
 	BoxXYZ = zero;
 	direction = G4ParticleMomentum(1., 0., 0.);
+	direction_input = G4ParticleMomentum(1., 0., 0.);
 	Radius = 0.1*m;
 	SourcePosType = "Volume";
         Shape = "Point";
@@ -156,47 +157,55 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
   sintheta = std::sqrt(1. - costheta*costheta);
   
   rndm2 = G4UniformRand();
-  Phi = MinPhi + (MaxPhi - MinPhi) * rndm2; 
-  sinphi = std::sin(Phi);
-  cosphi = std::cos(Phi);
+  G4double ResMag = 0.;
+  
+  switch (fSourceDirectionType) {
+	 case 0:
+		  px = new_direction.x();
+	  	  py = new_direction.y();
+	  	  pz = new_direction.z();
+	  	  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+		  px = px/ResMag;
+		  py = py/ResMag;
+		  pz = pz/ResMag; 
+		  direction.setX(px);
+		  direction.setY(py);
+		  direction.setZ(pz);
+		  break;
 
-  px = -sintheta * cosphi;
-  py = -sintheta * sinphi;
-  pz = -costheta;
+	  case 1:
+		  Phi = MinPhi + (MaxPhi - MinPhi) * rndm2; 
+  		  sinphi = std::sin(Phi);
+  		  cosphi = std::cos(Phi);
 
-  G4double ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
-  px = px/ResMag;
-  py = py/ResMag;
-  pz = pz/ResMag;
+  		  px = -sintheta * cosphi;
+  		  py = -sintheta * sinphi;
+ 		  pz = -costheta;
 
-  direction.setX(px);
-  direction.setY(py);
-  direction.setZ(pz);
-  if(fSourceDirectionType == 0){
-	  px = new_direction.x();
-	  py = new_direction.y();
-	  pz = new_direction.z();
-	  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
-	  px = px/ResMag;
-	  py = py/ResMag;
-	  pz = pz/ResMag; 
-	  direction.setX(px);
-	  direction.setY(py);
-	  direction.setZ(pz);
-  }
-  if(fSourceDirectionType == 2){
-	  px = new_direction.x();
-	  py = new_direction.y() + (rndm - 0.5)/3.;
-	  pz = new_direction.z() + (rndm2 - 0.5)/3.;
-	  G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
-	  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
-	  px = px/ResMag;
-	  py = py/ResMag;
-	  pz = pz/ResMag; 
-	  direction.setX(px);
-	  direction.setY(py);
-	  direction.setZ(pz);
-	  G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
+  		  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+  		  px = px/ResMag;
+  		  py = py/ResMag;
+  		  pz = pz/ResMag;
+
+  	  	  direction.setX(px);
+  		  direction.setY(py);
+  		  direction.setZ(pz);
+		  break;
+
+	  case 2:
+		  px = new_direction.x();
+		  py = new_direction.y() + (rndm - 0.5)/3.;
+		  pz = new_direction.z() + (rndm2 - 0.5)/3.;
+		  G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
+		  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
+		  px = px/ResMag;
+		  py = py/ResMag;
+		  pz = pz/ResMag; 
+		  direction.setX(px);
+		  direction.setY(py);
+		  direction.setZ(pz);
+		  G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
+		  break;
   }
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -208,7 +217,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4int Z=0, A=0;
 	G4ParticleDefinition* ion;
 	GeneratePointsInVolume();
-	GenerateDirection(direction);
+	GenerateDirection(direction_input);
 	G4double RandNb = G4UniformRand();
 	if(particleType == 11){
 	        fSourceEnergy = fAction3->InverseCumul();
@@ -339,6 +348,9 @@ void PrimaryGeneratorAction::SetSourcePosition(G4ThreeVector newPosition){
 	 CentreCoords = newPosition;
 }
 
+void PrimaryGeneratorAction::SetParticleDirection(G4ThreeVector new_direction){
+	 direction_input = new_direction;
+}
 void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 	Radius = newDiameter/2.;
 }
