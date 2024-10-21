@@ -123,7 +123,7 @@ You can uncomment what is inside the test.mac file if you want to add or modify 
 #uncoment if you want to use detector option 1 with shielding in the waffle
 #/ULALAP/det/setDetectorType 1
 #/ULALAP/det/setShieldingMaterialWaffle G4_WATER
-#direction type, if 1 isotropic
+#direction type, 0 constant direction given by vector, if 1 isotropic, 2 conical like direction sampling around given vector
 #/ULALAP/gun/sourceDirectionType 1
 #direction of the source
 #/ULALAP/gun/direction -1 0 0
