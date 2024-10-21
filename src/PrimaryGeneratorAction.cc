@@ -193,10 +193,10 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
 		  break;
 
 	  case 2:
-		  px = new_direction.x();
-		  py = new_direction.y() + (rndm - 0.5)/3.;
-		  pz = new_direction.z() + (rndm2 - 0.5)/3.;
-		  G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
+		  px = new_direction.x() + (G4UniformRand() -0.5)/2.;
+		  py = new_direction.y() + (rndm - 0.5)/2.;
+		  pz = new_direction.z() + (rndm2 - 0.5)/2.;
+		  //G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
 		  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
 		  px = px/ResMag;
 		  py = py/ResMag;
@@ -204,7 +204,7 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
 		  direction.setX(px);
 		  direction.setY(py);
 		  direction.setZ(pz);
-		  G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
+		  //G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
 		  break;
   }
 }

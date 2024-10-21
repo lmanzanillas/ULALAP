@@ -50,6 +50,7 @@ public:
         void  SetSourceShape(G4String shapeType);
         void  GeneratePointsInVolume();
 	void  GenerateDirection(G4ThreeVector d_vector);
+	void  SetParticleDirection(G4ThreeVector d_vector);
 
 	G4int GetParticleType(void){return particleType;};
 	G4int GetSourceGeometry(void){return fSourceGeometry;};
@@ -79,6 +80,7 @@ private:
 	G4int           fSourceGeometry;
 	G4double	fSourceEnergy;
 	G4ParticleMomentum     direction;
+	G4ParticleMomentum     direction_input;
 	DetectorConstruction*      fDetector;
 	G4double		fPhotonWavelength;
 	PrimaryGeneratorMessenger* fGunMessenger;
