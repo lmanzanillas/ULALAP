@@ -91,7 +91,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterPlywood = 10.0*mm;
   cryostatThicknessOuterSteelSupport = 1.00*m;
   shieldingThickness = 15.0*cm;
-  fDetectorType = 0;
+  fDetectorType = 1;
   fDetectorName = "FD2";
   fVolName = "World";
   materialConstruction = new UlalapMaterials;
@@ -337,7 +337,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Colour  green   (0.0, 1.0, 0.0) ;
   G4Colour  brown   (0.7, 0.4, 0.1) ;
 
-  /////// Detector + cryostat (7 layers) + shileding
+  /////// Detector + cryostat (7 layers) + shielding
   //First layer
   G4double box_size_ss_membrane_x = halfDetectorLength + cryostatThicknessPrimMembraneSS;
   G4double box_size_ss_membrane_y = halfDetectorWidth + cryostatThicknessPrimMembraneSS;
@@ -371,17 +371,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double box_steel_support_y = box_vapor_barrier_SS_y + cryostatThicknessOuterSteelSupport;
   G4double box_steel_support_z = box_vapor_barrier_SS_z + cryostatThicknessOuterSteelSupport;
   //shielding inner layer 1
-  G4double box_shileding_inner_x = box_steel_support_x + 1*cm;;
-  G4double box_shileding_inner_y = box_steel_support_y + 1*cm;
-  G4double box_shileding_inner_z = box_steel_support_z + 1*cm;
+  G4double box_shielding_inner_x = box_steel_support_x + 1*cm;;
+  G4double box_shielding_inner_y = box_steel_support_y + 1*cm;
+  G4double box_shielding_inner_z = box_steel_support_z + 1*cm;
   //shielding outer layer 1
-  G4double box_shileding_outer_x = box_shileding_inner_x + shieldingThickness;
-  G4double box_shileding_outer_y = box_shileding_inner_y + shieldingThickness;
-  G4double box_shileding_outer_z = box_shileding_inner_z + shieldingThickness;
+  G4double box_shielding_outer_x = box_shielding_inner_x + shieldingThickness;
+  G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness;
+  G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness;
   //Air box
-  G4double box_air_cavern_x = box_shileding_outer_x + 2*m;
-  G4double box_air_cavern_y = box_shileding_outer_y + 2*m;
-  G4double box_air_cavern_z = box_shileding_outer_z + 2*m;
+  G4double box_air_cavern_x = box_shielding_outer_x + 2*m;
+  G4double box_air_cavern_y = box_shielding_outer_y + 2*m;
+  G4double box_air_cavern_z = box_shielding_outer_z + 2*m;
   //Rock box
   G4double box_rock_x = box_air_cavern_x + 2*m;
   G4double box_rock_y = box_air_cavern_y + 2*m;
@@ -398,18 +398,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* cavernBox = new G4Box("CavernBox",box_air_cavern_x, box_air_cavern_y, box_air_cavern_z);
   logicCavern = new G4LogicalVolume(cavernBox,materialAir,"Cavern",0,0,0);
   //Printing key coordinates
-  G4cout<<"start of shielding: "<<box_shileding_inner_x/cm<<" y "<<box_shileding_inner_y/cm<<" z "<<box_shileding_inner_z/cm<<G4endl;
+  G4cout<<"start of shielding: "<<box_shielding_inner_x/cm<<" y "<<box_shielding_inner_y/cm<<" z "<<box_shielding_inner_z/cm<<G4endl;
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
-  G4cout<<"End of shielding x: "<<box_shileding_outer_x/cm<<" y "<<box_shileding_outer_y/cm<<" z "<<box_shileding_outer_z/cm<<G4endl;
+  G4cout<<"End of shielding x: "<<box_shielding_outer_x/cm<<" y "<<box_shielding_outer_y/cm<<" z "<<box_shielding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorLength/cm<<" y "<<halfDetectorWidth/cm<<" z "<<halfDetectorThickness/cm<<G4endl;
-  //Shileding 
-  G4Box* shieldingBoxOuter = new G4Box("b_shileding_outer", box_shileding_outer_x, box_shileding_outer_y, box_shileding_outer_z);
+  //Shielding 
+  G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
   logicshieldingBoxOuter = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
 
-  G4Box* shieldingBoxInner = new G4Box("b_shileding_inner", box_shileding_inner_x, box_shileding_inner_y, box_shileding_inner_z);
+  G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
   logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
   
-  G4Box* shieldingBoxWaffle = new G4Box("b_shileding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_y);
+  G4Box* shieldingBoxWaffle = new G4Box("b_shielding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_z);
   logicshieldingBoxWaffle = new G4LogicalVolume(shieldingBoxWaffle, materialShieldingWaffle, "ShieldingWaffle", 0, 0, 0);
   //G4double thick_support = box_steel_support_x - halfDetectorLength;
   //SteelSupportConstruction mySteelSupport;
@@ -418,12 +418,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //1) steel support sttructure
   // to be defined in another file since need to do quite some subtraction operations
   G4int n_h_bars = 5;
-  G4int n_v_bars_long_side = int(2*box_shileding_inner_x/(200*cm));
+  G4int n_v_bars_long_side = int(2*box_shielding_inner_x/(200*cm));
   G4cout<<"n v bars: "<<n_v_bars_long_side<<G4endl;
-  G4int n_v_bars_short_side = int(2*box_shileding_inner_z/(200*cm));
+  G4int n_v_bars_short_side = int(2*box_shielding_inner_z/(200*cm));
   G4cout<<"n v short: "<<n_v_bars_short_side<<G4endl;
   G4double bar_x = 0.2*m;
-  G4double bar_y = box_shileding_inner_y;
+  G4double bar_y = box_steel_support_y;
   G4double bar_z = cryostatThicknessOuterSteelSupport /2.0;
 
   //box_vapor_barrier_SS_z
@@ -584,9 +584,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //vis_cryo_SS_support->SetForceWireframe(true);
   //vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
   //vis_cryo_SS_support->SetForceLineSegmentsPerCircle (80);
-  //logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
+  logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
   //logicSteelSupportTop->SetVisAttributes(vis_cryo_SS_support);
-  //logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
+  logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
    //fLogicFCLongWide->SetVisAttributes(vis_cryo_SS_support);
   // fLogicFCLongSlim->SetVisAttributes(vis_cryo_SS_support);
    fLogicFCShortSlim->SetVisAttributes(vis_cryo_SS_support);
@@ -625,13 +625,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shileding inside cavern  
+	 //place shielding inside cavern  
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxOuter,
-		"shileding_"+std::to_string(1),
+		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
-	 //place shileding inner inside shileding outer 
+	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
@@ -720,7 +720,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		}
 
 	 }
-	 //SS vapor barrier inside inner shileding box
+	 //SS vapor barrier inside inner shielding box
 	 new G4PVPlacement(0,
                 G4ThreeVector(0,0,0),
                 logicCryoSSVaporBarrier,
@@ -1001,19 +1001,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shileding inside cavern  
+	 //place shielding inside cavern  
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxOuter,
-		"shileding_"+std::to_string(1),
+		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
-	 //place shileding inner inside shileding outer 
+	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
 		"inner_shielding_"+std::to_string(1),
 		logicshieldingBoxOuter,false,1,false);
-	 //place shileding waffle box inside inside shileding inner 
+	 //place shielding waffle box inside inside shielding inner 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxWaffle,
@@ -1029,6 +1029,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   logicSteelSupport,
                   "SS_support_xp_"+std::to_string(i),
                   logicshieldingBoxWaffle,false,1,1);
+		  //G4cout<<" box_steel_support_x y z: "<<box_steel_support_x<<" "<<box_steel_support_y<<" "<<box_steel_support_z<<" x_BarSteel: "<<xBarSteel<<" pos_z: "<<pos_z<<G4endl;
  		//side x- 
 		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
                   G4ThreeVector(-xBarSteel,0,pos_z),
@@ -1036,6 +1037,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   "SS_support_xm_"+std::to_string(i),
                   logicshieldingBoxWaffle,false,1,1);
          }
+	 
 	 //horizontal bars short sides
          for(int i =1 ; i < n_v_bars_short_side ; i++){
 	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
@@ -1102,7 +1104,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		}
 
 	 }
-	 //SS vapor barrier inside shileding waffle box
+	 
+	 //SS vapor barrier inside shielding waffle box
 	 new G4PVPlacement(0,
                 G4ThreeVector(0,0,0),
                 logicCryoSSVaporBarrier,

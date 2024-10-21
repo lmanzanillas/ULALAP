@@ -1,9 +1,10 @@
 #!/bin/sh
-det_type=0 
-thick=75
+det_type=1 
+thick=1
+dir_type=2
 thick_waffle=100
-material_shield_waffle=G4_AIR
-material_shielding=G4_WATER
+material_shield_waffle=G4_WATER
+material_shielding=G4_AIR
 for job_number in {1..20..1} 
 do
 	echo ${job_number}
@@ -12,10 +13,10 @@ do
 	/bin/cat <<EOM >$FILE_MAC
 
 /ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
-/ULALAP/det/setSetupName file_${job_number}
+/ULALAP/det/setSetupName file_${job_number}_dir_${dir_type}
 /ULALAP/det/setDetectorType ${det_type}
 /ULALAP/det/setShieldingMaterialWaffle ${material_shield_waffle}
-#/ULALAP/det/setWaffleThickness ${thick_waffle} cm
+/ULALAP/det/setWaffleThickness ${thick_waffle} cm
 /ULALAP/det/setShieldingMaterial ${material_shielding}
 /ULALAP/det/setshieldingThickness ${thick} cm
 #select output format, options are: csv root hdf5
@@ -24,7 +25,7 @@ do
 /process/had/particle_hp/do_not_adjust_final_state false
 /process/had/particle_hp/skip_missing_isotopes true
 #direction type, if 1 isotropic
-/ULALAP/gun/sourceDirectionType 0
+/ULALAP/gun/sourceDirectionType ${dir_type}
 #direction of the source
 /ULALAP/gun/direction -1 0 0
 #position of the center of the source in cm for x y z
