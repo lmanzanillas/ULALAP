@@ -160,6 +160,8 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
   G4double ResMag = 0.;
   
   switch (fSourceDirectionType) {
+	  //Fixed direction taking as input a vector ux,uy,uz
+	  //normalization is applied in case the vector is not unitary
 	 case 0:
 		  px = new_direction.x();
 	  	  py = new_direction.y();
@@ -173,6 +175,7 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
 		  direction.setZ(pz);
 		  break;
 
+	  //Random direction, direction is randomly generated in all directions
 	  case 1:
 		  Phi = MinPhi + (MaxPhi - MinPhi) * rndm2; 
   		  sinphi = std::sin(Phi);
@@ -192,6 +195,8 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
   		  direction.setZ(pz);
 		  break;
 
+	  //Like option 0, but sampling a random direction around the given vector
+	  //This should correspond to a ~conical generation
 	  case 2:
 		  px = new_direction.x() + (G4UniformRand() -0.5)/2.;
 		  py = new_direction.y() + (rndm - 0.5)/2.;
