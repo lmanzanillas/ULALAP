@@ -32,9 +32,13 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fPrimaryMessenger = new PrimaryGeneratorMessenger(this);
 	G4int n_particle = 1;
 	fParticleGun = new G4ParticleGun(n_particle);
+	//Generator of gammas from n capture on Ar36
 	fAction0 = new PrimaryGeneratorAction0(fParticleGun);
+	//Generator of gammas from n capture on Ar40
 	fAction1 = new PrimaryGeneratorAction1(fParticleGun);
+	//Generator of muons with E spectrum expected at DUNE FD site caverns
 	fAction2 = new PrimaryGeneratorAction2(fParticleGun);
+	//Generator of neutrons with E spectrum expected at DUNE FD site caverns
 	fAction3 = new PrimaryGeneratorAction3(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
@@ -237,6 +241,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 1:
+			//Fe-55 source
 			Z = 26;
 			A = 55;
 			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
@@ -248,6 +253,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 2:
+			//Cs-137 source
 			Z = 55;
 			A = 137;
 			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
@@ -259,6 +265,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 3:
+			//Bi-207 source
 			Z = 83;
 			A = 207;
 			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
@@ -270,6 +277,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 4:
+			//Sr-90 source
 			Z = 38;
 			A = 90;
 			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
@@ -307,6 +315,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 8:
+			//Mono-energetic neutrons
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("neutron"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
@@ -314,6 +323,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 9:
+			//Gammas from neutron capture on Ar-36(3.5%) and Ar-40
  			if (RandNb < 0.035){
 				fAction0->GeneratePrimaries(anEvent);
 			}
@@ -322,9 +332,11 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			}
 			break;
 		case 10:
+			//Muon with E spectrum at DUNE caverns
 			fAction2->GeneratePrimaries(anEvent);
     			break;
 		case 11:
+			//Neutrons with E spectrum (see before switch line) corresponding to DUNE caverns
 			fParticleGun->SetParticleDefinition(particleTable->FindParticle("neutron"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
