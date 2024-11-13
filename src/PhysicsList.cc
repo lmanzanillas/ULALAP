@@ -221,17 +221,17 @@ PhysicsList::PhysicsList() : G4VUserPhysicsList()
   G4NuclideTable::GetInstance()->SetLevelTolerance(1.0*eV);
  
   //comment ot check effect on gamma spectrum
-  /*  
+    
   G4DeexPrecoParameters* deex =
     G4NuclearLevelData::GetInstance()->GetParameters();
-  deex->SetCorrelatedGamma(true);
+  deex->SetCorrelatedGamma(false);
   deex->SetStoreAllLevels(true);
   deex->SetIsomerProduction(true);
   deex->SetDeexChannelsType(fEvaporation);
   deex->SetMaxLifeTime(G4NuclideTable::GetInstance()->GetThresholdOfHalfLife()
                 /std::log(2.));
    
-   */
+   
 
   //G4EmParameters::Instance()->AddPhysics("World","G4RadioactiveDecay");
   //G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();

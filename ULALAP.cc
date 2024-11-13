@@ -92,7 +92,7 @@ int main(int argc,char** argv)
   DetectorConstruction* det = new DetectorConstruction;
   runManager->SetUserInitialization(det);
 
-  //
+  
   // Physics list
   // Physics list factory
   G4PhysListFactory factory;
@@ -102,7 +102,9 @@ int main(int argc,char** argv)
   G4String physListName = "FTFP_BERT_HP";
   //G4String physListName = "QGSP_BIC_HP_EMZ";
   physList = factory.GetReferencePhysList(physListName);
+  //physList->RegisterPhysics( new G4RadioactiveDecayPhysics );
   runManager->SetUserInitialization(physList);
+  
   //runManager-> SetUserInitialization(new PhysicsList());
 
   //test, next line

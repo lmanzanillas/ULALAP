@@ -91,6 +91,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterPlywood = 10.0*mm;
   cryostatThicknessOuterSteelSupport = 1.00*m;
   shieldingThickness = 15.0*cm;
+  n_captureLayerThickness = 0.5*cm;
   fDetectorType = 1;
   fDetectorName = "FD2";
   fVolName = "World";
