@@ -157,6 +157,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialAlCryostat;
     G4Material* materialRock;
     G4Material* materialFR4;
+    G4Material* materialB4C;
     G4Material* materialAcrylic;
     G4String fSetupName;
     G4Box* fWorldBox;
@@ -169,6 +170,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicSteelSupportTop;
     G4LogicalVolume* logicRockBox;
     G4LogicalVolume* logicCavern;
+    G4LogicalVolume* logicshieldingBoxB4C;
     G4LogicalVolume* logicshieldingBoxOuter;
     G4LogicalVolume* logicshieldingBoxInner;
     G4LogicalVolume* logicshieldingBoxWaffle;

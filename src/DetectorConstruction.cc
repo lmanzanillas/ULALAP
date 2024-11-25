@@ -276,6 +276,7 @@ void DetectorConstruction::DefineMaterials(){
   materialConstruction-> Construct();
   materialAir = G4Material::GetMaterial("Air");
   materialFR4 = G4Material::GetMaterial("FR4");
+  materialB4C = G4Material::GetMaterial("G4_BORON_CARBIDE");
   materialSteel = G4Material::GetMaterial("Steel_EN8");
   materialSS304L = G4Material::GetMaterial("Steel_SS304L");
   materialPUfoam = G4Material::GetMaterial("PU_foam");
@@ -372,13 +373,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double box_steel_support_y = box_vapor_barrier_SS_y + cryostatThicknessOuterSteelSupport;
   G4double box_steel_support_z = box_vapor_barrier_SS_z + cryostatThicknessOuterSteelSupport;
   //shielding inner layer 1
-  G4double box_shielding_inner_x = box_steel_support_x + 1*cm;;
+  G4double box_shielding_inner_x = box_steel_support_x + 1*cm;
   G4double box_shielding_inner_y = box_steel_support_y + 1*cm;
   G4double box_shielding_inner_z = box_steel_support_z + 1*cm;
+  //shielding B4C layer
+  G4double box_shielding_inner_B4C_x = box_shielding_inner_x + n_captureLayerThickness;
+  G4double box_shielding_inner_B4C_y = box_shielding_inner_y + n_captureLayerThickness;
+  G4double box_shielding_inner_B4C_z = box_shielding_inner_z + n_captureLayerThickness;
   //shielding outer layer 1
-  G4double box_shielding_outer_x = box_shielding_inner_x + shieldingThickness;
-  G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness;
-  G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness;
+  G4double box_shielding_outer_x = box_shielding_inner_x + shieldingThickness + n_captureLayerThickness;
+  G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness + n_captureLayerThickness;
+  G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness + n_captureLayerThickness;
   //Air box
   G4double box_air_cavern_x = box_shielding_outer_x + 2*m;
   G4double box_air_cavern_y = box_shielding_outer_y + 2*m;
@@ -410,6 +415,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
   logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
   
+  G4Box* shieldingBoxB4C = new G4Box("b_shielding_b4c", box_shielding_inner_B4C_x, box_shielding_inner_B4C_y, box_shielding_inner_B4C_z);
+  logicshieldingBoxB4C = new G4LogicalVolume(shieldingBoxB4C, materialB4C, "Shielding", 0, 0, 0);
+
   G4Box* shieldingBoxWaffle = new G4Box("b_shielding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_z);
   logicshieldingBoxWaffle = new G4LogicalVolume(shieldingBoxWaffle, materialShieldingWaffle, "ShieldingWaffle", 0, 0, 0);
   //G4double thick_support = box_steel_support_x - halfDetectorLength;
@@ -611,6 +619,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // Place main detector always at center of world volume
   switch(fDetectorType){
 
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //                      Case 0 with shielding all around detector 
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //Detector alone for "direct" beam radiation	  
   case 0:
        
