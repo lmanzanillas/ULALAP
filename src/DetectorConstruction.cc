@@ -412,12 +412,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
   logicshieldingBoxOuter = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
 
-  G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
-  logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
-  
   G4Box* shieldingBoxB4C = new G4Box("b_shielding_b4c", box_shielding_inner_B4C_x, box_shielding_inner_B4C_y, box_shielding_inner_B4C_z);
   logicshieldingBoxB4C = new G4LogicalVolume(shieldingBoxB4C, materialB4C, "Shielding", 0, 0, 0);
 
+  G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
+  logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
+  
   G4Box* shieldingBoxWaffle = new G4Box("b_shielding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_z);
   logicshieldingBoxWaffle = new G4LogicalVolume(shieldingBoxWaffle, materialShieldingWaffle, "ShieldingWaffle", 0, 0, 0);
   //G4double thick_support = box_steel_support_x - halfDetectorLength;
@@ -1411,12 +1411,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicshieldingBoxOuter,
 		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
+	 //place shielding inside cavern  
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,0),
+		logicshieldingBoxB4C,
+		"shielding_B4C"+std::to_string(1),
+		logicshieldingBoxOuter,false,1,false);
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
 		"inner_shielding_"+std::to_string(1),
-		logicshieldingBoxOuter,false,1,false);
+		logicshieldingBoxB4C,false,1,false);
 	 //place many copies of steel bar support inside shielding inner
 	 //vertical bars short sides +/- x
 	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
