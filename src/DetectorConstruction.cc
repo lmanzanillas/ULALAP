@@ -72,7 +72,7 @@ logicCryoPrimMembrane(nullptr),
 fd2LogicVolume(nullptr) 
 {
   fDetectorMessenger = new DetectorMessenger(this);
-  halfSizeCavernFD2Y = halfSizeCavernFD2Z = 15.*m;
+  halfSizeCavernFD2Y = halfSizeCavernFD2Z = 30.*m;
   halfSizeCavernFD2X = 100.*m;
   fSetupName = "DUNE";
   fDataType = "csv";
@@ -389,13 +389,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double box_air_cavern_y = box_shielding_outer_y + 2*m;
   G4double box_air_cavern_z = box_shielding_outer_z + 2*m;
   //Rock box
-  G4double box_rock_x = box_air_cavern_x + 2*m;
-  G4double box_rock_y = box_air_cavern_y + 2*m;
-  G4double box_rock_z = box_air_cavern_z + 2*m;
+  G4double box_rock_x = box_air_cavern_x + 10*m;
+  G4double box_rock_y = box_air_cavern_y + 10*m;
+  G4double box_rock_z = box_air_cavern_z + 10*m;
 
   //World box
   fWorldBox = new G4Box("World",halfSizeCavernFD2X,halfSizeCavernFD2Y,halfSizeCavernFD2Z);
-  logicWorldBox = new G4LogicalVolume(fWorldBox,materialAir,"World",0,0,0);
+  logicWorldBox = new G4LogicalVolume(fWorldBox,materialRock,"World",0,0,0);
   physicWorldBox = new G4PVPlacement(0,G4ThreeVector(),logicWorldBox,"World",0,false,0);
   //Rock Box
   G4Box* rockBox = new G4Box("RockBox", box_rock_x, box_rock_y, box_rock_z);
@@ -408,6 +408,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
   G4cout<<"End of shielding x: "<<box_shielding_outer_x/cm<<" y "<<box_shielding_outer_y/cm<<" z "<<box_shielding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorLength/cm<<" y "<<halfDetectorWidth/cm<<" z "<<halfDetectorThickness/cm<<G4endl;
+  G4cout<<"SS vapor barrier: "<<box_vapor_barrier_SS_x/cm<<" y "<<box_vapor_barrier_SS_y/cm<<" z "<<box_vapor_barrier_SS_z/cm<<G4endl;
   //Shielding 
   G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
   logicshieldingBoxOuter = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
