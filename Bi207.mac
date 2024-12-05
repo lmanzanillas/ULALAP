@@ -1,0 +1,28 @@
+
+/ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
+/ULALAP/det/setSetupName file_1
+/ULALAP/det/setDetectorType 0
+/ULALAP/det/setShieldingMaterialWaffle G4_AIR
+/ULALAP/det/setShieldingMaterial G4_AIR
+#select output format, options are: csv root hdf5
+#ULALAP/det/setDataType csv
+/process/had/particle_hp/use_photo_evaporation true
+/process/had/particle_hp/do_not_adjust_final_state false
+/process/had/particle_hp/skip_missing_isotopes true
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+#direction type, if 1 isotropic
+/ULALAP/gun/sourceDirectionType 1
+#direction of the source
+#position of the center of the source in cm for x y z
+/ULALAP/gun/position 10 10 10
+#/ULALAP/gun/sourceEnergy 0.023 eV
+#choise of the source: 3 for Bi207
+/ULALAP/gun/sourceType 3
+#geometry of the source: Sphere Cone Box point
+/ULALAP/gun/shape Box
+#size of the box in cm for x y z
+/ULALAP/gun/BoxXYZ 0.1 0.1 0.1
+#number of events
+/run/beamOn 100000
+
+
