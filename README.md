@@ -4,6 +4,8 @@
 
 This Geant4 simulation project, developed at LAPP, is designed to study low-energy backgrounds in underground liquid argon detectors. A 10 kton DUNE-like module is simulated for this purpose.
 
+![Alt text](images/10kton_LAr_module.png)
+
 ---
 
 ## Getting Started
