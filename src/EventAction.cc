@@ -8,6 +8,7 @@
 #include "G4RunManager.hh"
 #include <vector>
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Constructor
 EventAction::EventAction(DetectorConstruction* det, RunAction* runAction)
     : G4UserEventAction(),
@@ -19,9 +20,11 @@ EventAction::EventAction(DetectorConstruction* det, RunAction* runAction)
       vertex(0., 0., 0.),
       primPDG(-999) {}
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Destructor
 EventAction::~EventAction() {}
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Begin of Event Action
 void EventAction::BeginOfEventAction(const G4Event* myEvent) {
     eventNumber = myEvent->GetEventID();
@@ -51,16 +54,19 @@ void EventAction::BeginOfEventAction(const G4Event* myEvent) {
     }
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Set Time Capture
 void EventAction::SetTimeCapture(G4double t_capture) {
     timeCapture = t_capture;
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Set Time Decay
 void EventAction::SetTimeDecay(G4double t_decay) {
     timeDecay = t_decay;
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Set Vertex
 void EventAction::SetVertex(G4ThreeVector v_vertex) {
     vertex = v_vertex;
@@ -68,6 +74,7 @@ void EventAction::SetVertex(G4ThreeVector v_vertex) {
     fRunAction->SetVertexOrigin(vertex_3d);
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add Energy Deposition Info
 void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE) {
     if (depE > 1.0 && std::abs(primPDG) != 13) { // Threshold and PDG check
@@ -82,6 +89,7 @@ void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, 
     }
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add Secondary Info
 void EventAction::AddInfoSecondaries(G4String creator, G4int atNumber, G4int atMass, G4int pdgCode,
                                      G4double energy, G4double xn, G4double yn, G4double zn, G4double tn) {
@@ -99,6 +107,7 @@ void EventAction::AddInfoSecondaries(G4String creator, G4int atNumber, G4int atM
     analysisManager->AddNtupleRow(4);
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add Gamma Capture Info
 void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector) {
     fRunAction->FillVectorGammas(gamma_vector);
@@ -109,6 +118,7 @@ void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector) {
     analysisManager->AddNtupleRow(2);
 }
 
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // End of Event Action
 void EventAction::EndOfEventAction(const G4Event* myEvent) {
     G4int nVertices = myEvent->GetNumberOfPrimaryVertex();
