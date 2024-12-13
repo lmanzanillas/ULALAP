@@ -1,24 +1,17 @@
 #include "G4RunManager.hh"
+#include "G4UIExecutive.hh"
 #include "G4UImanager.hh"
-#include "G4SteppingVerbose.hh"
+#include "G4VisExecutive.hh"
 #include "Randomize.hh"
-
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
-
-#include "G4MTRunManager.hh"
-
+#include "G4SystemOfUnits.hh"
+#include "G4RandomTools.hh"
 #include "DetectorConstruction.hh"
-#include "PhysicsList.hh"
 #include "ActionInitialization.hh"
+#include <ctime>
+#include <cstdlib>
 
-#include "G4VisExecutive.hh"
-#include "G4UIExecutive.hh"
-
-#include "G4ParticleHPManager.hh"
-#include "unistd.h"
-#include "time.h"
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 namespace {
   void PrintUsage() {
     G4cerr << " Usage: " << G4endl;
@@ -29,116 +22,87 @@ namespace {
   }
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+int main(int argc, char** argv) {
+    G4cout << G4endl
+           << "=================================================================" << G4endl
+           << "                                                                 " << G4endl
+           << "   #       #   #            ###   #            ###    #######    " << G4endl
+           << "   #       #   #            # #   #            # #    #      #   " << G4endl
+           << "   #       #   #           #  #   #           #  #    #      #   " << G4endl
+           << "   #       #   #          #####   #          #####    #######    " << G4endl
+           << "   #       #   #         #    #   #         #    #    #          " << G4endl
+           << "   #       #   #        #     #   #        #     #    #          " << G4endl
+           << "    #######    ####### #      #   ####### #      #    #          " << G4endl
+           << "                                                                 " << G4endl
+           << "=================================================================" << G4endl
+           << "       Underground LAr detectors at LAPP                         " << G4endl
+           << "                      Geant4 simplified                          " << G4endl
+           << "=================================================================" << G4endl
+           << G4endl;
 
-int main(int argc,char** argv)
-{
-    G4cout << " " << G4endl
-    << "================================================================="<< G4endl
-    << "                                                                 "<< G4endl
-    << "   #       #   #            ###   #            ###    #######    "<< G4endl
-    << "   #       #   #            # #   #            # #    #      #   "<< G4endl
-    << "   #       #   #           #  #   #           #  #    #      #   "<< G4endl
-    << "   #       #   #          #####   #          #####    #######    "<< G4endl
-    << "   #       #   #         #    #   #         #    #    #          "<< G4endl
-    << "   #       #   #        #     #   #        #     #    #          "<< G4endl
-    << "    #######    ####### #      #   ####### #      #    #          "<< G4endl
-    << "                                                                 "<< G4endl
-    << "================================================================="<< G4endl
-    << "       Underground LAr detectors at LAPP                         "<< G4endl
-    << "                      Geant4 simplified                          "<< G4endl
-    << "================================================================="<< G4endl
-    << G4endl << G4endl;
-  // Evaluate arguments
-  //
-  G4UIExecutive* ui = nullptr;
-  if (argc == 1) ui = new G4UIExecutive(argc,argv);
+    // Evaluate arguments
+    G4UIExecutive* ui = nullptr;
+    if (argc == 1) ui = new G4UIExecutive(argc, argv);
 
+    G4String macro;
+    G4String session;
+    G4long myseed = time(nullptr);
 
-  G4String macro;
-  G4String session;
-
-  G4cout<<"seed initialized "<<G4endl;
-  //G4long myseed = 345354;
-  G4long myseed = time((time_t *)NULL);
-  for ( G4int i=1; i<argc; i=i+2 ) {
-     if      ( G4String(argv[i]) == "-m" ) macro   = argv[i+1];
-     else if ( G4String(argv[i]) == "-u" ) session = argv[i+1];
-     else if ( G4String(argv[i]) == "-r" ) myseed  = atoi(argv[i+1]);
-     else {
-     	PrintUsage();
-     	return 1;
+    for (G4int i = 1; i < argc; i += 2) {
+        if (G4String(argv[i]) == "-m" && i + 1 < argc) {
+            macro = argv[i + 1];
+        } else if (G4String(argv[i]) == "-u" && i + 1 < argc) {
+            session = argv[i + 1];
+        } else if (G4String(argv[i]) == "-r" && i + 1 < argc) {
+            myseed = std::atoi(argv[i + 1]);
+        } else {
+            PrintUsage();
+            return 1;
+        }
     }
-  }
 
-  // Choose the Random engine
-  //
-  G4Random::setTheEngine(new CLHEP::RanecuEngine);
+    // Choose the Random engine
+    G4Random::setTheEngine(new CLHEP::RanecuEngine);
 
-  // Construct the default run manager
-  //
-  G4RunManager * runManager = new G4RunManager;
+    // Construct the default run manager
+    auto* runManager = new G4RunManager;
 
-  // Seed the random number generator manually
-  G4Random::setTheSeed(myseed);
+    // Seed the random number generator manually
+    G4Random::setTheSeed(myseed);
 
-  // Initialize G4 kernel
-  //
+    // Detector construction
+    auto* det = new DetectorConstruction;
+    runManager->SetUserInitialization(det);
 
-  // Set mandatory initialization classes
-  //
-  G4cout<<"constructing detector "<<G4endl;
-  // Detector construction
-  DetectorConstruction* det = new DetectorConstruction;
-  runManager->SetUserInitialization(det);
+    // Physics list
+    G4PhysListFactory factory;
+    G4VModularPhysicsList* physList = nullptr;
+    G4String physListName = "FTFP_BERT_HP";
+    physList = factory.GetReferencePhysList(physListName);
+    runManager->SetUserInitialization(physList);
 
-  
-  // Physics list
-  // Physics list factory
-  G4PhysListFactory factory;
-  G4VModularPhysicsList* physList = nullptr;
-  // Reference PhysicsList via its name
-  //G4String physListName = "Shielding";
-  G4String physListName = "FTFP_BERT_HP";
-  //G4String physListName = "QGSP_BIC_HP_EMZ";
-  physList = factory.GetReferencePhysList(physListName);
-  //physList->RegisterPhysics( new G4RadioactiveDecayPhysics );
-  runManager->SetUserInitialization(physList);
-  
-  //runManager-> SetUserInitialization(new PhysicsList());
+    // User action initialization
+    runManager->SetUserInitialization(new ActionInitialization(det));
+    runManager->Initialize();
 
-  //test, next line
-  //G4ParticleHPManager::GetInstance()->SetDoNotAdjustFinalState( true );
-  // User action initialization
-  runManager->SetUserInitialization(new ActionInitialization(det));
-  runManager->Initialize();
+    // Visualization manager
+    G4VisManager* visManager = nullptr;
+    G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
+    if (ui) {
+        visManager = new G4VisExecutive;
+        visManager->Initialize();
+        UImanager->ApplyCommand("/control/execute vis.mac");
+        ui->SessionStart();
+        delete ui;
+    } else {
+        G4String command = "/control/execute ";
+        UImanager->ApplyCommand(command + macro);
+    }
 
-  //initialize visualization
-  G4VisManager* visManager = nullptr;
+    // Job termination
+    delete visManager;
+    delete runManager;
 
-  //get the pointer to the User Interface manager 
-  G4UImanager* UImanager = G4UImanager::GetUIpointer();
-
-  if (ui)  {
-   //interactive mode
-   visManager = new G4VisExecutive;
-   visManager->Initialize();
-   UImanager->ApplyCommand("/control/execute vis.mac");
-   ui->SessionStart();
-   delete ui;
-  } else  {
-   //batch mode  
-   G4String command = "/control/execute ";
-   UImanager->ApplyCommand(command+macro);
-  }
-
-  //job termination
-  delete visManager;
-  delete runManager;
-
-
-  return 0;
+    return 0;
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
