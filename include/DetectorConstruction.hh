@@ -141,6 +141,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double cryostatThicknessOuterSteelSupport;
     G4double zPositionSample;
     G4double n_captureLayerThickness;
+    G4double halfSourceContainerThickness;
 
 
     G4double fSiliconPlate_h;
@@ -159,6 +160,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialFR4;
     G4Material* materialB4C;
     G4Material* materialAcrylic;
+    G4Material* materialTitanium;
     G4String fSetupName;
     G4Box* fWorldBox;
     G4Box* fd2DetectorBox;

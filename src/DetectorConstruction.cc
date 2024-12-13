@@ -284,6 +284,7 @@ void DetectorConstruction::DefineMaterials(){
   materialAcrylic = G4Material::GetMaterial("Acrylic");
   materialAlCryostat = G4Material::GetMaterial("Aluminium_6061");
   materialRock = G4Material::GetMaterial("G4_CONCRETE");
+  materialTitanium = G4Material::GetMaterial("titanium");
 
   G4cout<<" materials imported succesfully "<<G4endl;
 
@@ -536,6 +537,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4LogicalVolume* fLogicFCShortSlim = new G4LogicalVolume(fSolidFCShortSlim,materialAlCryostat,"FieldCageSlim");
 
 
+  //source holder for Bi source
+  G4double innerRadiusSourceContainer = 0.*mm;
+  G4double externalRadiusSourceContainer = 5.*mm;
+  halfSourceContainerThickness = 5.3*um;
+  G4Tubs* SourceContainerDisk = new G4Tubs("sourceContainer",innerRadiusSourceContainer,externalRadiusSourceContainer,halfSourceContainerThickness,0.,360.*deg);
+  G4LogicalVolume* logicSourceContainer = new G4LogicalVolume(SourceContainerDisk,materialTitanium,"sourceContainer",0,0,0);
+
   G4RotationMatrix* rotationMatrixSteelSupportsShortSides = new G4RotationMatrix();
   rotationMatrixSteelSupportsShortSides->rotateY(90.*deg);
 
@@ -615,6 +623,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4int nFCbars = 110;
 
   G4double pos_x, pos_y, pos_z;
+
+  G4RotationMatrix* rotationMatrixSourceContainer = new G4RotationMatrix(0,0,0);
+  rotationMatrixSourceContainer->rotateX(90*deg);
   //  ============================================================= Place volumes =============================================================
   
   // Place main detector always at center of world volume
@@ -787,6 +798,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
+	 //Bi source container
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+                        G4ThreeVector(0,15.0*cm,0),
+                        logicSourceContainer,
+                        "sourceContainer",
+                        fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,
                 G4ThreeVector(0,halfDetectorWidthActiveAr + 10.*mm,0),
@@ -1172,6 +1189,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
+	 //Bi source container
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+                        G4ThreeVector(0,15.0*cm,0),
+                        logicSourceContainer,
+                        "sourceContainer",
+                        fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,
                 G4ThreeVector(0,halfDetectorWidthActiveAr + 10.*mm,0),
@@ -1555,6 +1578,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
+	 //Bi source container
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+                        G4ThreeVector(0,15.0*cm,0),
+                        logicSourceContainer,
+                        "sourceContainer",
+                        fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,
                 G4ThreeVector(0,halfDetectorWidthActiveAr + 10.*mm,0),

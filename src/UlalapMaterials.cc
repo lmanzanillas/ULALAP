@@ -666,7 +666,12 @@ void UlalapMaterials::Construct()
     materialTitaniumGrade2->AddElement(O,0.0025);  
     materialTitaniumGrade2->AddElement(H,0.0015);  
     materialTitaniumGrade2->AddElement(C,0.0008);  
-    materialTitaniumGrade2->AddElement(N,0.0003);  
+    materialTitaniumGrade2->AddElement(N,0.0003); 
+
+    //Titanium foil for Bi source
+    G4Material* materialTitanium = new G4Material("titanium", 4.54*g/cm3, 2);
+    materialTitanium->AddElement(Ti,0.99);
+    materialTitanium->AddElement(O,0.01); 
 
 
 }
