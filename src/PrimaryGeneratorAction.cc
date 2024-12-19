@@ -46,10 +46,10 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	BoxXYZ = zero;
 	direction = G4ParticleMomentum(1., 0., 0.);
 	direction_input = G4ParticleMomentum(1., 0., 0.);
-	Radius = 0.1*m;
+	Radius = 5.0*mm;
 	SourcePosType = "Volume";
         Shape = "Point";
-        HalfZ = 0.;
+        HalfZ = 0.00001;
 	MinTheta = 0.;
 	MaxTheta = pi;
 	MinPhi = 0.;
@@ -120,14 +120,14 @@ void PrimaryGeneratorAction::GeneratePointsInVolume()
 
   else if(Shape == "Cylinder") {
     x = Radius*2.;
-    y = Radius*2.;
-    while(((x*x)+(y*y)) > (Radius*Radius)) {
+    z = Radius*2.;
+    while(((x*x)+(z*z)) > (Radius*Radius)) {
       x = G4UniformRand();
       y = G4UniformRand();
       z = G4UniformRand();
       x = (x*2.*Radius) - Radius;
-      y = (y*2.*Radius) - Radius;
-      z = (z*2.*HalfZ) - HalfZ;
+      y = (y*2.*HalfZ) - HalfZ;
+      z = (z*2.*Radius) - Radius;
     }
   }
 

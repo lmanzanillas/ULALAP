@@ -539,7 +539,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   //source holder for Bi source
   G4double innerRadiusSourceContainer = 0.*mm;
-  G4double externalRadiusSourceContainer = 5.*mm;
+  G4double externalRadiusSourceContainer = 20.*mm;
   halfSourceContainerThickness = 5.3*um;
   G4Tubs* SourceContainerDisk = new G4Tubs("sourceContainer",innerRadiusSourceContainer,externalRadiusSourceContainer,halfSourceContainerThickness,0.,360.*deg);
   G4LogicalVolume* logicSourceContainer = new G4LogicalVolume(SourceContainerDisk,materialTitanium,"sourceContainer",0,0,0);
