@@ -671,7 +671,13 @@ void UlalapMaterials::Construct()
     //Titanium foil for Bi source
     G4Material* materialTitanium = new G4Material("titanium", 4.54*g/cm3, 2);
     materialTitanium->AddElement(Ti,0.99);
-    materialTitanium->AddElement(O,0.01); 
+    materialTitanium->AddElement(O,0.01);
 
+    // Define the PET material using the elements and their atomic ratios
+    G4Material* PET = new G4Material("PET", 1.38*g/cm3, 3); // Density: 1.38 g/cm³
+    // Set the composition of PET (C10H8O4)
+    PET->AddElement(C, 10);
+    PET->AddElement(H, 8);
+    PET->AddElement(O, 4); 
 
 }
