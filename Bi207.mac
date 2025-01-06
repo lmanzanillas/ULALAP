@@ -1,4 +1,3 @@
-
 /ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
 /ULALAP/det/setSetupName file_1
 /ULALAP/det/setDetectorType 0
@@ -14,15 +13,13 @@
 /ULALAP/gun/sourceDirectionType 1
 #direction of the source
 #position of the center of the source in cm for x y z
-/ULALAP/gun/position 10 10 10
+/ULALAP/gun/position 0 15 0
 #/ULALAP/gun/sourceEnergy 0.023 eV
 #choise of the source: 3 for Bi207
 /ULALAP/gun/sourceType 3
 #geometry of the source: Sphere Cone Box point
 /ULALAP/gun/shape Box
 #size of the box in cm for x y z
-/ULALAP/gun/BoxXYZ 0.1 0.1 0.1
+/ULALAP/gun/BoxXYZ 0.4 0.0001 0.4
 #number of events
-/run/beamOn 100000
-
-
+/run/beamOn 200000
