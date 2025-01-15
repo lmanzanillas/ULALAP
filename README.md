@@ -131,6 +131,8 @@ For large-scale simulations, use a macro file (e.g., `test.mac`). Example:
 
 ### Modifying `test.mac`
 
+Several .mac files are provided and can be modified according to your case study
+
 You can modify settings such as energy, particle type, and source geometry in the macro file. Example content:
 
 ```bash
