@@ -343,6 +343,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(direction);
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
+		case 12:
+			fParticleGun->SetParticleDefinition(particleTable->FindParticle("alpha"));
+			fParticleGun->SetParticleEnergy(fSourceEnergy);
+			fParticleGun->SetParticlePosition(position);
+			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
+ 			break;
 
 	}
 }
