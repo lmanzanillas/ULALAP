@@ -381,7 +381,7 @@ void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 
 void PrimaryGeneratorAction::SetSourceType(G4int newType)
 {
-	if (newType <= 11 && newType >= 0)
+	if (newType <= 12 && newType >= 0)
 	{
 		particleType = newType;
 	}
