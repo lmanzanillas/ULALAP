@@ -157,6 +157,7 @@ Uncomment and adjust the lines as needed to suit your simulation requirements.
 
 ## Additional Notes
 
+- A Julia package has been created to read and analyze the geant4 output of this package: [DUNEatLapp.jl](https://github.com/MaelMartin17/DUNEatLapp.jl) 
 - Ensure you are familiar with Geant4 macros and environment setup before running complex simulations.
 - Check the output data format and directory settings to match your analysis pipeline.
 - For support or contributions, refer to the repository documentation or contact the developers.
