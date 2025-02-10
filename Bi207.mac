@@ -1,5 +1,6 @@
 
-/ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
+#/ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
+/ULALAP/det/setOutputDirectory ./
 /ULALAP/det/setSetupName file_1
 /ULALAP/det/setDetectorType 0
 /ULALAP/det/setShieldingMaterialWaffle G4_AIR
