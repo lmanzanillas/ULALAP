@@ -1,3 +1,4 @@
+
 /ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
 /ULALAP/det/setSetupName file_1
 /ULALAP/det/setDetectorType 0
@@ -18,8 +19,12 @@
 #choise of the source: 3 for Bi207
 /ULALAP/gun/sourceType 3
 #geometry of the source: Sphere Cone Box point
-/ULALAP/gun/shape Box
+/ULALAP/gun/shape Cylinder
 #size of the box in cm for x y z
-/ULALAP/gun/BoxXYZ 0.4 0.0001 0.4
+#/ULALAP/gun/BoxXYZ 0.4 0.0001 0.4
+/ULALAP/gun/sourceDiameter 5.0 mm
+/ULALAP/gun/halfz 0.0001 mm 
 #number of events
 /run/beamOn 200000
+
+
