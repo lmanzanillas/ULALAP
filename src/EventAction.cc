@@ -77,7 +77,7 @@ void EventAction::SetVertex(G4ThreeVector v_vertex) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add Energy Deposition Info
 void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE) {
-    if (depE > 1.0 && std::abs(primPDG) != 13) { // Threshold and PDG check
+    if (depE > 1.0 ) { // Threshold and PDG check
         auto analysisManager = G4AnalysisManager::Instance();
         analysisManager->FillNtupleIColumn(1, 0, eventNumber);
         analysisManager->FillNtupleDColumn(1, 1, xF);

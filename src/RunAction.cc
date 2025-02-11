@@ -48,7 +48,7 @@ std::string datetime() {
 G4String RunAction::GetFolderName() {
     static const std::map<int, G4String> sourceMap = {
         {0, "gamma"}, {1, "Fe55"}, {2, "Cs137"}, {3, "Bi207"},
-        {4, "Sr90"}, {5, "Am241"}, {6, "electron"}, {7, "optical_photon"},
+        {4, "Sr90"}, {5, "Am241"}, {6, "electron"}, {7, "Muon_mono_E"},
         {8, "neutron"}, {9, "GammasArNeutronCapture"}, {10, "Muon"}, {11, "neutron_spectrum"}, {12, "alpha"}
     };
 

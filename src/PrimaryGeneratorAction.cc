@@ -308,7 +308,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 7:
-			fParticleGun->SetParticleDefinition(particleTable->FindParticle("opticalphoton"));
+			//monoenergetic muons
+			fParticleGun->SetParticleDefinition(particleTable->FindParticle("mu-"));
 			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(direction);
