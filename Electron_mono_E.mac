@@ -1,0 +1,29 @@
+
+#/ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/ulalap_output/
+/ULALAP/det/setOutputDirectory ./
+/ULALAP/det/setSetupName file_1
+/ULALAP/det/setDetectorType 0
+/ULALAP/det/setShieldingMaterialWaffle G4_AIR
+/ULALAP/det/setShieldingMaterial G4_AIR
+#select output format, options are: csv root hdf5
+#ULALAP/det/setDataType csv
+/process/had/particle_hp/use_photo_evaporation true
+/process/had/particle_hp/do_not_adjust_final_state false
+/process/had/particle_hp/skip_missing_isotopes true
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+#direction type, 0,direction given by vector or 1 if you want isotropic
+/ULALAP/gun/sourceDirectionType 0
+#direction of the source
+/ULALAP/gun/direction -1 0 0
+/ULALAP/gun/shape Point
+#position of the center of the source in cm for x y z
+/ULALAP/gun/position 100 0 0
+#choise of the source: 6 for mono energetic electrons of given energy
+/ULALAP/gun/sourceType 6
+/ULALAP/gun/sourceEnergy 500 MeV
+#geometry of the source: Sphere Cone Box point
+#size of the box in cm for x y z
+#number of events
+/run/beamOn 20
+
+
