@@ -33,6 +33,25 @@ To set up the required environment in the MUST cluster:
    ```bash
    source setup_g4.sh
    ```
+### Setting Up in CC IN2P3
+
+To set up the required environment in the CC IN2P3 cluster:
+
+1. Create a `setup_g4.sh` file with the following content:
+
+   ```bash
+   module add Modelisation/geant4/11.2.1
+   module add Production/cmake/3.29.2
+   module load Analysis/root/6.30.06
+   module add Compilers/gcc/13.2.0
+   ```
+
+2. At the start of each session, run:
+
+   ```bash
+   source setup_g4.sh
+   ```
+
 
 ### Setting Up in LXPLUS
 
