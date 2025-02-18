@@ -6,6 +6,7 @@
 /process/had/particle_hp/use_photo_evaporation true
 /process/had/particle_hp/do_not_adjust_final_state false
 /process/had/particle_hp/skip_missing_isotopes true
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 #direction type, if 1 isotropic
 /ULALAP/gun/sourceDirectionType 0
 #direction of the source

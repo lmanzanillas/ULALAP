@@ -163,6 +163,7 @@ You can modify settings such as energy, particle type, and source geometry in th
 /process/had/particle_hp/use_photo_evaporation true
 /process/had/particle_hp/do_not_adjust_final_state true
 /process/had/particle_hp/skip_missing_isotopes true
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
 
 # Source configuration
 /ULALAP/gun/sourceType 9
