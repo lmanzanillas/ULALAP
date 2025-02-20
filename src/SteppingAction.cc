@@ -135,7 +135,8 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
             thePrePoint->GetPosition().y() / cm,
             thePrePoint->GetPosition().z() / cm,
             edepStep,
-            time_dep
+            time_dep,
+	    pdgCode
         );
     }
 
