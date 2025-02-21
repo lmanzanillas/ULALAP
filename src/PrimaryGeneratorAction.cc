@@ -59,6 +59,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
         size_source_z = 10.;
 	particleType = 8;
 	fSourceDirectionType = 1;
+	ionZ = 83;
+	ionA = 207;
 	fSourceEnergy = 1*eV;
 	fPhotonWavelength = 0;
 	fParticleName = "void";
@@ -241,10 +243,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
 		case 1:
-			//Fe-55 source
-			Z = 26;
-			A = 55;
-			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
+			//ion source with Z and A passed by command
+			ion = G4IonTable::GetIonTable()->GetIon(ionZ,ionA,excitEnergy);
 			fParticleGun->SetParticleEnergy(0.*eV);
 			fParticleGun->SetParticlePosition(position);
 			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
@@ -416,6 +416,17 @@ void PrimaryGeneratorAction::SetSourceGeometry(G4int newType)
 		G4cerr<<"Possible values are 0 for square and 1 for circunference"<<G4endl;
 		G4cerr<<"Setting the default value to square "<<G4endl;
   		fSourceGeometry = 0;
+	}
+}
+void PrimaryGeneratorAction::SetSourceIon_ZA(G4int newZ, G4int newA)
+{
+	if(newZ > 0  &&  newZ < 118){
+		ionZ = newZ;
+		ionA = newA;
+	}
+	else{
+		G4cerr<<"Possible values are in the range 1 -118 for Z"<<G4endl;
+		G4cerr<<"Setting the default value to 83 (Bi) "<<G4endl;
 	}
 }
 void PrimaryGeneratorAction::SetSourceEnergy(G4double newEnergy)

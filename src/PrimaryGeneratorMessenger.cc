@@ -9,6 +9,8 @@
 #include "G4UIcmdWith3Vector.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4SystemOfUnits.hh"
+#include "G4Tokenizer.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun)
@@ -18,6 +20,14 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
 
   fGunDir = new G4UIdirectory("/ULALAP/gun/");
   fGunDir->SetGuidance("PrimaryGenerator control");
+
+  fSourceIon_ZA = new G4UIcommand("/ULALAP/gun/sourceIon_ZA", this);
+  fSourceIon_ZA->SetGuidance("Choose the type of ion (Z A)");
+  parZ = new G4UIparameter("parZ", 'i', false);
+  fSourceIon_ZA->SetParameter(parZ);
+  parA = new G4UIparameter("parA", 'i', false);
+  fSourceIon_ZA->SetParameter(parA);
+
 
   fSourceType = new G4UIcmdWithAnInteger("/ULALAP/gun/sourceType",this);
   fSourceType->SetGuidance("Choose the type of source");
@@ -97,6 +107,7 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
 
 PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
 {
+  delete fSourceIon_ZA;
   delete fSourceType;
   delete fSourceDirectionType;
   delete fSourceGeometry;
@@ -144,6 +155,16 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
   }
   if(command == fSourceDirection) {
   	fAction->SetParticleDirection(fSourceDirection->GetNew3VectorValue(newValue));
+  }
+  if(command == fSourceIon_ZA) {
+	// Tokenize the input string to extract Z and A values
+    	G4int Z, A;
+    	std::istringstream iss(newValue);
+    	iss >> Z >> A;
+
+    	// Call the corresponding function in fAction
+    	fAction->SetSourceIon_ZA(Z, A);
+
   }
 }
 

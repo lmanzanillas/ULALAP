@@ -37,6 +37,7 @@ public:
 	PrimaryGeneratorAction3*  GetAction3() { return fAction3; };
 
 	void  SetSourceType(G4int newType);
+	void  SetSourceIon_ZA(G4int newZ, G4int newA);
 	void  SetSourceDirectionType(G4int newType);
 	void  SetSourceGeometry(G4int newType);
 	void  SetSourceEnergy(G4double newEnergy);
@@ -53,6 +54,8 @@ public:
 	void  SetParticleDirection(G4ThreeVector d_vector);
 
 	G4int GetParticleType(void){return particleType;};
+	G4int GetIonZ(void){return ionZ;};
+	G4int GetIonA(void){return ionA;};
 	G4int GetSourceGeometry(void){return fSourceGeometry;};
 	G4double GetSourceEnergy(void){return fSourceEnergy;};
 	G4String GetParticleName(void){return fParticleName;};
@@ -78,6 +81,8 @@ private:
 	G4int           particleType;
 	G4int           fSourceDirectionType;
 	G4int           fSourceGeometry;
+	G4int           ionZ;
+	G4int           ionA;
 	G4double	fSourceEnergy;
 	G4ParticleMomentum     direction;
 	G4ParticleMomentum     direction_input;
