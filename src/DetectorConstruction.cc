@@ -92,6 +92,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterSteelSupport = 1.00*m;
   shieldingThickness = 15.0*cm;
   n_captureLayerThickness = 0.5*cm;
+  fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
   fDetectorType = 1;
   fDetectorName = "FD2";
   fVolName = "World";
@@ -162,7 +163,11 @@ void DetectorConstruction::SetLArDetectorWidth(G4double value){
 
 void DetectorConstruction::SetshieldingThickness(G4double value){
   shieldingThickness = (value/1.)*mm;
-  //UpdateGeometry();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+
+void DetectorConstruction::SetBiSourcePosition(G4ThreeVector value){
+  fBiSourcePosition = value;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
@@ -800,7 +805,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
 	 new G4PVPlacement(rotationMatrixSourceContainer,
-                        G4ThreeVector(0,15.0*cm,0),
+			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
@@ -1191,7 +1196,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
 	 new G4PVPlacement(rotationMatrixSourceContainer,
-                        G4ThreeVector(0,15.0*cm,0),
+			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
@@ -1580,7 +1585,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
 	 new G4PVPlacement(rotationMatrixSourceContainer,
-                        G4ThreeVector(0,15.0*cm,0),
+			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);

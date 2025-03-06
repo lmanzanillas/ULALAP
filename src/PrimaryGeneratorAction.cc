@@ -371,6 +371,9 @@ void PrimaryGeneratorAction::SetSourceShape(G4String newValue){
 }
 void PrimaryGeneratorAction::SetSourcePosition(G4ThreeVector newPosition){
 	 CentreCoords = newPosition;
+	 if (particleType == 3){
+		 fDetector->SetBiSourcePosition(newPosition);
+	 }
 }
 
 void PrimaryGeneratorAction::SetParticleDirection(G4ThreeVector new_direction){

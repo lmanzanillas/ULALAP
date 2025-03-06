@@ -75,7 +75,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetWaffleThickness(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
     void SetDistanceCollimatorDetector(G4double);
-    void SetDistanceSampleWindow(G4double);
+    void SetBiSourcePosition(G4ThreeVector);
     void SetNumberOfTargetSamples(G4int);
     void SetVolName(G4ThreeVector);
     void SetDetectorName(G4String);
@@ -88,8 +88,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     //const G4VPhysicalVolume* GetWorld() {return physicPenCryostatBox;};
     const G4VPhysicalVolume* GetWorld() {return physicWorldBox;};
     G4int GetDetectorType(){return fDetectorType;};
-    G4double GetDetectorCollimatorY(){return fDetectorCollimatorY;};
-    G4double GetSourceContainerY(){return fSourceContainerY;};
+    G4double GetBiSourceCapsuleX(){return fBiSourcePosition.x();};
+    G4double GetBiSourceCapsuleY(){return fBiSourcePosition.y();};
+    G4double GetBiSourceCapsuleZ(){return fBiSourcePosition.z();};
     G4String GetDetectorName(){return fDetectorName;};
     G4String GetDetectorOutputDataDirectory(){return data_output_directory;};
     G4String GetVolName(){return fVolName;};
@@ -201,9 +202,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialPolyethylene;
 
     G4int fDetectorType;
-    G4double fDetectorCollimatorX;
-    G4double fDetectorCollimatorY;
-    G4double fSourceContainerY;
+    G4ThreeVector fBiSourcePosition;
     G4String fDetectorName;
     G4String fVolName;
     G4String data_output_directory;
