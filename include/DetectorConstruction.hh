@@ -74,9 +74,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetshieldingThickness(G4double);
     void SetWaffleThickness(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
-    void SetDistanceCollimatorDetector(G4double);
     void SetBiSourcePosition(G4ThreeVector);
-    void SetNumberOfTargetSamples(G4int);
     void SetVolName(G4ThreeVector);
     void SetDetectorName(G4String);
     void SetSetupName(G4String);
@@ -102,13 +100,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double GetGeDetectorLength()  {return halfDetectorLength*2.0;};
     G4double GetGeDetectorThickness()  {return halfDetectorThickness*2.0;};
     G4double GetGeDetectorWidth()  {return halfDetectorWidth*2.0;};
-    G4double GetSampleLength()  {return cryostatThicknessPrimMembraneSS*2.0;};
-    G4double GetSampleThickness()  {return cryostatThicknessSecondaryBarrierAl*2.0;};
-    G4double GetSampleWidth()  {return cryostatThicknessVaporBarrierSS*2.0;};
-    G4double GetBeWindowRadius()  {return cryostatThicknessInnerPU;};
     G4double GetSamplePositionZ()  {return zPositionSample;};
-    G4double GetDistanceCollimatorDetector()  {return cryostatThicknessInnerPlywood;};
-    G4double GetDistanceSampleWindow()  {return cryostatThicknessOuterPlywood;};
     G4String GetSetupName(){return fSetupName;};
     G4String GetDataType(){return fDataType;};
     G4Material*        GetWorldMaterial()   {return fWorldMaterial;};
@@ -145,8 +137,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double halfSourceContainerThickness;
 
 
-    G4double fSiliconPlate_h;
-    G4double fHolderWidth;
 
     G4Material* fWorldMaterial;
     G4Material* fd2Material;
@@ -186,7 +176,6 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicCryoSSVaporBarrier;
     G4LogicalVolume* fd2LogicVolume;
     G4LogicalVolume* logicCryostat;
-    G4LogicalVolume* logicBeWindow;
     G4LogicalVolume* logicKaptonWindow;
     G4LogicalVolume* logicMetalWindow;
     G4LogicalVolume* logicMetalWindowBack;

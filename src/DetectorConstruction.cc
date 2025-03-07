@@ -1805,7 +1805,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //// Definition of simulation steps.
   //logicWorldBox->SetUserLimits(new G4UserLimits(0.1*mm));
   //fd2LogicVolume->SetUserLimits(new G4UserLimits(1.0*um));
-  //logicBeWindow->SetUserLimits(new G4UserLimits(50.0*um));
   //logicCryostat->SetUserLimits(new G4UserLimits(5.0*nm));
 
       
