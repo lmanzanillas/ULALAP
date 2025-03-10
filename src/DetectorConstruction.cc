@@ -93,7 +93,7 @@ fd2LogicVolume(nullptr)
   shieldingThickness = 15.0*cm;
   n_captureLayerThickness = 0.5*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
-  fDetectorType = 1;
+  fDetectorType = 0;
   fDetectorName = "FD2";
   fVolName = "World";
   materialConstruction = new UlalapMaterials;
@@ -424,6 +424,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
   logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
+
+  //Box to draw for illustration
+  G4Box* shieldingBoxPlot = new G4Box("b_shielding_plot", box_shielding_outer_x, box_shielding_outer_y, 40.*cm);
+  G4LogicalVolume* logicshieldingBoxPlot = new G4LogicalVolume(shieldingBoxPlot, fShieldingMaterial, "Shielding", 0, 0, 0);
   
   G4Box* shieldingBoxWaffle = new G4Box("b_shielding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_z);
   logicshieldingBoxWaffle = new G4LogicalVolume(shieldingBoxWaffle, materialShieldingWaffle, "ShieldingWaffle", 0, 0, 0);
@@ -596,19 +600,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   vis_arapuca->SetVisibility(true);
   fLogicArapuca->SetVisAttributes(vis_arapuca);
 
+  //Shielding on waffle
+  G4VisAttributes* vis_waffle = new G4VisAttributes(lgreen);
+  vis_waffle->SetForceSolid(true);
+  vis_waffle->SetVisibility(true);
+  vis_waffle->SetForceAuxEdgeVisible(true);
+  logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
+  logicshieldingBoxPlot->SetVisAttributes(vis_waffle);
+
   G4VisAttributes* vis_anode = new G4VisAttributes(orange);
   vis_anode->SetForceSolid(true);
   vis_anode->SetVisibility(true);
   fLogicAnode->SetVisAttributes(vis_anode);
 
   G4VisAttributes* vis_cryo_SS_support = new G4VisAttributes(red);
-  //vis_cryo_SS_support->SetForceSolid(true);
+  vis_cryo_SS_support->SetForceSolid(true);
   vis_cryo_SS_support->SetVisibility(true);
   //vis_cryo_SS_support->SetForceWireframe(true);
-  //vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
+  vis_cryo_SS_support->SetForceAuxEdgeVisible(true);
   //vis_cryo_SS_support->SetForceLineSegmentsPerCircle (80);
   logicSteelSupport->SetVisAttributes(vis_cryo_SS_support);
-  //logicSteelSupportTop->SetVisAttributes(vis_cryo_SS_support);
+  logicSteelSupportTop->SetVisAttributes(vis_cryo_SS_support);
   logicSteelSupportHorizontal->SetVisAttributes(vis_cryo_SS_support);
    //fLogicFCLongWide->SetVisAttributes(vis_cryo_SS_support);
   // fLogicFCLongSlim->SetVisAttributes(vis_cryo_SS_support);
@@ -660,6 +672,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
+	 //place shielding wall for visualization logicshieldingBoxPlot
+	 //uncommnet if you want to plot thw lateral wall
+	 //Should be always commented for running
+	 /*
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,box_air_cavern_z - 50*cm),
+		logicshieldingBoxPlot,
+		"shielding_plot"+std::to_string(1),
+		logicCavern,false,1,false);
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,-box_air_cavern_z + 50*cm),
+		logicshieldingBoxPlot,
+		"shielding_plot"+std::to_string(1),
+		logicCavern,false,1,false);
+	*/
 	 //place shielding inside cavern  
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
