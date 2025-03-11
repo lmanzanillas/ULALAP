@@ -81,7 +81,7 @@ G4String RunAction::GetFolderName() {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 G4String RunAction::GetFileName() {
     G4String setupName = fDetector->GetSetupName();
-    fFileName = fDetector->GetDetectorName() + "_" + setupName + ".csv";
+    fFileName = fDetector->GetDetectorName() + "_" + setupName + "." + fDetector->GetDataType();
     return fFileName;
 }
 
