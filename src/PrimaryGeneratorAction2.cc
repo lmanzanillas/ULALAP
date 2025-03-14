@@ -64,8 +64,10 @@ PrimaryGeneratorAction2::PrimaryGeneratorAction2(G4ParticleGun* gun)
 void PrimaryGeneratorAction2::GeneratePosition()
 {  
   //To do: read the LAr volume dims and use that as info instead of hard coding.... 
+  //G4double xg = (G4UniformRand() - 0.5)*50.*m;
+  //G4double zg = (G4UniformRand() - 0.5)*10.*m;
   G4double xg = (G4UniformRand() - 0.5)*50.*m;
-  G4double zg = (G4UniformRand() - 0.5)*10.*m;
+  G4double zg = 8.*m + (G4UniformRand() - 0.5)*1.*m;//Test what bkg are coming from muon not being detected in detector
   G4double yg = 12.*m;
   position.setX(xg);
   position.setY(yg);
