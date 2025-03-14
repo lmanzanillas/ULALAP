@@ -1,0 +1,10 @@
+/ULALAP/det/setOutputDirectory ./
+/process/had/particle_hp/use_photo_evaporation true
+/process/had/particle_hp/do_not_adjust_final_state true
+/process/had/particle_hp/skip_missing_isotopes true
+/ULALAP/det/setSetupName Muon_job_
+#/ULALAP/gun/sourceDirectionType 1
+/ULALAP/gun/sourceType 10
+#/ULALAP/gun/sourceEnergy 6.0 MeV
+#/ULALAP/gun/position 100 200 30
+/run/beamOn 100
