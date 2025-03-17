@@ -4,6 +4,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 #include "G4ParticleMomentum.hh"
+#include "G4ParticleDefinition.hh"
 #include "globals.hh"
 
 class G4ParticleGun;
@@ -75,6 +76,7 @@ private:
 	G4double size_source_y;
 	G4double size_source_z;
 	G4double Radius;
+	G4ParticleDefinition* fParticleDefinition;
 	G4String fParticleName;
 	PrimaryGeneratorMessenger* fPrimaryMessenger;
 	G4ParticleGun*  fParticleGun;

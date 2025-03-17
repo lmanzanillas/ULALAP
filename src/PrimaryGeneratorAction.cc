@@ -64,6 +64,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fSourceEnergy = 1*eV;
 	fPhotonWavelength = 0;
 	fParticleName = "void";
+	fParticleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu+");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -233,6 +234,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	if(particleType == 11){
 	        fSourceEnergy = fAction3->InverseCumul();
 	}
+	if(particleType == 10){
+	        fSourceEnergy = fAction2->InverseCumul();
+  		fParticleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu+"); 
+  		if ( G4UniformRand() > 0.5798 ){//We know that the ratio mu+/mu- is 1.38, which gives 0.5798 prob of having mu+
+	 		fParticleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu-"); 
+ 		 }
+	}
 
 	switch (particleType) {
 		case 0:
@@ -334,7 +342,11 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			break;
 		case 10:
 			//Muon with E spectrum at DUNE caverns
-			fAction2->GeneratePrimaries(anEvent);
+			fParticleGun->SetParticleDefinition(fParticleDefinition);
+			fParticleGun->SetParticleEnergy(fSourceEnergy);
+			fParticleGun->SetParticlePosition(position);
+			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
     			break;
 		case 11:
 			//Neutrons with E spectrum (see before switch line) corresponding to DUNE caverns
