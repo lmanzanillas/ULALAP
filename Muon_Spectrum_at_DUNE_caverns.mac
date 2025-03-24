@@ -1,10 +1,19 @@
-/ULALAP/det/setOutputDirectory ./
+
+/ULALAP/det/setOutputDirectory /sps/lbno/lmanzani/
 /process/had/particle_hp/use_photo_evaporation true
 /process/had/particle_hp/do_not_adjust_final_state true
 /process/had/particle_hp/skip_missing_isotopes true
-/ULALAP/det/setSetupName Muon_job_
+/ULALAP/det/setSetupName Muon_job_FTFP_BERT_HP_25
 #/ULALAP/gun/sourceDirectionType 1
 /ULALAP/gun/sourceType 10
-#/ULALAP/gun/sourceEnergy 6.0 MeV
-#/ULALAP/gun/position 100 200 30
-/run/beamOn 100
+/ULALAP/gun/sourceDirectionType 0
+/ULALAP/gun/direction 0 -1 0
+#position of the center of the source in cm for x y z
+/ULALAP/gun/position 0 1200 1050
+#geometry of the source: Sphere Cone Box point
+/ULALAP/gun/shape Box
+#size of the box in cm for x y z
+/ULALAP/gun/BoxXYZ 6000 1 600
+
+/run/beamOn 10000
+
