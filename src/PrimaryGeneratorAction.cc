@@ -5,6 +5,7 @@
 #include "PrimaryGeneratorAction1.hh"
 #include "PrimaryGeneratorAction2.hh"
 #include "PrimaryGeneratorAction3.hh"
+#include "PrimaryGeneratorAction4.hh"
 
 #include "G4MTRunManager.hh"
 
@@ -40,6 +41,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fAction2 = new PrimaryGeneratorAction2(fParticleGun);
 	//Generator of neutrons with E spectrum expected at DUNE FD site caverns
 	fAction3 = new PrimaryGeneratorAction3(fParticleGun);
+	//Generator of two Bi sources as in ProtoDUNE-HD or 50L prototype
+	fAction4 = new PrimaryGeneratorAction4(fParticleGun);
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
 	CentreCoords = zero;
@@ -262,15 +265,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			break;
 		case 2:
 			//Cs-137 source
-			Z = 55;
-			A = 137;
-			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
-			fParticleGun->SetParticleEnergy(0.*eV);
-			fParticleGun->SetParticlePosition(position);
-			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
-			fParticleGun->SetParticleDefinition(ion);
-			fParticleGun->SetParticleCharge(ionCharge);
-			fParticleGun->GeneratePrimaryVertex(anEvent);
+			fAction0->GeneratePrimaries(anEvent);
 			break;
 		case 3:
 			//Bi-207 source

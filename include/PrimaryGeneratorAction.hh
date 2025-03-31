@@ -15,6 +15,7 @@ class PrimaryGeneratorAction0;
 class PrimaryGeneratorAction1;
 class PrimaryGeneratorAction2;
 class PrimaryGeneratorAction3;
+class PrimaryGeneratorAction4;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -36,6 +37,7 @@ public:
 	PrimaryGeneratorAction1*  GetAction1() { return fAction1; };
 	PrimaryGeneratorAction2*  GetAction2() { return fAction2; };
 	PrimaryGeneratorAction3*  GetAction3() { return fAction3; };
+	PrimaryGeneratorAction4*  GetAction4() { return fAction4; };
 
 	void  SetSourceType(G4int newType);
 	void  SetSourceIon_ZA(G4int newZ, G4int newA);
@@ -71,6 +73,7 @@ private:
 	PrimaryGeneratorAction1* fAction1 = nullptr;
 	PrimaryGeneratorAction2* fAction2 = nullptr;
 	PrimaryGeneratorAction3* fAction3 = nullptr;
+	PrimaryGeneratorAction4* fAction4 = nullptr;
 
 	G4double size_source_x;
 	G4double size_source_y;
