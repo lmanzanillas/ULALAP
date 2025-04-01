@@ -264,8 +264,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 2:
-			//Cs-137 source
-			fAction0->GeneratePrimaries(anEvent);
+			//Two Bi source
+			fAction4->GeneratePrimaries(anEvent);
 			break;
 		case 3:
 			//Bi-207 source
