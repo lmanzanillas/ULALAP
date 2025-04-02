@@ -81,7 +81,6 @@ G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
 	G4ParticleDefinition* ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
     	G4PrimaryParticle* particleBi207 = new G4PrimaryParticle(ion);
     	particleBi207->SetMomentumDirection(directionIon);
-    	particleBi207->SetKineticEnergy(excitEnergy);
 
         GeneratePosition(pos_bi,0.25);
 
@@ -94,10 +93,10 @@ G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Generate primaries
 void PrimaryGeneratorAction4::GeneratePrimaries(G4Event* anEvent) {
-
-	G4PrimaryVertex* myVertex = GenerateVertex(G4ThreeVector(0,15,0));
+	//The units are taken as mm in the G4ThreeVectors below
+	G4PrimaryVertex* myVertex = GenerateVertex(G4ThreeVector(0,150,0));
         anEvent->AddPrimaryVertex(myVertex);
-        myVertex = GenerateVertex(G4ThreeVector(0,55,10));
+        myVertex = GenerateVertex(G4ThreeVector(0,550,100));
         anEvent->AddPrimaryVertex(myVertex);
 }
 
