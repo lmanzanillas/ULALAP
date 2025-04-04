@@ -74,7 +74,6 @@ void PrimaryGeneratorAction4::GeneratePosition(G4ThreeVector new_pos, G4double R
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Generate primary vertex
 G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
-	G4double ionCharge   = 0.*eplus;
 	G4double excitEnergy = 0.*eV;
 	G4int Z=83, A=207;
     	G4ThreeVector directionIon(0., 0., 0.);
