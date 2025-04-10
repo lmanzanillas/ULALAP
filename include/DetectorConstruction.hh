@@ -75,6 +75,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetWaffleThickness(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
     void SetBiSourcePosition(G4ThreeVector);
+    void SetBiSourcePosition2(G4ThreeVector);
     void SetVolName(G4ThreeVector);
     void SetDetectorName(G4String);
     void SetSetupName(G4String);
@@ -192,6 +193,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4int fDetectorType;
     G4ThreeVector fBiSourcePosition;
+    G4ThreeVector fBiSourcePosition2;
     G4String fDetectorName;
     G4String fVolName;
     G4String data_output_directory;
