@@ -93,6 +93,7 @@ fd2LogicVolume(nullptr)
   shieldingThickness = 15.0*cm;
   n_captureLayerThickness = 0.5*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
+  fBiSourcePosition2 = G4ThreeVector(10.*cm, 45.*cm, 10.*cm);
   fDetectorType = 0;
   fDetectorName = "FD2";
   fVolName = "World";
@@ -165,12 +166,16 @@ void DetectorConstruction::SetshieldingThickness(G4double value){
   shieldingThickness = (value/1.)*mm;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
-
+//Bi sources position
 void DetectorConstruction::SetBiSourcePosition(G4ThreeVector value){
   fBiSourcePosition = value;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
+void DetectorConstruction::SetBiSourcePosition2(G4ThreeVector value){
+  fBiSourcePosition2 = value;
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
 void DetectorConstruction::SetWaffleThickness(G4double value){
   cryostatThicknessOuterSteelSupport = (value/1.)*mm;
   //UpdateGeometry();
@@ -830,11 +835,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		fd2LogicVolume,
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
-	 //Bi source container
+	 //Bi source containers
 	 new G4PVPlacement(rotationMatrixSourceContainer,
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
+                        fd2LogicVolume, false, 0, false);
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+			 fBiSourcePosition2,
+                        logicSourceContainer,
+                        "sourceContainer2",
                         fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,
@@ -1227,6 +1237,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+			 fBiSourcePosition2,
+                        logicSourceContainer,
+                        "sourceContainer2",
+                        fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,
                 G4ThreeVector(0,halfDetectorWidthActiveAr + 10.*mm,0),
@@ -1615,6 +1630,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
+                        fd2LogicVolume, false, 0, false);
+	 new G4PVPlacement(rotationMatrixSourceContainer,
+			 fBiSourcePosition2,
+                        logicSourceContainer,
+                        "sourceContainer2",
                         fd2LogicVolume, false, 0, false);
 	//Anode
 	new G4PVPlacement(0,

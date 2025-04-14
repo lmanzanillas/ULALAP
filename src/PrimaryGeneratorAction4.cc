@@ -93,9 +93,12 @@ G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
 // Generate primaries
 void PrimaryGeneratorAction4::GeneratePrimaries(G4Event* anEvent) {
 	//The units are taken as mm in the G4ThreeVectors below
-	G4PrimaryVertex* myVertex1 = GenerateVertex(G4ThreeVector(0.*cm,-15.*cm,0.*cm));
+	G4ThreeVector posBi1 = G4ThreeVector(0.*cm,15.*cm,0.*cm);
+	G4ThreeVector posBi2 = G4ThreeVector(0.*cm,15.*cm,50.*cm);
+	G4PrimaryVertex* myVertex1 = GenerateVertex(posBi1);
         anEvent->AddPrimaryVertex(myVertex1);
-        G4PrimaryVertex* myVertex2 = GenerateVertex(G4ThreeVector(50.*cm,55.*cm,40.*cm));
+	//fDetector->SetBiSourcePosition(posBi1);
+        G4PrimaryVertex* myVertex2 = GenerateVertex(posBi2);
         anEvent->AddPrimaryVertex(myVertex2);
 }
 
