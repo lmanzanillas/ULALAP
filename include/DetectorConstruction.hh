@@ -87,6 +87,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     //const G4VPhysicalVolume* GetWorld() {return physicPenCryostatBox;};
     const G4VPhysicalVolume* GetWorld() {return physicWorldBox;};
     G4int GetDetectorType(){return fDetectorType;};
+    G4ThreeVector GetBiSourceCapsulePosition1(){return fBiSourcePosition;}
+    G4ThreeVector GetBiSourceCapsulePosition2(){return fBiSourcePosition2;}
     G4double GetBiSourceCapsuleX(){return fBiSourcePosition.x();};
     G4double GetBiSourceCapsuleY(){return fBiSourcePosition.y();};
     G4double GetBiSourceCapsuleZ(){return fBiSourcePosition.z();};
