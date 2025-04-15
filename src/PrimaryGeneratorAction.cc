@@ -43,6 +43,9 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fAction3 = new PrimaryGeneratorAction3(fParticleGun);
 	//Generator of two Bi sources as in ProtoDUNE-HD or 50L prototype
 	fAction4 = new PrimaryGeneratorAction4(fParticleGun);
+	//Set default Bi positions
+	fAction4 -> SetBi1Position(fDetector->GetBiSourceCapsulePosition1());
+	fAction4 -> SetBi2Position(fDetector->GetBiSourceCapsulePosition2());
 	G4ThreeVector zero(0., 0., 0.);
 	position = zero;
 	CentreCoords = zero;
@@ -382,7 +385,16 @@ void PrimaryGeneratorAction::SetSourcePosition(G4ThreeVector newPosition){
 		 fDetector->SetBiSourcePosition(newPosition);
 	 }
 }
-
+//Bi1 position
+void PrimaryGeneratorAction::SetSourcePositionBi1(G4ThreeVector newPosition){
+	fDetector->SetBiSourcePosition(newPosition);
+	fAction4 -> SetBi1Position(newPosition);
+}
+//Bi2 position
+void PrimaryGeneratorAction::SetSourcePositionBi2(G4ThreeVector newPosition){
+	fDetector -> SetBiSourcePosition2(newPosition);
+	fAction4 -> SetBi2Position(newPosition);
+}
 void PrimaryGeneratorAction::SetParticleDirection(G4ThreeVector new_direction){
 	 direction_input = new_direction;
 }

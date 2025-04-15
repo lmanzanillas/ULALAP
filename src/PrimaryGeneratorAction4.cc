@@ -48,11 +48,13 @@ PrimaryGeneratorAction4::PrimaryGeneratorAction4(G4ParticleGun* gun)
     : fParticleGun(gun) { 
     G4ThreeVector zero(0., 0., 0.);
     CentreCoords = zero;
-    position = zero;
+    positionBi = zero;
+    positionBi1 = G4ThreeVector(0.*cm,15.*cm,0.*cm);
+    positionBi2 = G4ThreeVector(0.*cm,45.*cm,50.*cm);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-// Generate random position
+// Generate random positionBi1
 void PrimaryGeneratorAction4::GeneratePosition(G4ThreeVector new_pos, G4double Radius) { 
     G4double x=0., y=0., z=0.;
     G4ThreeVector  RandPos = G4ThreeVector(0.,0.,0.);
@@ -67,10 +69,18 @@ void PrimaryGeneratorAction4::GeneratePosition(G4ThreeVector new_pos, G4double R
    RandPos.setX(x);
    RandPos.setY(y);
    RandPos.setZ(z);
-   position = CentreCoords + new_pos + RandPos;
+   positionBi = CentreCoords + new_pos + RandPos;
 
 }
-
+//
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+//Set position of Bi soruces
+void PrimaryGeneratorAction4::SetBi1Position(G4ThreeVector new_pos1) {
+	positionBi1 = new_pos1;
+}
+void PrimaryGeneratorAction4::SetBi2Position(G4ThreeVector new_pos2) {
+	positionBi2 = new_pos2;
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Generate primary vertex
 G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
@@ -83,7 +93,7 @@ G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
 
         GeneratePosition(pos_bi,0.25*cm);
 
-        G4PrimaryVertex* vertexBi207 = new G4PrimaryVertex(position, 0. * s);
+        G4PrimaryVertex* vertexBi207 = new G4PrimaryVertex(positionBi, 0. * s);
     	vertexBi207->SetPrimary(particleBi207);
 
     	return vertexBi207;
@@ -93,12 +103,10 @@ G4PrimaryVertex* PrimaryGeneratorAction4::GenerateVertex(G4ThreeVector pos_bi) {
 // Generate primaries
 void PrimaryGeneratorAction4::GeneratePrimaries(G4Event* anEvent) {
 	//The units are taken as mm in the G4ThreeVectors below
-	G4ThreeVector posBi1 = G4ThreeVector(0.*cm,15.*cm,0.*cm);
-	G4ThreeVector posBi2 = G4ThreeVector(0.*cm,15.*cm,50.*cm);
-	G4PrimaryVertex* myVertex1 = GenerateVertex(posBi1);
+	G4PrimaryVertex* myVertex1 = GenerateVertex(positionBi1);
         anEvent->AddPrimaryVertex(myVertex1);
 	//fDetector->SetBiSourcePosition(posBi1);
-        G4PrimaryVertex* myVertex2 = GenerateVertex(posBi2);
+        G4PrimaryVertex* myVertex2 = GenerateVertex(positionBi2);
         anEvent->AddPrimaryVertex(myVertex2);
 }
 

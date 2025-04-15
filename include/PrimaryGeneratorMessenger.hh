@@ -31,6 +31,8 @@ class PrimaryGeneratorMessenger: public G4UImessenger
     G4UIcmdWithAnInteger*	fSourceGeometry;
     G4UIcmdWithADoubleAndUnit*  fSourceEnergy;
     G4UIcmdWith3VectorAndUnit*  fSourcePosition;
+    G4UIcmdWith3VectorAndUnit*  fSourcePositionBi1;
+    G4UIcmdWith3VectorAndUnit*  fSourcePositionBi2;
     G4UIcmdWith3VectorAndUnit*  fSourceBoxXYZ;
     G4UIcmdWith3VectorAndUnit*  fSourceCentreCoords;
     G4UIcmdWith3Vector*		fSourceDirection;

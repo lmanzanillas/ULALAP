@@ -46,6 +46,8 @@ public:
 	void  SetSourceEnergy(G4double newEnergy);
 	void  SetParticleName(G4int Z, G4int A, G4double excitEnergy);
 	void  SetSourcePosition(G4ThreeVector newValue);
+	void  SetSourcePositionBi1(G4ThreeVector newValue);
+	void  SetSourcePositionBi2(G4ThreeVector newValue);
 	void  SetSourceDiameter(G4double newValue);
 	void  SetSourceBoxXYZ(G4ThreeVector newValue);
 	void  SetSourceHalfZ(G4double newValue);

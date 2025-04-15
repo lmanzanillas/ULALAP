@@ -49,15 +49,21 @@ class PrimaryGeneratorAction4
   public:
     PrimaryGeneratorAction4(G4ParticleGun*);    
    ~PrimaryGeneratorAction4() = default;
+   void SetBi1Position(G4ThreeVector);
+   void SetBi2Position(G4ThreeVector);
 
   public:
     void GeneratePrimaries(G4Event*);
     void GeneratePosition(G4ThreeVector v_pos, G4double radius);
     G4PrimaryVertex* GenerateVertex(G4ThreeVector newpos);
+    G4ThreeVector GetBi1Position(){return positionBi1;}
+    G4ThreeVector GetBi2Position(){return positionBi2;}
 
   private:
     G4ParticleGun*  fParticleGun = nullptr;
-    G4ThreeVector position;
+    G4ThreeVector positionBi;
+    G4ThreeVector positionBi1;
+    G4ThreeVector positionBi2;
     G4ThreeVector CentreCoords;
 
     G4PrimaryVertex* myVertex;

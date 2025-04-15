@@ -66,7 +66,19 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* Gun
   fSourcePosition->SetParameterName("X","Y","Z",true,true);
   fSourcePosition->SetDefaultUnit("cm");
 
-  //Position of the source, taking the center as reference
+  //Position of the source Bi1, taking the center as reference
+  fSourcePositionBi1 = new G4UIcmdWith3VectorAndUnit("/ULALAP/gun/positionBi1",this);
+  fSourcePositionBi1->SetGuidance("Set starting position of the Bi1.");
+  fSourcePositionBi1->SetParameterName("X","Y","Z",true,true);
+  fSourcePositionBi1->SetDefaultUnit("cm");
+
+  //Position of the source Bi2, taking the center as reference
+  fSourcePositionBi2 = new G4UIcmdWith3VectorAndUnit("/ULALAP/gun/positionBi2",this);
+  fSourcePositionBi2->SetGuidance("Set starting position of the Bi2.");
+  fSourcePositionBi2->SetParameterName("X","Y","Z",true,true);
+  fSourcePositionBi2->SetDefaultUnit("cm");
+
+  //Box shape of the source, taking the center as reference
   fSourceBoxXYZ = new G4UIcmdWith3VectorAndUnit("/ULALAP/gun/BoxXYZ",this);
   fSourceBoxXYZ->SetGuidance("Set size of Box volume.");
   fSourceBoxXYZ->SetParameterName("X","Y","Z",true,true);
@@ -116,6 +128,8 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fSourceHalfZ;
   delete fSourceBoxXYZ;
   delete fSourcePosition;
+  delete fSourcePositionBi1;
+  delete fSourcePositionBi2;
   delete fSourceShape;
   delete fSourceDiameter;
   delete fSourceDirection;
@@ -149,6 +163,12 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
   }
   if(command == fSourcePosition){
   	fAction->SetSourcePosition(fSourcePosition->GetNew3VectorValue(newValue));
+  }
+  if(command == fSourcePositionBi1){
+  	fAction->SetSourcePositionBi1(fSourcePositionBi1->GetNew3VectorValue(newValue));
+  }
+  if(command == fSourcePositionBi2){
+  	fAction->SetSourcePositionBi2(fSourcePositionBi2->GetNew3VectorValue(newValue));
   }
   if(command == fSourceShape){
   	fAction->SetSourceShape(newValue);
