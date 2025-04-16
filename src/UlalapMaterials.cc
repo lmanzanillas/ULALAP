@@ -73,6 +73,7 @@ void UlalapMaterials::Construct()
     G4Element* Ce = new G4Element("Cerium", "Ce", 58., 140.116 * g / mole);
     G4Element* Gd = new G4Element("Gadolinium", "Gd", 64., 157.25 * g / mole);
     G4Element* Ga = new G4Element("Gallium", "Ga", 31., 69.723 * g / mole);
+    G4Element* Zr = new G4Element("Zirconium", "Zr", 40., 91.22*g/mole);
 
     // ------------------------------------------------------------------------
     // Isotopes
@@ -100,9 +101,10 @@ void UlalapMaterials::Construct()
     // ------------------------------------------------------------------------
     // Enriched B10 - 95% by mass
     // ------------------------------------------------------------------------
-    // G4Element *B10el = new G4Element("B10el","B", 2);
-    // B10el->AddIsotope(B10, 95.*perCent);
-    // B10el->AddIsotope(B11, 5.*perCent);
+    // Create enriched Boron element (e.g., 95% B-10, 5% B-11)
+    G4Element* enrichedB = new G4Element("EnrichedBoron", "B", 2);
+    enrichedB->AddIsotope(B10, 95.*perCent);
+    enrichedB->AddIsotope(B11, 5.*perCent);
 
     // ------------------------------------------------------------------------
     // Enriched B10 - 95% by mass
@@ -308,6 +310,58 @@ void UlalapMaterials::Construct()
     G4Material* HDPE_borated = new G4Material("HDPE_borated", 1.01*g/cm3, 2);
     HDPE_borated->AddMaterial(HDPE, 95.*perCent);
     HDPE_borated->AddElement(B10el, 5.*perCent);
+
+    //Gd2O3 powder
+    G4Material* Gd2O3 = new G4Material("Gd2O3_Powder", 7.07*g/cm3, 2);
+    Gd2O3->AddElement(Gd,2);
+    Gd2O3->AddElement(O,3);
+
+    // Define the polyurethane resin as a generic hydrocarbon
+    G4Material* polyurethane = new G4Material("Polyurethane", 1.0*g/cm3, 3);
+    polyurethane->AddElement(C, 3);
+    polyurethane->AddElement(H, 6);
+    polyurethane->AddElement(O, 2);
+
+    // Define mineral spirits (approx. as C10H22)
+    G4Material* mineralSpirits = new G4Material("MineralSpirits", 0.75*g/cm3, 2);
+    mineralSpirits->AddElement(C, 10);
+    mineralSpirits->AddElement(H, 22);
+
+    // Define zirconium 2-ethylhexanoate (simplified)
+    G4Material* zirconiumDryer = new G4Material("ZirconiumDryer", 1.3*g/cm3, 3);
+    zirconiumDryer->AddElement(C, 8);
+    zirconiumDryer->AddElement(H, 16);
+    zirconiumDryer->AddElement(Zr, 1);
+
+    // Create the final mixture
+    G4Material* MinwaxPolyurethane = new G4Material("MinwaxPolyurethane", 0.90*g/cm3, 3);
+    MinwaxPolyurethane->AddMaterial(mineralSpirits, 60*perCent);
+    MinwaxPolyurethane->AddMaterial(polyurethane,     39.8*perCent);
+    MinwaxPolyurethane->AddMaterial(zirconiumDryer,    0.2*perCent);
+
+    // Now define the final composite
+    G4Material* MinwaxGdComposite = new G4Material("MinwaxGdComposite", 2.25*g/cm3, 2); 
+    // Density is estimated as weighted average: 0.6*0.9 + 0.4*7.41 ≈ 2.25 g/cm³
+    MinwaxGdComposite->AddMaterial(MinwaxPolyurethane, 60.*perCent);
+    MinwaxGdComposite->AddMaterial(Gd2O3,              40.*perCent);
+    
+    // Define natural rubber (C5H8)
+    G4Material* naturalRubber = new G4Material("NaturalRubber", 0.92*g/cm3, 2);
+    naturalRubber->AddElement(C, 5);
+    naturalRubber->AddElement(H, 8);
+
+    // Define Boron Carbide (B4C) using enriched Boron
+    G4Material* enrichedB4C = new G4Material("EnrichedB4C", 2.52*g/cm3, 2); // real B4C density
+    enrichedB4C->AddElement(enrichedB, 4);
+    enrichedB4C->AddElement(C, 1);
+
+    // Define FLEXIBORE with 50% enriched B4C by mass
+    G4Material* FLEXIBORE = new G4Material("FLEXIBORE", 1.72*g/cm3, 2);
+    // Estimated density: 0.5*0.92 + 0.5*2.52 ≈ 1.72 g/cm³
+
+    FLEXIBORE->AddMaterial(naturalRubber, 50.*perCent);
+    FLEXIBORE->AddMaterial(enrichedB4C,   50.*perCent);
+
      
     //polyurethane foam
     G4Material* PU_foam = new G4Material("PU_foam", 0.09*g/cm3, 4);

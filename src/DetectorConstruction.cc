@@ -286,7 +286,7 @@ void DetectorConstruction::DefineMaterials(){
   materialConstruction-> Construct();
   materialAir = G4Material::GetMaterial("Air");
   materialFR4 = G4Material::GetMaterial("FR4");
-  materialB4C = G4Material::GetMaterial("G4_BORON_CARBIDE");
+  materialB4C = G4Material::GetMaterial("FLEXIBORE");
   materialSteel = G4Material::GetMaterial("Steel_EN8");
   materialSS304L = G4Material::GetMaterial("Steel_SS304L");
   materialPUfoam = G4Material::GetMaterial("PU_foam");
