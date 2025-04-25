@@ -54,7 +54,8 @@ foreach(_script ${ULALAP_SCRIPTS})
     COPYONLY
     )
 endforeach()
-
+#
+configure_file(input_files/DUNE_cavern_gammas.txt ${CMAKE_BINARY_DIR}/DUNE_cavern_gammas.txt COPYONLY)
 #----------------------------------------------------------------------------
 # Install the executable to 'bin' directory under CMAKE_INSTALL_PREFIX
 #

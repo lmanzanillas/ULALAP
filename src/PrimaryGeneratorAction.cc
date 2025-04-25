@@ -47,7 +47,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	//Generator of two cavern gammas at DUNE caverns
 	fAction5 = new PrimaryGeneratorAction5(fParticleGun);
 	//Set default Bi positions
-	fAction5->LoadEnergyDistribution("../ULALAP/input_files/DUNE_cavern_gammas.txt");
+	fAction5->LoadEnergyDistribution("DUNE_cavern_gammas.txt");
         fAction5->BuildCDF();
 	fAction4 -> SetBi1Position(fDetector->GetBiSourceCapsulePosition1());
 	fAction4 -> SetBi2Position(fDetector->GetBiSourceCapsulePosition2());
