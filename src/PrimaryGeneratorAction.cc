@@ -209,19 +209,24 @@ void PrimaryGeneratorAction::GenerateDirection(G4ThreeVector new_direction)
 		  break;
 
 	  //Like option 0, but sampling a random direction around the given vector
-	  //This should correspond to a ~conical generation
+	  //This should correspond to a 2pi half sphere direction
 	  case 2:
-		  px = new_direction.x() + (G4UniformRand() -0.5)/2.;
-		  py = new_direction.y() + (rndm - 0.5)/2.;
-		  pz = new_direction.z() + (rndm2 - 0.5)/2.;
-		  //G4cout<<"direction before: "<<px<<" "<<py<<" "<<pz<<G4endl;
-		  ResMag = std::sqrt((px*px) + (py*py) + (pz*pz));
-		  px = px/ResMag;
-		  py = py/ResMag;
-		  pz = pz/ResMag; 
-		  direction.setX(px);
-		  direction.setY(py);
-		  direction.setZ(pz);
+		  G4ThreeVector zAxis(0, 0, 1); // Default direction
+		  G4ThreeVector normAxis = new_direction.unit();
+
+		  // Sample a point on hemisphere centered around +Z
+   		  G4double cosTheta = G4UniformRand();              // cos(θ) in [0,1] → hemisphere
+    		  G4double sinTheta = std::sqrt(1.0 - cosTheta*cosTheta);
+    		  G4double phi = CLHEP::twopi * G4UniformRand();    // φ in [0, 2π]
+
+    		  px = sinTheta * std::cos(phi);
+    		  py = sinTheta * std::sin(phi);
+    		  pz = cosTheta;
+
+    		  G4ThreeVector localDir(px, py, pz);
+
+ 		  // Rotate localDir from +Z axis to the desired axis direction
+		  direction = localDir.rotateUz(normAxis);
 		  //G4cout<<"direction: "<<px<<" "<<py<<" "<<pz<<G4endl;
 		  break;
   }
