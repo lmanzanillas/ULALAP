@@ -6,6 +6,7 @@
 #include "PrimaryGeneratorAction2.hh"
 #include "PrimaryGeneratorAction3.hh"
 #include "PrimaryGeneratorAction4.hh"
+#include "PrimaryGeneratorAction5.hh"
 
 #include "G4MTRunManager.hh"
 
@@ -43,7 +44,11 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	fAction3 = new PrimaryGeneratorAction3(fParticleGun);
 	//Generator of two Bi sources as in ProtoDUNE-HD or 50L prototype
 	fAction4 = new PrimaryGeneratorAction4(fParticleGun);
+	//Generator of two cavern gammas at DUNE caverns
+	fAction5 = new PrimaryGeneratorAction5(fParticleGun);
 	//Set default Bi positions
+	fAction5->LoadEnergyDistribution("../ULALAP/input_files/DUNE_cavern_gammas.txt");
+        fAction5->BuildCDF();
 	fAction4 -> SetBi1Position(fDetector->GetBiSourceCapsulePosition1());
 	fAction4 -> SetBi2Position(fDetector->GetBiSourceCapsulePosition2());
 	G4ThreeVector zero(0., 0., 0.);
@@ -82,6 +87,8 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 	delete fAction1;
 	delete fAction2;
 	delete fAction3;
+	delete fAction4;
+	delete fAction5;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -242,6 +249,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	GeneratePointsInVolume();
 	GenerateDirection(direction_input);
 	G4double RandNb = G4UniformRand();
+	if(particleType == 4){
+	        fSourceEnergy = fAction5->SampleEnergy() * keV; 
+	}
 	if(particleType == 11){
 	        fSourceEnergy = fAction3->InverseCumul();
 	}
@@ -289,14 +299,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			break;
 		case 4:
 			//Sr-90 source
-			Z = 38;
-			A = 90;
-			ion = G4IonTable::GetIonTable()->GetIon(Z,A,excitEnergy);
-			fParticleGun->SetParticleEnergy(0.*eV);
+			fParticleGun->SetParticleDefinition(particleTable->FindParticle("gamma"));
+			fParticleGun->SetParticleEnergy(fSourceEnergy);
 			fParticleGun->SetParticlePosition(position);
-			fParticleGun->SetParticleMomentumDirection(G4ThreeVector(0.,0.,0.));
-			fParticleGun->SetParticleDefinition(ion);
-			fParticleGun->SetParticleCharge(ionCharge);
+			fParticleGun->SetParticleMomentumDirection(direction);
 			fParticleGun->GeneratePrimaryVertex(anEvent);
 			break;
 		case 5:
