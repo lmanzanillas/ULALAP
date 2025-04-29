@@ -100,9 +100,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double GetShieldingThickness()  {return shieldingThickness;};
     G4double GetNeutronCaptShieldingThickness()  {return n_captureLayerThickness;};
     G4double GetWaffleThickness()  {return cryostatThicknessOuterSteelSupport;};
-    G4double GetGeDetectorLength()  {return halfDetectorLength*2.0;};
-    G4double GetGeDetectorThickness()  {return halfDetectorThickness*2.0;};
-    G4double GetGeDetectorWidth()  {return halfDetectorWidth*2.0;};
+    G4double GetGeDetectorLength()  {return halfDetectorX*2.0;};
+    G4double GetGeDetectorThickness()  {return halfDetectorZ*2.0;};
+    G4double GetGeDetectorWidth()  {return halfDetectorY*2.0;};
     G4double GetSamplePositionZ()  {return zPositionSample;};
     G4String GetSetupName(){return fSetupName;};
     G4String GetDataType(){return fDataType;};
@@ -120,12 +120,12 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double halfSizeCavernFD2Y;
     G4double halfSizeCavernFD2Z;
 
-    G4double halfDetectorLength;
-    G4double halfDetectorLengthActiveAr;
-    G4double halfDetectorThickness;
-    G4double halfDetectorThicknessActiveAr;
-    G4double halfDetectorWidth;
-    G4double halfDetectorWidthActiveAr;
+    G4double halfDetectorX;
+    G4double halfDetectorXActiveAr;
+    G4double halfDetectorZ;
+    G4double halfDetectorZActiveAr;
+    G4double halfDetectorY;
+    G4double halfDetectorYActiveAr;
     G4double shieldingThickness;
     G4double cryostatThicknessPrimMembraneSS;
     G4double cryostatThicknessSecondaryBarrierAl;
