@@ -79,9 +79,9 @@ fd2LogicVolume(nullptr)
   halfDetectorX = 62.0/2.0*m;
   halfDetectorXActiveAr = 60.0/2.0*m;
   halfDetectorZ = 14.0/2.0*m;
-  halfDetectorZActiveAr = 13.0/2.0*m;
+  halfDetectorZActiveAr = 12.5/2.0*m;
   halfDetectorY = 15.1/2.0*m;
-  halfDetectorYActiveAr = 13.0/2.0*m;
+  halfDetectorYActiveAr = 14.54/2.0*m;
   cryostatThicknessPrimMembraneSS = 1.2*mm;
   cryostatThicknessSecondaryBarrierAl = 0.8*mm;
   cryostatThicknessVaporBarrierSS = 12.0*mm;
@@ -500,7 +500,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   fd2DetectorBox = new G4Box("target", halfDetectorX, halfDetectorY, halfDetectorZ);
   fd2LogicVolume = new G4LogicalVolume(fd2DetectorBox,fd2Material, "target",0,0,0);
   //Cathode
-  G4Box* BoxCathode = new G4Box("BoxCathode",halfDetectorXActiveAr,0.5*mm,halfDetectorYActiveAr);
+  G4Box* BoxCathode = new G4Box("BoxCathode",halfDetectorXActiveAr,0.5*mm,halfDetectorZActiveAr);
   G4LogicalVolume* fLogicCathode = new G4LogicalVolume(BoxCathode,materialSS304L,"cathode");
   //Arapuca
   G4double arapuca_x = 65.*cm;
@@ -508,7 +508,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double arapuca_z = 65.*cm;
   
   G4double pitch_x_arapuca = 2 * halfDetectorXActiveAr/20.;
-  G4double pitch_z_arapuca = 2 * halfDetectorYActiveAr/2.;
+  G4double pitch_z_arapuca = 2 * halfDetectorZActiveAr/2.;
   G4int arapuca_row_x[21] = { 0, 2, 4, 1, 3, 2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3,2, 4, 1, 3}; 
   
   
@@ -516,37 +516,37 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* BoxArapuca = new G4Box("BoxAnode",arapuca_x/2,arapuca_y/2,arapuca_z/2);
   G4LogicalVolume* fLogicArapuca = new G4LogicalVolume(BoxArapuca,materialAcrylic,"arapuca");
   //Anodes
-  G4Box* BoxAnode = new G4Box("BoxAnode",halfDetectorXActiveAr,3.2*mm,halfDetectorYActiveAr);
+  G4Box* BoxAnode = new G4Box("BoxAnode",halfDetectorXActiveAr,3.2*mm,halfDetectorZActiveAr);
   G4LogicalVolume* fLogicAnode = new G4LogicalVolume(BoxAnode,materialFR4,"anode");
   //Field Cage
   //Longer lateral Wide
   G4EllipticalTube* EllipTubeWideLong = new G4EllipticalTube("EllipTubeWideLong",5.*mm,23.*mm,halfDetectorXActiveAr);
-  G4EllipticalTube* EllipTubeWideLongInner = new G4EllipticalTube("EllipTubeWideLongInner", 4.*mm,19.0*mm,halfDetectorXActiveAr + 1.0*m);
-  G4Box* FCBoxLongWide = new G4Box("FCBoxLongWide",5*mm,10.*mm,halfDetectorXActiveAr + 1.*m);
+  G4EllipticalTube* EllipTubeWideLongInner = new G4EllipticalTube("EllipTubeWideLongInner", 4.*mm,19.0*mm,halfDetectorXActiveAr + 1.0*cm);
+  G4Box* FCBoxLongWide = new G4Box("FCBoxLongWide",5*mm,10.*mm,halfDetectorXActiveAr + 1.*cm);
   G4VSolid* fSolidFCLongWide ;
   fSolidFCLongWide = new G4SubtractionSolid("FieldCageWide", EllipTubeWideLong, EllipTubeWideLongInner, 0, G4ThreeVector(0.,0.,0.));
   fSolidFCLongWide = new G4SubtractionSolid("FieldCageWide", fSolidFCLongWide, FCBoxLongWide, 0, G4ThreeVector(7.*mm,0.,0.));
   G4LogicalVolume* fLogicFCLongWide = new G4LogicalVolume(fSolidFCLongWide,materialAlCryostat,"FieldCageWide");
   //Longer lateral Slim
   G4EllipticalTube* EllipTubeSlimLong = new G4EllipticalTube("EllipTubeSlimLong",5.*mm,7.5*mm,halfDetectorXActiveAr);
-  G4EllipticalTube* EllipTubeSlimLongInner = new G4EllipticalTube("EllipTubeSlimLongInner", 4.*mm,4.0*mm,halfDetectorXActiveAr + 1.0*m);
-  G4Box* FCBoxLongSlim = new G4Box("FCBoxLongSlim",3*mm,3.*mm,halfDetectorXActiveAr + 1.*m);
+  G4EllipticalTube* EllipTubeSlimLongInner = new G4EllipticalTube("EllipTubeSlimLongInner", 4.*mm,4.0*mm,halfDetectorXActiveAr + 1.0*cm);
+  G4Box* FCBoxLongSlim = new G4Box("FCBoxLongSlim",3*mm,3.*mm,halfDetectorXActiveAr + 1.*cm);
   G4VSolid* fSolidFCLongSlim ;
   fSolidFCLongSlim = new G4SubtractionSolid("FieldCageSlim", EllipTubeSlimLong, EllipTubeSlimLongInner, 0, G4ThreeVector(0.,0.,0.));
   fSolidFCLongSlim = new G4SubtractionSolid("FieldCageSlim", fSolidFCLongSlim, FCBoxLongSlim, 0, G4ThreeVector(3.*mm,0.,0.));
   G4LogicalVolume* fLogicFCLongSlim = new G4LogicalVolume(fSolidFCLongSlim,materialAlCryostat,"FieldCageSlim");
   //Short lateral Wide
-  G4EllipticalTube* EllipTubeWideShort = new G4EllipticalTube("EllipTubeWideShort",5.*mm,23.*mm,halfDetectorYActiveAr);
-  G4EllipticalTube* EllipTubeWideShortInner = new G4EllipticalTube("EllipTubeWideShortInner", 4.*mm,19.0*mm,halfDetectorYActiveAr + 1.0*m);
-  G4Box* FCBoxShortWide = new G4Box("FCBoxShortWide",5*mm,10.*mm,halfDetectorYActiveAr + 1.0*m);
+  G4EllipticalTube* EllipTubeWideShort = new G4EllipticalTube("EllipTubeWideShort",5.*mm,23.*mm,halfDetectorZActiveAr);
+  G4EllipticalTube* EllipTubeWideShortInner = new G4EllipticalTube("EllipTubeWideShortInner", 4.*mm,19.0*mm,halfDetectorZActiveAr + 1.0*cm);
+  G4Box* FCBoxShortWide = new G4Box("FCBoxShortWide",5*mm,10.*mm,halfDetectorZActiveAr + 1.0*cm);
   G4VSolid* fSolidFCShortWide ;
   fSolidFCShortWide = new G4SubtractionSolid("FieldCageWide", EllipTubeWideShort, EllipTubeWideShortInner, 0, G4ThreeVector(0.,0.,0.));
   fSolidFCShortWide = new G4SubtractionSolid("FieldCageWide", fSolidFCShortWide, FCBoxShortWide, 0, G4ThreeVector(7.*mm,0.,0.));
   G4LogicalVolume* fLogicFCShortWide = new G4LogicalVolume(fSolidFCShortWide,materialAlCryostat,"FieldCageWide");
   //Short lateral Slim
-  G4EllipticalTube* EllipTubeSlimShort = new G4EllipticalTube("EllipTubeSlimShort",5.*mm,7.5*mm,halfDetectorYActiveAr);
-  G4EllipticalTube* EllipTubeSlimShortInner = new G4EllipticalTube("EllipTubeSlimShortInner", 4.*mm,4.0*mm,halfDetectorYActiveAr + 1.0*m);
-  G4Box* FCBoxShortSlim = new G4Box("FCBoxShortSlim",3*mm,3.*mm,halfDetectorYActiveAr + 1.*m);
+  G4EllipticalTube* EllipTubeSlimShort = new G4EllipticalTube("EllipTubeSlimShort",5.*mm,7.5*mm,halfDetectorZActiveAr);
+  G4EllipticalTube* EllipTubeSlimShortInner = new G4EllipticalTube("EllipTubeSlimShortInner", 4.*mm,4.0*mm,halfDetectorZActiveAr + 1.0*cm);
+  G4Box* FCBoxShortSlim = new G4Box("FCBoxShortSlim",3*mm,3.*mm,halfDetectorZActiveAr + 1.*cm);
   G4VSolid* fSolidFCShortSlim ;
   fSolidFCShortSlim = new G4SubtractionSolid("FieldCageSlim", EllipTubeSlimShort, EllipTubeSlimShortInner, 0, G4ThreeVector(0.,0.,0.));
   fSolidFCShortSlim = new G4SubtractionSolid("FieldCageSlim", fSolidFCShortSlim, FCBoxShortSlim, 0, G4ThreeVector(3.*mm,0.,0.));
@@ -894,7 +894,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         for(int i =1 ; i < 92; i++){
         	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
 		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorYActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
+			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
 			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
 			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
 			   new G4PVPlacement(0,
@@ -1029,50 +1029,50 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_long_slim_yp",
   			fd2LogicVolume,	false, 0, true);
 
 		   new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_long_slim_ym",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_long_slim_yp",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_long_slim_ym",
   			fd2LogicVolume,	false, 0, true);
 
 		//Short sides up
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 		//Short sides down
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 	}
          
@@ -1308,7 +1308,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         for(int i =1 ; i < 92; i++){
         	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
 		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorYActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
+			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
 			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
 			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
 			   new G4PVPlacement(0,
@@ -1390,49 +1390,49 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr - 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 		
 		new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr - 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 	        //short sides up
         	new G4PVPlacement(0,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
         	new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 		//short sides down
         	new G4PVPlacement(0,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,-pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
         	new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,-pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
 
@@ -1443,50 +1443,50 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		   new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		//Short sides up
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 		//Short sides down
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 	}
          
@@ -1721,7 +1721,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         for(int i =1 ; i < 92; i++){
         	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
 		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorYActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
+			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
 			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
 			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
 			   new G4PVPlacement(0,
@@ -2144,7 +2144,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         for(int i =1 ; i < 92; i++){
         	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
 		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorYActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
+			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
 			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
 			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
 			   new G4PVPlacement(0,
