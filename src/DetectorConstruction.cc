@@ -420,6 +420,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
   G4cout<<"End of shielding x: "<<box_shielding_outer_x/cm<<" y "<<box_shielding_outer_y/cm<<" z "<<box_shielding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorX/cm<<" y "<<halfDetectorY/cm<<" z "<<halfDetectorZ/cm<<G4endl;
+  G4cout<<"Active LAr Volume x: "<<halfDetectorXActiveAr/cm<<" y "<<halfDetectorYActiveAr/cm<<" z "<<halfDetectorZActiveAr/cm<<G4endl;
   G4cout<<"SS vapor barrier: "<<box_vapor_barrier_SS_x/cm<<" y "<<box_vapor_barrier_SS_y/cm<<" z "<<box_vapor_barrier_SS_z/cm<<G4endl;
   //Shielding 
   G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
