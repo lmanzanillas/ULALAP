@@ -94,7 +94,7 @@ fd2LogicVolume(nullptr)
   n_captureLayerThickness = 0.1*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
   fBiSourcePosition2 = G4ThreeVector(10.*cm, 45.*cm, 10.*cm);
-  fDetectorType = 1;
+  fDetectorType = 0;
   fDetectorName = "FD2";
   fVolName = "World";
   materialConstruction = new UlalapMaterials;
@@ -801,12 +801,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxInner,false,1,1);
 			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
 		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxInner,false,1,1);
 		}
 
 	 }
