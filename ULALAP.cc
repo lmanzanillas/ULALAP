@@ -3,6 +3,7 @@
 #include "G4UImanager.hh"
 #include "G4VisExecutive.hh"
 #include "Randomize.hh"
+#include "G4HadronicParameters.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
 #include "G4SystemOfUnits.hh"
@@ -75,9 +76,10 @@ int main(int argc, char** argv) {
     runManager->SetUserInitialization(det);
 
     // Physics list
+    G4HadronicParameters::Instance()->SetTypeTablePT("njoy");
     G4PhysListFactory factory;
     G4VModularPhysicsList* physList = nullptr;
-    G4String physListName = "FTFP_BERT_HP";
+    G4String physListName = "FTFP_BERT_HPT";
     physList = factory.GetReferencePhysList(physListName);
     runManager->SetUserInitialization(physList);
 
