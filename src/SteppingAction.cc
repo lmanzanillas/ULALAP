@@ -140,6 +140,19 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
         );
     }
 
+    /* -------------   NEW: neutron-entry filter   -------------------- */
+    G4Track*       track     = theStep->GetTrack();
+    G4StepPoint*   postPoint = theStep->GetPostStepPoint();
+
+    if (track->GetDefinition() == G4Neutron::Definition()
+        && postPoint->GetStepStatus() == fGeomBoundary
+        && postPoint->GetPhysicalVolume()->GetName() == "target_1") // or pointer compare
+    {
+        G4double ke = track->GetKineticEnergy();
+	fEventAction->AddNeutronKinAtLAr(ke);
+        //G4AnalysisManager::Instance()->FillH1(0, ke);
+    }
+
     // Check if the post-step volume is valid
     G4StepPoint* thePostPoint = theStep->GetPostStepPoint();
     G4VPhysicalVolume* thePostPV = thePostPoint->GetPhysicalVolume();

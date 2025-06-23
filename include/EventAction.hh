@@ -27,6 +27,7 @@ class EventAction : public G4UserEventAction
     virtual void SetTimeCapture(G4double t_value_c);
     virtual void SetTimeDecay(G4double t_value_d);
     virtual void SetVertex(G4ThreeVector v_value_v);
+    virtual void AddNeutronKinAtLAr(G4double kinEneutron);
 
 
   private:
