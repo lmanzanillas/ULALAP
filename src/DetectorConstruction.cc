@@ -91,10 +91,11 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterPlywood = 10.0*mm;
   cryostatThicknessOuterSteelSupport = 1.00*m;
   shieldingThickness = 15.0*cm;
+  BottomShieldingThickness = 30.0*cm;
   n_captureLayerThickness = 0.1*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
   fBiSourcePosition2 = G4ThreeVector(10.*cm, 45.*cm, 10.*cm);
-  fDetectorType = 0;
+  fDetectorType = 1;
   fDetectorName = "FD2";
   fVolName = "World";
   materialConstruction = new UlalapMaterials;
@@ -453,7 +454,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double bar_x = 0.2*m;
   G4double bar_y = box_steel_support_y;
   G4double bar_z = cryostatThicknessOuterSteelSupport /2.0;
-
+  
   //box_vapor_barrier_SS_z
 
   G4Box* SteelSupportBarTop = new G4Box("b_steel_support_V", bar_x, bar_z, box_vapor_barrier_SS_z);
@@ -614,7 +615,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   vis_waffle->SetForceSolid(true);
   vis_waffle->SetVisibility(true);
   vis_waffle->SetForceAuxEdgeVisible(true);
-  logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
+  //logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
   //logicshieldingBoxPlot->SetVisAttributes(vis_waffle);
 
   G4VisAttributes* vis_anode = new G4VisAttributes(orange);
@@ -647,6 +648,39 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4double FCpitch = 60*mm;
   G4int nFCbars = 110;
+
+  //Bottom waffle
+  G4double waffleBoxX = pitch_x - 2*bar_x;
+  G4double waffleBoxZ = pitch_z - 2*bar_x;
+  G4Box* BottomWaffleBoxes = new G4Box("b_waffle",waffleBoxX/2,cryostatThicknessOuterSteelSupport/2,waffleBoxZ/2);
+  logicWaffleBoxes = new G4LogicalVolume(BottomWaffleBoxes, materialAir, "BottomWaffles", 0, 0, 0);
+
+   
+  G4Box* BoxInsideWaffle = new G4Box("b_waffle",waffleBoxX/2,15*cm,waffleBoxZ/2);
+  G4LogicalVolume* logicDaughter = new G4LogicalVolume(BoxInsideWaffle, materialAir, "DaughterLV");
+
+  G4double yBoxWaffle = -cryostatThicknessOuterSteelSupport/2 + 16*cm;
+  new G4PVPlacement(nullptr,                       // no rotation
+                  G4ThreeVector(0,yBoxWaffle,0),          // local position
+                  logicDaughter,                 // LV of the daughter
+                  "DaughterPV",                  // PV name
+                  logicWaffleBoxes,              // *mother* LV
+                  false,                         // no boolean op
+                  0,                             // copy number
+                  1);                // optional
+
+  G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,0.01*cm,waffleBoxZ/2);
+  G4LogicalVolume* logicD2 = new G4LogicalVolume(BoxNcapture, materialAir, "DaughterLV");
+  //logicWaffleBoxes->SetVisAttributes(vis_waffle);
+  logicD2->SetVisAttributes(vis_waffle);
+  new G4PVPlacement(nullptr,                   // no rotation
+                  G4ThreeVector(0,0,0),      // local position in D1
+                  logicD2,                   // LV we just created
+                  "D2_PV",                   // PV name
+                  logicDaughter,                   // <--- mother LV is D1
+                  false,                     // no booleans
+                  0,                         // copy-number of D2
+                  1);
 
   G4double pos_x, pos_y, pos_z;
 
@@ -1186,10 +1220,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  "SS_support_b_"+std::to_string(i),
 		  logicshieldingBoxWaffle,false,1,1);
 	 }
-         
+        
+
 	 //horizontal bars long sides
          for(int i =1 ; i < n_v_bars_long_side; i++){
 	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
+
 		for(int j=1; j <= n_h_bars; j++){
 	                pos_y = origin_y + (j-1)*pitch_y;
 			new G4PVPlacement(0, 
@@ -1209,6 +1245,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	 //ongoing implementation
          for(int i =1 ; i < n_v_bars_long_side; i++){
 	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
+		G4double posX_waffle = pos_x + bar_x; 
+         	///Testing waffle boxes
+		for(int j=1; j < n_h_bars_top; j++){
+	                G4double  posZ = origin_z + (j-1)*pitch_z + bar_x + waffleBoxZ/2;
+			new G4PVPlacement(0, 
+		  		G4ThreeVector(pos_x, yBarSteel, posZ),
+			  	logicWaffleBoxes,
+			  	"WaffleBox_yp_i"+std::to_string(i)+"_j_"+std::to_string(1),
+			  	logicshieldingBoxWaffle,false,1,1);
+			new G4PVPlacement(0, 
+		  		G4ThreeVector(pos_x, -yBarSteel, posZ),
+			  	logicWaffleBoxes,
+			  	"WaffleBox_ym_i"+std::to_string(i)+"_j_"+std::to_string(1),
+			  	logicshieldingBoxWaffle,false,1,1);
+		}
+		//////////////////
 		for(int j=1; j <= n_h_bars_top; j++){
 	                pos_z = origin_z + (j-1)*pitch_z;
 			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 

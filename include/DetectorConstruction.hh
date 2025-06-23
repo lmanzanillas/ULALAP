@@ -127,6 +127,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double halfDetectorY;
     G4double halfDetectorYActiveAr;
     G4double shieldingThickness;
+    G4double BottomShieldingThickness;
     G4double cryostatThicknessPrimMembraneSS;
     G4double cryostatThicknessSecondaryBarrierAl;
     G4double cryostatThicknessVaporBarrierSS;
@@ -161,6 +162,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Box* shieldingBox;
     G4Box* CryostatBox;
 
+    G4LogicalVolume* logicWaffleBoxes;
     G4LogicalVolume* logicSteelSupport;
     G4LogicalVolume* logicSteelSupportHorizontal;
     G4LogicalVolume* logicSteelSupportTop;
