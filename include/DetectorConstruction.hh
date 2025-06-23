@@ -65,6 +65,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetTargetMaterial(G4String);
     void SetShieldingMaterial(G4String);
     void SetShieldingMaterialWaffle(G4String);
+    void SetMaterialWaffleNeutronAbsorber(G4String);
     void SetOutputDirectory(G4String);
     void SetWorldMaterial(G4String);
     void SetDetectorType(G4int);
@@ -99,7 +100,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double GetcryostatThicknessPrimMembraneSS()  {return cryostatThicknessPrimMembraneSS;};
     G4double GetShieldingThickness()  {return shieldingThickness;};
     G4double GetNeutronCaptShieldingThickness()  {return n_captureLayerThickness;};
-    G4double GetWaffleThickness()  {return cryostatThicknessOuterSteelSupport;};
+    G4double GetWaffleThickness()  {return BottomShieldingThickness;};
     G4double GetGeDetectorLength()  {return halfDetectorX*2.0;};
     G4double GetGeDetectorThickness()  {return halfDetectorZ*2.0;};
     G4double GetGeDetectorWidth()  {return halfDetectorY*2.0;};
@@ -110,6 +111,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material*        GetTargetMaterial()   {return fd2Material;};
     G4Material*        GetShieldingMaterial()   {return fShieldingMaterial;};
     G4Material*        GetShieldingMaterialWaffle()   {return materialShieldingWaffle;};
+    G4Material*        GetMaterialNeutronCapture()   {return materialNeutronCapture;};
     G4ThreeVector* fSourceVector;
 
     void               DefineMaterials();
@@ -156,6 +158,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialB4C;
     G4Material* materialAcrylic;
     G4Material* materialTitanium;
+    G4Material* materialNeutronCapture;
     G4String fSetupName;
     G4Box* fWorldBox;
     G4Box* fd2DetectorBox;
@@ -163,6 +166,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Box* CryostatBox;
 
     G4LogicalVolume* logicWaffleBoxes;
+    G4LogicalVolume* logicWaffleBottomShielding;
+    G4LogicalVolume* logicNeutronAbsorber;
     G4LogicalVolume* logicSteelSupport;
     G4LogicalVolume* logicSteelSupportHorizontal;
     G4LogicalVolume* logicSteelSupportTop;
