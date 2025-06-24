@@ -14,6 +14,7 @@
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTypes.hh"
 #include "G4SystemOfUnits.hh"
+#include "MyTrackInfo.hh"
 
 #include "G4SteppingManager.hh"
 
@@ -144,13 +145,26 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
     G4Track*       track     = theStep->GetTrack();
     G4StepPoint*   postPoint = theStep->GetPostStepPoint();
 
+    // Get or create custom track information
+    MyTrackInfo* trackInfo = static_cast<MyTrackInfo*>(track->GetUserInformation());
+    if (!trackInfo) {
+        trackInfo = new MyTrackInfo();
+        track->SetUserInformation(trackInfo);
+    }
+
     if (track->GetDefinition() == G4Neutron::Definition()
         && postPoint->GetStepStatus() == fGeomBoundary
         && postPoint->GetPhysicalVolume()->GetName() == "target_1") // or pointer compare
     {
-        G4double ke = track->GetKineticEnergy();
-	fEventAction->AddNeutronKinAtLAr(ke);
-        //G4AnalysisManager::Instance()->FillH1(0, ke);
+
+	if (!trackInfo->HasEnteredTarget1())
+        {
+        	G4double ke = track->GetKineticEnergy()/keV;
+		fEventAction->AddNeutronKinAtLAr(ke);
+        	//G4AnalysisManager::Instance()->FillH1(0, ke);
+		// Mark this track as having entered the target
+            	trackInfo->SetEnteredTarget1(true);
+	}
     }
 
     // Check if the post-step volume is valid

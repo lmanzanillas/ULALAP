@@ -104,7 +104,8 @@ fd2LogicVolume(nullptr)
   fd2Material = G4Material::GetMaterial("G4_lAr");
   fShieldingMaterial = G4Material::GetMaterial("G4_AIR");
   materialShieldingWaffle = G4Material::GetMaterial("G4_WATER");
-  materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
+  //materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
+  materialNeutronCapture = G4Material::GetMaterial("G4_WATER");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -179,7 +180,7 @@ void DetectorConstruction::SetBiSourcePosition2(G4ThreeVector value){
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 void DetectorConstruction::SetWaffleThickness(G4double value){
-  cryostatThicknessOuterSteelSupport = (value/1.)*mm;
+  BottomShieldingThickness = (value/1.)*mm;
   //UpdateGeometry();
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }

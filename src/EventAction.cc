@@ -123,8 +123,8 @@ void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector) {
 // Add neutron kin E at LAr 
 void EventAction::AddNeutronKinAtLAr(G4double kinEneutron) {
     auto analysisManager = G4AnalysisManager::Instance();
-    analysisManager->FillNtupleIColumn(1, 0, eventNumber);
-    analysisManager->FillNtupleDColumn(2, 1, kinEneutron);
+    analysisManager->FillNtupleIColumn(5, 0, eventNumber);
+    analysisManager->FillNtupleDColumn(5, 1, kinEneutron);
     analysisManager->AddNtupleRow(5);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

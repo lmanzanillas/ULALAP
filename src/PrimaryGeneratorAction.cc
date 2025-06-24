@@ -47,6 +47,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction(DetectorConstruction* det)
 	//Generator of two cavern gammas at DUNE caverns
 	fAction5 = new PrimaryGeneratorAction5(fParticleGun);
 	//Set default Bi positions
+	fAction3->LoadEnergyDistribution("DUNE_cavern_neutrons.txt");
+        fAction3->BuildCDF();
 	fAction5->LoadEnergyDistribution("DUNE_cavern_gammas.txt");
         fAction5->BuildCDF();
 	fAction4 -> SetBi1Position(fDetector->GetBiSourceCapsulePosition1());
@@ -253,7 +255,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	        fSourceEnergy = fAction5->SampleEnergy() * keV; 
 	}
 	if(particleType == 11){
-	        fSourceEnergy = fAction3->InverseCumul();
+	        fSourceEnergy = fAction3->SampleEnergy() * keV;
 	}
 	if(particleType == 10){
 	        fSourceEnergy = fAction2->InverseCumul();
