@@ -104,8 +104,8 @@ fd2LogicVolume(nullptr)
   fd2Material = G4Material::GetMaterial("G4_lAr");
   fShieldingMaterial = G4Material::GetMaterial("G4_AIR");
   materialShieldingWaffle = G4Material::GetMaterial("G4_WATER");
-  //materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
-  materialNeutronCapture = G4Material::GetMaterial("G4_WATER");
+  materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
+  //materialNeutronCapture = G4Material::GetMaterial("G4_WATER");
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -695,9 +695,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //Place neutron absorver
   new G4PVPlacement(nullptr,                 // no rotation
                   G4ThreeVector(0,0,0),      // local position in D1
-                  logicNeutronAbsorber,                   // LV we just created
+                  logicNeutronAbsorber,      // LV we just created
                   "D2_PV",                   // PV name
-                  logicWaffleBottomShielding,             // <--- mother LV is D1
+                  logicWaffleBottomShielding,// <--- mother LV is D1
                   false,                     // no booleans
                   0,                         // copy-number of D2
                   1);

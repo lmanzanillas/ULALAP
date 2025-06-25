@@ -43,6 +43,7 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithAString*         commandSetTargetMaterial;
     G4UIcmdWithAString*         commandSetShieldingMaterial;
     G4UIcmdWithAString*         commandSetShieldingMaterialWaffle;
+    G4UIcmdWithAString*         commandSetShieldingWaffleNeutronAbsorber;
     G4UIcmdWithAString*         commandSetDetectorName;
     G4UIcmdWithAString*         commandSetSetupName;
     G4UIcmdWithAString*         commandSetDataType;
