@@ -84,6 +84,7 @@ void UlalapMaterials::Construct()
     G4Isotope* B10 = new G4Isotope("B10", 5, 10, 10.*g/mole);
     G4Isotope* B11 = new G4Isotope("B11", 5, 11, 11.*g/mole);
     
+    G4Isotope* Ar36 = new G4Isotope("Ar36", 18, 36, 36.*g/mole);
 
     // ------------------------------------------------------------------------
     // Enriched Li6 - 95% by mass
@@ -97,6 +98,10 @@ void UlalapMaterials::Construct()
     // ------------------------------------------------------------------------
     G4Element *Li6pure = new G4Element("Li6pure","Li", 1);
     Li6pure->AddIsotope(Li6, 100.0*perCent);
+
+    // Ar-36 pure
+    G4Element *Ar36pure = new G4Element("Ar36pure","Ar", 1);
+    Ar36pure->AddIsotope(Ar36, 100.0*perCent);
 
     // ------------------------------------------------------------------------
     // Enriched B10 - 95% by mass
@@ -165,7 +170,9 @@ void UlalapMaterials::Construct()
     auto matGeEn = new G4Material("EnGe", 5.539 * g / cm3, 1, kStateSolid);
     matGeEn->AddElement(GeEn, 1.0);
  
-    //auto matGeNa = new G4Material("NaGe", 32, 72.61 * g / mole, 5.23 * g / cm3);
+    expTemp = 83.0*kelvin;
+    auto matlAr36 = new G4Material("lAr36", 1.4 * g / cm3, 1, kStateLiquid, expTemp);
+    matlAr36->AddElement(Ar36pure, 1.0);
 
 //
 // DEFINE WATER IN MULTIPLE WAYS

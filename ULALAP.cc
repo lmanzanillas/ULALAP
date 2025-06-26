@@ -77,9 +77,14 @@ int main(int argc, char** argv) {
 
     // Physics list
     G4HadronicParameters::Instance()->SetTypeTablePT("njoy");
+    auto param = G4HadronicParameters::Instance();
+    param->SetEnableNUDEX(true);
+
     G4PhysListFactory factory;
     G4VModularPhysicsList* physList = nullptr;
-    G4String physListName = "FTFP_BERT_HPT";
+    //G4String physListName = "FTFP_BERT_HPT";
+    //G4String physListName = "QGSP_BERT_HP";
+    G4String physListName = "Shielding";
     physList = factory.GetReferencePhysList(physListName);
     runManager->SetUserInitialization(physList);
 

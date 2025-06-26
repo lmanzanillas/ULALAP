@@ -89,7 +89,7 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
     G4double edepStep = theStep->GetTotalEnergyDeposit() / keV;
 
     // Handle neutron capture
-    if (process_name == "nCapture") {
+    if (process_name == "nCapture" || process_name == "nCaptureHP") {
         G4double time_finish = theStep->GetPostStepPoint()->GetGlobalTime();
         fEventAction->SetTimeCapture(time_finish / us);
         fEventAction->SetTimeDecay(0.);
@@ -118,7 +118,8 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
         energy = (*fSecondary)[lp1]->GetKineticEnergy();
 
         if (particleDefi == G4Gamma::Definition()) {
-            if (process == "RadioactiveDecay" || process == "nCapture") {
+	    //G4cout<<process<<G4endl;
+            if (process == "RadioactiveDecay" || process == "nCapture" || process == "nCaptureHP") {
                 gamma_vector.push_back(energy / keV);
             }
         }
