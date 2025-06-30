@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
 
     G4String macro;
     G4String session;
+    G4String physListName;
     G4long myseed = time(nullptr);
 
     for (G4int i = 1; i < argc; i += 2) {
@@ -56,6 +57,8 @@ int main(int argc, char** argv) {
             session = argv[i + 1];
         } else if (G4String(argv[i]) == "-r" && i + 1 < argc) {
             myseed = std::atoi(argv[i + 1]);
+	} else if (G4String(argv[i]) == "-p"){
+      	   physListName = argv[i + 1];
         } else {
             PrintUsage();
             return 1;
@@ -82,9 +85,30 @@ int main(int argc, char** argv) {
 
     G4PhysListFactory factory;
     G4VModularPhysicsList* physList = nullptr;
-    //G4String physListName = "FTFP_BERT_HPT";
-    //G4String physListName = "QGSP_BERT_HP";
-    G4String physListName = "Shielding";
+
+    // Get physics list name
+    if (!physListName.size()) {
+       // Physics List is defined via environment variable PHYSLIST
+       char* physListNameEnv = std::getenv("PHYSLIST");
+       if (physListNameEnv) {
+          physListName = G4String(physListNameEnv);
+       }
+    }
+
+    // Check if the name is known to the factory
+    if (physListName.size() && (!factory.IsReferencePhysList(physListName))) {
+       G4cerr << "Physics list " << physListName << " is not available in PhysListFactory." << G4endl;
+       physListName.clear();
+    }
+    
+
+    // If name is not defined use Shielding ou autre
+    if (!physListName.size()) {
+    	//physListName = "FTFP_BERT_HPT";
+    	//physListName = "QGSP_BERT_HP";
+    	physListName = "Shielding_HPT";
+    }
+
     physList = factory.GetReferencePhysList(physListName);
     runManager->SetUserInitialization(physList);
 
