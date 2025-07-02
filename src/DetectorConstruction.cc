@@ -260,7 +260,7 @@ void DetectorConstruction::SetMaterialWaffleNeutronAbsorber(G4String materialCho
   G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
 
   if (pttoMaterial) {
-    materialShieldingWaffle = pttoMaterial;
+    materialNeutronCapture = pttoMaterial;
     if(logicNeutronAbsorber)logicNeutronAbsorber->SetMaterial(materialNeutronCapture);
     G4cout<<" material n absorber: "<<materialNeutronCapture->GetName()<<G4endl;  
   } else {
