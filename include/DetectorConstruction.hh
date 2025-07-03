@@ -74,6 +74,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetLArDetectorWidth(G4double);
     void SetshieldingThickness(G4double);
     void SetWaffleThickness(G4double);
+    void SetBottomWafflenCaptThickness(G4double);
     void SetcryostatThicknessPrimMembraneSS(G4double);
     void SetBiSourcePosition(G4ThreeVector);
     void SetBiSourcePosition2(G4ThreeVector);
@@ -101,6 +102,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double GetShieldingThickness()  {return shieldingThickness;};
     G4double GetNeutronCaptShieldingThickness()  {return n_captureLayerThickness;};
     G4double GetWaffleThickness()  {return BottomShieldingThickness;};
+    G4double GetWafflenCaptLayerThickness()  {return n_captWaffleBottomThickness;};
     G4double GetGeDetectorLength()  {return halfDetectorX*2.0;};
     G4double GetGeDetectorThickness()  {return halfDetectorZ*2.0;};
     G4double GetGeDetectorWidth()  {return halfDetectorY*2.0;};
@@ -140,6 +142,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double cryostatThicknessOuterSteelSupport;
     G4double zPositionSample;
     G4double n_captureLayerThickness;
+    G4double n_captWaffleBottomThickness;
     G4double halfSourceContainerThickness;
 
 

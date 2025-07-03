@@ -93,6 +93,7 @@ fd2LogicVolume(nullptr)
   shieldingThickness = 15.0*cm;
   BottomShieldingThickness = 30.0*cm;
   n_captureLayerThickness = 0.1*cm;
+  n_captWaffleBottomThickness = 0.00236*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
   fBiSourcePosition2 = G4ThreeVector(10.*cm, 45.*cm, 10.*cm);
   fDetectorType = 1;
@@ -181,6 +182,11 @@ void DetectorConstruction::SetBiSourcePosition2(G4ThreeVector value){
 }
 void DetectorConstruction::SetWaffleThickness(G4double value){
   BottomShieldingThickness = (value/1.)*mm;
+  //UpdateGeometry();
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+}
+void DetectorConstruction::SetBottomWafflenCaptThickness(G4double value){
+  n_captWaffleBottomThickness = (value/1.)*mm;
   //UpdateGeometry();
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
@@ -690,7 +696,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   1);                		 // check overlaps
 
   //Volume for neutron absorver
-  G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,0.00236/2*cm,waffleBoxZ/2);
+  //G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,0.00236/2*cm,waffleBoxZ/2);
+  G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,n_captWaffleBottomThickness/2,waffleBoxZ/2);
   logicNeutronAbsorber = new G4LogicalVolume(BoxNcapture, materialNeutronCapture, "DaughterLV");
   //Place neutron absorver
   new G4PVPlacement(nullptr,                 // no rotation
