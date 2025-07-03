@@ -117,7 +117,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetLArDetectorWidth->SetToBeBroadcasted(false);
 
   commandSetshieldingThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setshieldingThickness",this);
-  commandSetshieldingThickness->SetGuidance("Set thickness of Al contact");
+  commandSetshieldingThickness->SetGuidance("Set thickness of shielding layer");
   commandSetshieldingThickness->SetParameterName("shieldingThickness",false);
   commandSetshieldingThickness->SetRange("shieldingThickness>0.");
   commandSetshieldingThickness->SetUnitCategory("Length");
