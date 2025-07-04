@@ -737,6 +737,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   G4RotationMatrix* rotationMatrixSourceContainer = new G4RotationMatrix(0,0,0);
   rotationMatrixSourceContainer->rotateX(90*deg);
+  G4RotationMatrix* rotationMatrixWaffleBoxes = new G4RotationMatrix(0,0,0);
+  rotationMatrixWaffleBoxes->rotateX(180*deg);
   //  ============================================================= Place volumes =============================================================
   
   // Place main detector always at center of world volume
@@ -1300,7 +1302,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
          	///Testing waffle boxes
 		for(int j=1; j < n_h_bars_top; j++){
 	                G4double  posZ = origin_z + (j-1)*pitch_z + bar_x + waffleBoxZ/2;
-			new G4PVPlacement(0, 
+			new G4PVPlacement(rotationMatrixWaffleBoxes, 
 		  		G4ThreeVector(pos_x, yBarSteel, posZ),
 			  	logicWaffleBoxes,
 			  	"WaffleBox_yp_i"+std::to_string(i)+"_j_"+std::to_string(1),
