@@ -92,6 +92,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterSteelSupport = 1.00*m;
   shieldingThickness = 15.0*cm;
   BottomShieldingThickness = 30.0*cm;
+  BottomLeadShieldingThickness = 2.5*cm;
   n_captureLayerThickness = 0.1*cm;
   n_captWaffleBottomThickness = 0.00236*cm;
   fBiSourcePosition = G4ThreeVector(0.*cm, 15.*cm, 0.*cm);
@@ -322,6 +323,7 @@ void DetectorConstruction::DefineMaterials(){
   materialAlCryostat = G4Material::GetMaterial("Aluminium_6061");
   materialRock = G4Material::GetMaterial("G4_CONCRETE");
   materialTitanium = G4Material::GetMaterial("titanium");
+  materialLead = G4Material::GetMaterial("G4_Pb");
 
   G4cout<<" materials imported succesfully "<<G4endl;
 
@@ -629,6 +631,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //logicCryoOuterPUfoam->SetVisAttributes(visPUfoam);
   //logicCryoInnerPUfoam->SetVisAttributes(visPUfoam);
 
+  G4VisAttributes* visLead = new G4VisAttributes(yellow);
+  visLead->SetVisibility(true);
   //Arapuca
   G4VisAttributes* vis_arapuca = new G4VisAttributes(lblue);
   vis_arapuca->SetForceSolid(true);
@@ -683,13 +687,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //Volume for bottom shielding 
   G4Box* BoxInsideWaffle = new G4Box("b_waffle",waffleBoxX/2,BottomShieldingThickness/2,waffleBoxZ/2);
   logicWaffleBottomShielding = new G4LogicalVolume(BoxInsideWaffle, materialShieldingWaffle, "DaughterLV");
-  
+ 
+
   //Place volume for bottom shielding
-  G4double yBoxWaffle = -cryostatThicknessOuterSteelSupport/2 + BottomShieldingThickness/2;
+  G4double yBoxWaffle = -cryostatThicknessOuterSteelSupport/2 + BottomShieldingThickness/2 + BottomLeadShieldingThickness;
   new G4PVPlacement(nullptr,                     // no rotation
                   G4ThreeVector(0,yBoxWaffle,0), // local position
                   logicWaffleBottomShielding,    // LV of the daughter
-                  "DaughterPV",                  // PV name
+                  "BottomWaffleShieldPV",                  // PV name
                   logicWaffleBoxes,              // *mother* LV
                   false,                         // no boolean op
                   0,                             // copy number
@@ -703,16 +708,33 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   new G4PVPlacement(nullptr,                 // no rotation
                   G4ThreeVector(0,0,0),      // local position in D1
                   logicNeutronAbsorber,      // LV we just created
-                  "D2_PV",                   // PV name
+                  "WaffleNeutronAbsPV",                   // PV name
                   logicWaffleBottomShielding,// <--- mother LV is D1
                   false,                     // no booleans
                   0,                         // copy-number of D2
                   1);
 
+  //Volume for lead layer in bottom waffle
+  G4Box* BoxLeadInsideWaffle = new G4Box("b_lead_waffle",waffleBoxX/2,BottomLeadShieldingThickness/2,waffleBoxZ/2);
+  logicLeadWaffleLayer = new G4LogicalVolume(BoxLeadInsideWaffle, materialLead, "DaughterLV");
+  G4double yBoxWaffleLead = -cryostatThicknessOuterSteelSupport/2 + BottomLeadShieldingThickness/2;
+  //Place volume 
+  new G4PVPlacement(nullptr,                     // no rotation
+                  G4ThreeVector(0,yBoxWaffleLead,0), // local position
+                  logicLeadWaffleLayer,    // LV of the daughter
+                  "LeadWafflePV",                  // PV name
+                  logicWaffleBoxes,              // *mother* LV
+                  false,                         // no boolean op
+                  0,                             // copy number
+                  1);                		 // check overlaps
+
+
   G4double pos_x, pos_y, pos_z;
 
   //logicWaffleBoxes->SetVisAttributes(vis_waffle);
-  logicNeutronAbsorber->SetVisAttributes(vis_waffle);
+  logicWaffleBottomShielding->SetVisAttributes(vis_waffle);
+  logicLeadWaffleLayer->SetVisAttributes(visLead);
+
   G4RotationMatrix* rotationMatrixSourceContainer = new G4RotationMatrix(0,0,0);
   rotationMatrixSourceContainer->rotateX(90*deg);
   //  ============================================================= Place volumes =============================================================

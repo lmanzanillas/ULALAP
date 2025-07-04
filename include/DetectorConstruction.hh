@@ -144,6 +144,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double n_captureLayerThickness;
     G4double n_captWaffleBottomThickness;
     G4double halfSourceContainerThickness;
+    G4double BottomLeadShieldingThickness;
 
 
 
@@ -162,6 +163,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4Material* materialAcrylic;
     G4Material* materialTitanium;
     G4Material* materialNeutronCapture;
+    G4Material* materialLead;
     G4String fSetupName;
     G4Box* fWorldBox;
     G4Box* fd2DetectorBox;
@@ -194,6 +196,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicMetalWindowBack;
     G4LogicalVolume* logicMetalTube;
     G4LogicalVolume* logicWorldBox;
+    G4LogicalVolume* logicLeadWaffleLayer;
 
 
     G4VPhysicalVolume* physicWorldBox;
