@@ -179,7 +179,8 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicRockBox;
     G4LogicalVolume* logicCavern;
     G4LogicalVolume* logicshieldingBoxB4C;
-    G4LogicalVolume* logicshieldingBoxOuter;
+    G4LogicalVolume* logicShieldingBoxLongLatWall;
+    G4LogicalVolume* logicShieldingBoxShortLatWall;
     G4LogicalVolume* logicshieldingBoxInner;
     G4LogicalVolume* logicshieldingBoxWaffle;
     G4LogicalVolume* logicCryoPrimMembrane;

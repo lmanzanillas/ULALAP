@@ -90,7 +90,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessInnerPlywood = 10.0*mm;
   cryostatThicknessOuterPlywood = 10.0*mm;
   cryostatThicknessOuterSteelSupport = 1.00*m;
-  shieldingThickness = 15.0*cm;
+  shieldingThickness = 23.0*cm;
   BottomShieldingThickness = 30.0*cm;
   BottomLeadShieldingThickness = 2.5*cm;
   n_captureLayerThickness = 0.1*cm;
@@ -234,7 +234,8 @@ void DetectorConstruction::SetShieldingMaterial(G4String materialChoice)
 
   if (pttoMaterial) {
     fShieldingMaterial = pttoMaterial;
-    if(logicshieldingBoxOuter)logicshieldingBoxOuter->SetMaterial(fShieldingMaterial);
+    if(logicShieldingBoxLongLatWall)logicShieldingBoxLongLatWall->SetMaterial(fShieldingMaterial);
+    if(logicShieldingBoxShortLatWall)logicShieldingBoxShortLatWall->SetMaterial(fShieldingMaterial);
     G4cout<<" material "<<fShieldingMaterial->GetName()<<G4endl;  
   } else {
     G4cout << "\n--> warning from DetectorConstruction::SetMaterial : "
@@ -421,13 +422,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double box_shielding_inner_B4C_y = box_shielding_inner_y + n_captureLayerThickness;
   G4double box_shielding_inner_B4C_z = box_shielding_inner_z + n_captureLayerThickness;
   //shielding outer layer 1
-  G4double box_shielding_outer_x = box_shielding_inner_x + shieldingThickness + n_captureLayerThickness;
-  G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness + n_captureLayerThickness;
-  G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness + n_captureLayerThickness;
+  //G4double box_shielding_outer_x = box_shielding_inner_x + shieldingThickness + n_captureLayerThickness;
+  //G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness + n_captureLayerThickness;
+  //G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness + n_captureLayerThickness;
   //Air box
-  G4double box_air_cavern_x = box_shielding_outer_x + 2*m;
-  G4double box_air_cavern_y = box_shielding_outer_y + 2*m;
-  G4double box_air_cavern_z = box_shielding_outer_z + 2*m;
+  G4double box_air_cavern_x = box_shielding_inner_B4C_x + 1*m;//change here to remove box_shielding_outer
+  G4double box_air_cavern_y = box_shielding_inner_B4C_y + 1*m;
+  G4double box_air_cavern_z = box_shielding_inner_B4C_z + 1*m;
   //Rock box
   G4double box_rock_x = box_air_cavern_x + 10*m;
   G4double box_rock_y = box_air_cavern_y + 10*m;
@@ -446,13 +447,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //Printing key coordinates
   G4cout<<"start of shielding: "<<box_shielding_inner_x/cm<<" y "<<box_shielding_inner_y/cm<<" z "<<box_shielding_inner_z/cm<<G4endl;
   G4cout<<"Cavern box filled with air x: "<<box_air_cavern_x/cm<<" y "<<box_air_cavern_y/cm<<" z "<<box_air_cavern_z/cm<<G4endl;
-  G4cout<<"End of shielding x: "<<box_shielding_outer_x/cm<<" y "<<box_shielding_outer_y/cm<<" z "<<box_shielding_outer_z/cm<<G4endl;
+  //G4cout<<"End of shielding x: "<<box_shielding_outer_x/cm<<" y "<<box_shielding_outer_y/cm<<" z "<<box_shielding_outer_z/cm<<G4endl;
   G4cout<<"LAr Volume x: "<<halfDetectorX/cm<<" y "<<halfDetectorY/cm<<" z "<<halfDetectorZ/cm<<G4endl;
   G4cout<<"Active LAr Volume x: "<<halfDetectorXActiveAr/cm<<" y "<<halfDetectorYActiveAr/cm<<" z "<<halfDetectorZActiveAr/cm<<G4endl;
   G4cout<<"SS vapor barrier: "<<box_vapor_barrier_SS_x/cm<<" y "<<box_vapor_barrier_SS_y/cm<<" z "<<box_vapor_barrier_SS_z/cm<<G4endl;
   //Shielding 
-  G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
-  logicshieldingBoxOuter = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
+  //G4Box* shieldingBoxOuter = new G4Box("b_shielding_outer", box_shielding_outer_x, box_shielding_outer_y, box_shielding_outer_z);
+  //logicShieldingBoxLongLatWall = new G4LogicalVolume(shieldingBoxOuter, fShieldingMaterial, "Shielding", 0, 0, 0);
 
   G4Box* shieldingBoxB4C = new G4Box("b_shielding_b4c", box_shielding_inner_B4C_x, box_shielding_inner_B4C_y, box_shielding_inner_B4C_z);
   logicshieldingBoxB4C = new G4LogicalVolume(shieldingBoxB4C, materialB4C, "Shielding", 0, 0, 0);
@@ -460,10 +461,15 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* shieldingBoxInner = new G4Box("b_shielding_inner", box_shielding_inner_x, box_shielding_inner_y, box_shielding_inner_z);
   logicshieldingBoxInner = new G4LogicalVolume(shieldingBoxInner, materialAir, "Shielding", 0, 0, 0);
 
-  //Box to draw for illustration
-  G4Box* shieldingBoxPlot = new G4Box("b_shielding_plot", box_shielding_outer_x, box_shielding_outer_y, 40.*cm);
-  G4LogicalVolume* logicshieldingBoxPlot = new G4LogicalVolume(shieldingBoxPlot, fShieldingMaterial, "Shielding", 0, 0, 0);
+  //Lateral shielding Box, long side
+  G4Box* shieldingBoxLongLatWall = new G4Box("b_shielding_walls", box_steel_support_x, box_steel_support_y, shieldingThickness/2);
+  logicShieldingBoxLongLatWall = new G4LogicalVolume(shieldingBoxLongLatWall, fShieldingMaterial, "Shielding", 0, 0, 0);
   
+  //Lateral shielding Box, long side
+  G4Box* shieldingBoxShortLatWall = new G4Box("b_shielding_walls", shieldingThickness/2, box_steel_support_y, box_steel_support_z);
+  logicShieldingBoxShortLatWall = new G4LogicalVolume(shieldingBoxShortLatWall, fShieldingMaterial, "Shielding", 0, 0, 0);
+
+  //Waffle shielding
   G4Box* shieldingBoxWaffle = new G4Box("b_shielding_waffle", box_steel_support_x, box_steel_support_y, box_steel_support_z);
   logicshieldingBoxWaffle = new G4LogicalVolume(shieldingBoxWaffle, materialAir, "ShieldingWaffle", 0, 0, 0);
   //G4double thick_support = box_steel_support_x - halfDetectorX;
@@ -645,7 +651,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   vis_waffle->SetVisibility(true);
   vis_waffle->SetForceAuxEdgeVisible(true);
   //logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
-  //logicshieldingBoxPlot->SetVisAttributes(vis_waffle);
+  logicShieldingBoxLongLatWall->SetVisAttributes(vis_waffle);
+  logicShieldingBoxShortLatWall->SetVisAttributes(vis_waffle);
 
   G4VisAttributes* vis_anode = new G4VisAttributes(orange);
   vis_anode->SetForceSolid(true);
@@ -768,33 +775,45 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shielding wall for visualization logicshieldingBoxPlot
+	 //place shielding wall for visualization logicShieldingBoxLongLatWall
 	 //uncommnet if you want to plot thw lateral wall
 	 //Should be always commented for running
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+	 //Short walls
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+	 //place shielding inside cavern  
 	 /*
   	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,box_air_cavern_z - 50*cm),
-		logicshieldingBoxPlot,
-		"shielding_plot"+std::to_string(1),
-		logicCavern,false,1,false);
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,-box_air_cavern_z + 50*cm),
-		logicshieldingBoxPlot,
-		"shielding_plot"+std::to_string(1),
-		logicCavern,false,1,false);
-	*/
-	 //place shielding inside cavern  
-  	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
-		logicshieldingBoxOuter,
+		logicShieldingBoxLongLatWall,
 		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
 	 //place shielding inner inside shielding outer 
+	*/
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
 		"inner_shielding_"+std::to_string(1),
-		logicshieldingBoxOuter,false,1,false);
+		logicCavern,false,1,false);
 	 //place many copies of steel bar support inside shielding inner
 	 //vertical bars short sides +/- x
 	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
@@ -1189,18 +1208,43 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shielding inside cavern  
+	 //place shielding inside cavern 
+	 /* 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
-		logicshieldingBoxOuter,
+		logicShieldingBoxLongLatWall,
 		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
+	 */
+	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+	 //Short walls
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 -10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
 		"inner_shielding_"+std::to_string(1),
-		logicshieldingBoxOuter,false,1,false);
+		logicCavern,false,1,false);
 	 //place shielding waffle box inside inside shielding inner 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
@@ -1216,14 +1260,14 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   G4ThreeVector(xBarSteel,0,pos_z),
                   logicSteelSupport,
                   "SS_support_xp_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,1);
+                  logicshieldingBoxWaffle,false,1,0);
 		  //G4cout<<" box_steel_support_x y z: "<<box_steel_support_x<<" "<<box_steel_support_y<<" "<<box_steel_support_z<<" x_BarSteel: "<<xBarSteel<<" pos_z: "<<pos_z<<G4endl;
  		//side x- 
 		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
                   G4ThreeVector(-xBarSteel,0,pos_z),
                   logicSteelSupport,
                   "SS_support_xm_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,1);
+                  logicshieldingBoxWaffle,false,1,0);
          }
 	 
 	 //horizontal bars short sides
@@ -1235,12 +1279,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                                 G4ThreeVector(xBarSteel, pos_y, pos_z),
                                 logicSteelSupportHorizontal,
                                 "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,1);
+                                logicshieldingBoxWaffle,false,1,0);
 			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
                                 G4ThreeVector(-xBarSteel, pos_y, pos_z),
                                 logicSteelSupportHorizontal,
                                 "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,1);
+                                logicshieldingBoxWaffle,false,1,0);
 		}
 	}
 	 //vertical bars long sides +/- z
@@ -1251,13 +1295,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  G4ThreeVector(pos_x,0,zBarSteel),
 		  logicSteelSupport,
 		  "SS_support_zp_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
+		  logicshieldingBoxWaffle,false,1,0);
 
 		new G4PVPlacement(0, 
 		  G4ThreeVector(pos_x,0,-zBarSteel),
 		  logicSteelSupport,
 		  "SS_support_zm_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
+		  logicshieldingBoxWaffle,false,1,0);
 	}
 	//Top long bars
 	for(int i = 2 ; i < n_v_bars_long_side; i++){
@@ -1266,12 +1310,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  G4ThreeVector(pos_x,yBarSteel,0),
 		  logicSteelSupportTop,
 		  "SS_support_t_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
+		  logicshieldingBoxWaffle,false,1,0);
 		new G4PVPlacement(0, 
 		  G4ThreeVector(pos_x,-yBarSteel,0),
 		  logicSteelSupportTop,
 		  "SS_support_b_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
+		  logicshieldingBoxWaffle,false,1,0);
 	 }
         
 
@@ -1285,12 +1329,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 			new G4PVPlacement(0, 
 		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 		}
 
 	 }
@@ -1306,12 +1350,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  		G4ThreeVector(pos_x, yBarSteel, posZ),
 			  	logicWaffleBoxes,
 			  	"WaffleBox_yp_i"+std::to_string(i)+"_j_"+std::to_string(1),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 			new G4PVPlacement(0, 
 		  		G4ThreeVector(pos_x, -yBarSteel, posZ),
 			  	logicWaffleBoxes,
 			  	"WaffleBox_ym_i"+std::to_string(i)+"_j_"+std::to_string(1),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 		}
 		//////////////////
 		for(int j=1; j <= n_h_bars_top; j++){
@@ -1320,12 +1364,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
 		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
 			  	logicSteelSupportHorizontal,
 			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
+			  	logicshieldingBoxWaffle,false,1,0);
 		}
 
 	 }
@@ -1421,7 +1465,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			   G4ThreeVector(pos_x,0,pos_z),
   			   fLogicArapuca,     //its logical volume
 			   "Arapuca",
-  			   fd2LogicVolume,	false, 0, true);
+  			   fd2LogicVolume,	false, 0, 0);
 			}
 		}
 	}
@@ -1435,25 +1479,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Top side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side front
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 		}
 	}
 	//Arapucas short sides
@@ -1466,25 +1510,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Top side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side plus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 		}
 	}
 			
@@ -1622,18 +1666,44 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shielding inside cavern  
+	 //place shielding inside cavern 
+	 /* 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
-		logicshieldingBoxOuter,
+		logicShieldingBoxLongLatWall,
 		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
+	 */
+	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+	//Short walls
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+
 	 //place shielding inside cavern  
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxB4C,
 		"shielding_B4C"+std::to_string(1),
-		logicshieldingBoxOuter,false,1,false);
+		logicCavern,false,1,false);
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
@@ -2034,12 +2104,38 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicCavern,
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
-	 //place shielding inside cavern  
+	 //place shielding inside cavern 
+	 /* 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
-		logicshieldingBoxOuter,
+		logicShieldingBoxLongLatWall,
 		"shielding_"+std::to_string(1),
 	 	logicCavern,false,1,false);
+	*/
+	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		logicShieldingBoxLongLatWall,
+		"shielding_walls_long"+std::to_string(1),
+		logicCavern,false,1,1);
+	//Short walls
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
+		logicShieldingBoxShortLatWall,
+		"shielding_walls_short"+std::to_string(1),
+		logicCavern,false,1,1);
+
+
 	 /////////////////////////////////////////
 	 //place B4C or other layer here
 	 //place shielding inside cavern  
@@ -2047,7 +2143,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxB4C,
 		"shielding_B4C"+std::to_string(1),
-		logicshieldingBoxOuter,false,1,false);
+		logicCavern,false,1,false);
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
