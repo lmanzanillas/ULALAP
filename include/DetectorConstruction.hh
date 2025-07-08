@@ -172,7 +172,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     G4LogicalVolume* logicWaffleBoxes;
     G4LogicalVolume* logicWaffleBottomShielding;
-    G4LogicalVolume* logicNeutronAbsorber;
+    G4LogicalVolume* logicNeutronAbsorberWaffle;
     G4LogicalVolume* logicSteelSupport;
     G4LogicalVolume* logicSteelSupportHorizontal;
     G4LogicalVolume* logicSteelSupportTop;

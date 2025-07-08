@@ -26,7 +26,8 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  commandSetTargetMaterial(0),
  commandSetShieldingMaterial(0),
  commandSetShieldingMaterialWaffle(0),
- commandSetShieldingWaffleNeutronAbsorber(0),
+ commandSetShieldingWaffleNeutronAbsorberMaterial(0),
+ commandSetShieldingWaffleNeutronAbsorberThickness(0),
  commandSetDetectorName(0),
  commandSetSetupName(0),
  commandSetDataType(0),
@@ -56,11 +57,11 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetShieldingMaterialWaffle->SetToBeBroadcasted(false);
 
 
-  commandSetShieldingWaffleNeutronAbsorber = new G4UIcmdWithAString("/ULALAP/det/setBottomWaffleNeutronAbsorber",this);
-  commandSetShieldingWaffleNeutronAbsorber->SetGuidance("Select material of the bottom waffle shielding neutron absorber.");
-  commandSetShieldingWaffleNeutronAbsorber->SetParameterName("choice",false);
-  commandSetShieldingWaffleNeutronAbsorber->AvailableForStates(G4State_PreInit,G4State_Idle);
-  commandSetShieldingWaffleNeutronAbsorber->SetToBeBroadcasted(false);
+  commandSetShieldingWaffleNeutronAbsorberMaterial = new G4UIcmdWithAString("/ULALAP/det/setBottomWaffleNeutronAbsorber",this);
+  commandSetShieldingWaffleNeutronAbsorberMaterial->SetGuidance("Select material of the bottom waffle shielding neutron absorber.");
+  commandSetShieldingWaffleNeutronAbsorberMaterial->SetParameterName("choice",false);
+  commandSetShieldingWaffleNeutronAbsorberMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetShieldingWaffleNeutronAbsorberMaterial->SetToBeBroadcasted(false);
 
   commandSetDetectorName = new G4UIcmdWithAString("/ULALAP/det/setDetectorName",this);
   commandSetDetectorName->SetGuidance("Select name of detector.");
@@ -132,6 +133,14 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetWaffleThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetWaffleThickness->SetToBeBroadcasted(false);
 
+  commandSetShieldingWaffleNeutronAbsorberThickness = new G4UIcmdWithADoubleAndUnit("/ULALAP/det/setWaffleNeutronAbsThickness",this);
+  commandSetShieldingWaffleNeutronAbsorberThickness->SetGuidance("Set thickness of neutron absorber layer in waffle");
+  commandSetShieldingWaffleNeutronAbsorberThickness->SetParameterName("waffleNeutronAbsThickness",false);
+  commandSetShieldingWaffleNeutronAbsorberThickness->SetRange("waffleNeutronAbsThickness>0.");
+  commandSetShieldingWaffleNeutronAbsorberThickness->SetUnitCategory("Length");
+  commandSetShieldingWaffleNeutronAbsorberThickness->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetShieldingWaffleNeutronAbsorberThickness->SetToBeBroadcasted(false);
+
 
 
   commandSetDetectorType = new G4UIcmdWithAnInteger("/ULALAP/det/setDetectorType",this);
@@ -158,7 +167,8 @@ DetectorMessenger::~DetectorMessenger()
   delete commandSetTargetMaterial;
   delete commandSetShieldingMaterial;
   delete commandSetShieldingMaterialWaffle;
-  delete commandSetShieldingWaffleNeutronAbsorber;
+  delete commandSetShieldingWaffleNeutronAbsorberMaterial;
+  delete commandSetShieldingWaffleNeutronAbsorberThickness;
   delete commandSetDetectorName;
   delete commandSetSetupName;
   delete commandSetDataType;
@@ -181,8 +191,12 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 	fDetector->SetShieldingMaterialWaffle(newValue);
    }
 
-   if( command == commandSetShieldingWaffleNeutronAbsorber ){
+   if( command == commandSetShieldingWaffleNeutronAbsorberMaterial ){
 	fDetector->SetMaterialWaffleNeutronAbsorber(newValue);
+   }
+
+   if( command == commandSetShieldingWaffleNeutronAbsorberThickness ){
+	fDetector->SetBottomWafflenCaptThickness(commandSetShieldingWaffleNeutronAbsorberThickness->GetNewDoubleValue(newValue));
    }
 
    if( command == commandSetDetectorName ){

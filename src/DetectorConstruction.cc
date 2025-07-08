@@ -269,7 +269,7 @@ void DetectorConstruction::SetMaterialWaffleNeutronAbsorber(G4String materialCho
 
   if (pttoMaterial) {
     materialNeutronCapture = pttoMaterial;
-    if(logicNeutronAbsorber)logicNeutronAbsorber->SetMaterial(materialNeutronCapture);
+    if(logicNeutronAbsorberWaffle)logicNeutronAbsorberWaffle->SetMaterial(materialNeutronCapture);
     G4cout<<" material n absorber: "<<materialNeutronCapture->GetName()<<G4endl;  
   } else {
     G4cout << "\n--> warning from DetectorConstruction::SetMaterialWaffleNeutronAbsorber : "
@@ -710,11 +710,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //Volume for neutron absorver
   //G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,0.00236/2*cm,waffleBoxZ/2);
   G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,n_captWaffleBottomThickness/2,waffleBoxZ/2);
-  logicNeutronAbsorber = new G4LogicalVolume(BoxNcapture, materialNeutronCapture, "DaughterLV");
+  logicNeutronAbsorberWaffle = new G4LogicalVolume(BoxNcapture, materialNeutronCapture, "DaughterLV");
   //Place neutron absorver
   new G4PVPlacement(nullptr,                 // no rotation
                   G4ThreeVector(0,0,0),      // local position in D1
-                  logicNeutronAbsorber,      // LV we just created
+                  logicNeutronAbsorberWaffle,      // LV we just created
                   "WaffleNeutronAbsPV",                   // PV name
                   logicWaffleBottomShielding,// <--- mother LV is D1
                   false,                     // no booleans
