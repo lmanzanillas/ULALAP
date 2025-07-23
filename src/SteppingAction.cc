@@ -161,7 +161,12 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
 	if (!trackInfo->HasEnteredTarget1())
         {
         	G4double ke = track->GetKineticEnergy()/keV;
-		fEventAction->AddNeutronKinAtLAr(ke);
+		fEventAction->AddNeutronKinAtLAr(
+			ke,
+			postPoint->GetPosition().x() / cm,
+			postPoint->GetPosition().y() / cm,
+			postPoint->GetPosition().z() / cm
+			);
         	//G4AnalysisManager::Instance()->FillH1(0, ke);
 		// Mark this track as having entered the target
             	trackInfo->SetEnteredTarget1(true);

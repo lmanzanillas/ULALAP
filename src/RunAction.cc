@@ -144,6 +144,9 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     fMan->CreateNtuple("NeutronkinE", "NeutronKinE");
     fMan->CreateNtupleIColumn("EventID");
     fMan->CreateNtupleDColumn("kinEneutron");
+    fMan->CreateNtupleDColumn("xLAr");
+    fMan->CreateNtupleDColumn("yLAr");
+    fMan->CreateNtupleDColumn("zLAr");
     fMan->FinishNtuple();
 
 
