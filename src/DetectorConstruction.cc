@@ -484,7 +484,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4cout<<"n v bars: "<<n_v_bars_long_side<<G4endl;
   G4int n_v_bars_short_side = int(2*box_shielding_inner_z/(200*cm));
   G4cout<<"n v short: "<<n_v_bars_short_side<<G4endl;
-  G4double bar_x = 0.2*m;
+  G4double bar_x = 0.022/2 *m;
   G4double bar_y = box_steel_support_y;
   G4double bar_z = cryostatThicknessOuterSteelSupport /2.0;
   
