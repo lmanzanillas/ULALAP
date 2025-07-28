@@ -57,6 +57,15 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     static G4VPhysicalVolume *
     GetPhysicalVolumeByName(const G4String &name);
 
+  private:
+    G4LogicalVolume* fIBeamTopLog = nullptr;
+    G4LogicalVolume* fIBeamBotLog = nullptr;
+    G4LogicalVolume* fIBeamSideLog = nullptr;
+    // --- Logical volumes for Belts ---
+    G4LogicalVolume* fBeltWithHoleLog = nullptr;
+    G4LogicalVolume* fBeltWithoutHoleLog = nullptr;
+    G4LogicalVolume* fBeltWithoutHoleLogTop = nullptr;
+
   public:
     virtual G4VPhysicalVolume* Construct();
     void UpdateGeometry();
@@ -83,7 +92,9 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetSetupName(G4String);
     void SetDataType(G4String);
 
-
+    void IBeams();
+    void Belts();
+    void ShieldingFloor();
 
   public:
     //const G4VPhysicalVolume* GetWorld() {return physicPenCryostatBox;};
@@ -217,6 +228,24 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
     UlalapMaterials* materialConstruction;
     DetectorMessenger* fDetectorMessenger;
+
+    //I beams
+    G4double fIFlangeWidth;
+    G4double fIFlangeThick;
+    G4double fITopLength;
+    G4double fISideLength;
+    G4double fIFlangeWaist;
+    G4double fIFlangeHeight;
+    G4double fIPortHoleRad;
+    G4double fISidePortLoc;
+    G4double fIPortSpacing;
+    G4double fIBotPortLoc;
+    G4double fIFlangeHeightInside;
+
+    G4double fSpacing;
+    G4double fht;
+    G4double fst;
+    G4double fzpl;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

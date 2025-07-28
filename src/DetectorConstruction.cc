@@ -78,10 +78,10 @@ fd2LogicVolume(nullptr)
   fDataType = "csv";
   halfDetectorX = 62.0/2.0*m;
   halfDetectorXActiveAr = 60.0/2.0*m;
-  halfDetectorZ = 14.0/2.0*m;
-  halfDetectorZActiveAr = 12.5/2.0*m;
-  halfDetectorY = 15.1/2.0*m;
-  halfDetectorYActiveAr = 14.54/2.0*m;
+  halfDetectorZ = 15.1/2.0*m;
+  halfDetectorZActiveAr = 13.6/2.0*m;
+  halfDetectorY = 14.0/2.0*m;
+  halfDetectorYActiveAr = 13.44/2.0*m;
   cryostatThicknessPrimMembraneSS = 1.2*mm;
   cryostatThicknessSecondaryBarrierAl = 0.8*mm;
   cryostatThicknessVaporBarrierSS = 12.0*mm;
@@ -89,7 +89,7 @@ fd2LogicVolume(nullptr)
   cryostatThicknessOuterPU = 0.4*m;
   cryostatThicknessInnerPlywood = 10.0*mm;
   cryostatThicknessOuterPlywood = 10.0*mm;
-  cryostatThicknessOuterSteelSupport = 1.00*m;
+  cryostatThicknessOuterSteelSupport = 1.20*m;
   shieldingThickness = 23.0*cm;
   BottomShieldingThickness = 30.0*cm;
   BottomLeadShieldingThickness = 2.5*cm;
@@ -107,6 +107,26 @@ fd2LogicVolume(nullptr)
   fShieldingMaterial = G4Material::GetMaterial("G4_AIR");
   materialShieldingWaffle = G4Material::GetMaterial("G4_WATER");
   materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
+  //I beams
+  // IBeams
+  fIFlangeWidth = 0.402 * m; // all m here.
+  fIFlangeThick = 0.040 * m;
+  fIFlangeWaist = 0.022 * m;
+  fIFlangeHeight = 1.108 * m - 2*fIFlangeThick;
+  //fIFlangeHeightInside = fIFlangeHeight - 2*fIFlangeThick;
+  fIFlangeHeightInside = fIFlangeHeight;
+  fITopLength = 18.94 *m ;
+  fISideLength = 17.8 * m  - 2*fIFlangeHeight - 2*fIFlangeThick; // need a little space with these side beams
+
+  fIPortHoleRad = 0.800/2 * m;
+  fISidePortLoc = 5.907 * m - fIFlangeHeight/2. ;
+  fIPortSpacing = 4.0*m ;
+  fIBotPortLoc = 5.0*m;
+
+  fht = 4*m; // m, for beam and belt placement
+  fst = (17.832/2 + 0.030)*m;
+  fzpl = 64.732*m;
+  fSpacing = 64.732/41 *m; // m
   //materialNeutronCapture = G4Material::GetMaterial("G4_WATER");
 }
 
@@ -117,6 +137,148 @@ DetectorConstruction::~DetectorConstruction(){
   delete fDetectorMessenger;
   delete materialConstruction;
 }
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void DetectorConstruction::IBeams()
+{
+  // Solids
+  G4Box* IBeamTopFlange = new G4Box("IBeamTopFlange", (fIFlangeWidth/2.), (fIFlangeThick/2.), (fITopLength/2.));
+  G4Box* IBeamTopMid    = new G4Box("IBeamTopMid",    (fIFlangeWaist/2.), (fIFlangeHeight/2.), (fITopLength/2.));
+
+  G4Box* IBeamSideFlange = new G4Box("IBeamSideFlange", (fIFlangeWidth/2.), (fIFlangeThick/2.), (fISideLength/2.));
+  G4Box* IBeamSideMid0   = new G4Box("IBeamSideMid0",   (fIFlangeWaist/2.), (fIFlangeHeight/2.), (fISideLength/2.));
+
+  G4Tubs* IBeamPort = new G4Tubs("IBeamPortHole", 0., fIPortHoleRad, (fIFlangeThick/2.), 0., 2.*CLHEP::pi);
+
+  // Rotations
+  G4RotationMatrix* fc = new G4RotationMatrix();
+  fc->rotate(CLHEP::pi/2., G4ThreeVector(0.0, 1.0, 0.0));
+
+  // Subtractions for Bottom and Side Mid
+  G4SubtractionSolid* IBeamBotMidtmp = new G4SubtractionSolid("IBeamBottomtmp", IBeamTopMid, IBeamPort, fc, G4ThreeVector(0.0, 0.0, fIPortSpacing/2. ));
+  G4SubtractionSolid* IBeamBotMid = new G4SubtractionSolid("IBeamBottom", IBeamBotMidtmp, IBeamPort, fc, G4ThreeVector(0.0, 0.0, -fIPortSpacing/2. ));
+
+  G4double baseZ = (fISideLength/2. + fIFlangeHeight/2. - fISidePortLoc) ;
+  G4SubtractionSolid* IBeamSideMid1 = new G4SubtractionSolid("IBeamSide1", IBeamSideMid0, IBeamPort, fc, G4ThreeVector(0.0, 0.0, baseZ));
+  G4SubtractionSolid* IBeamSideMid2 = new G4SubtractionSolid("IBeamSide2", IBeamSideMid1, IBeamPort, fc, G4ThreeVector(0.0, 0.0, baseZ - fIPortSpacing ));
+  G4SubtractionSolid* IBeamSideMid  = new G4SubtractionSolid("IBeamSide",  IBeamSideMid2, IBeamPort, fc, G4ThreeVector(0.0, 0.0, baseZ - 2.0*fIPortSpacing ));
+
+  // Transformations
+  HepGeom::Transform3D tnull = HepGeom::TranslateY3D(0.0);
+  HepGeom::Transform3D tr1 = HepGeom::TranslateY3D((fIFlangeHeight/2. + fIFlangeThick/2.) );
+  HepGeom::Transform3D tr2 = HepGeom::TranslateY3D((-fIFlangeHeight/2. - fIFlangeThick/2.) );
+
+  // MultiUnions
+  G4MultiUnion* fBeamTopVol = new G4MultiUnion("IBeamTopVol");
+  fBeamTopVol->AddNode(IBeamTopMid, tnull);
+  fBeamTopVol->AddNode(IBeamTopFlange, tr1);
+  fBeamTopVol->AddNode(IBeamTopFlange, tr2);
+  fBeamTopVol->Voxelize();
+
+  G4MultiUnion* fBeamBotVol = new G4MultiUnion("IBeamBotVol");
+  fBeamBotVol->AddNode(IBeamBotMid, tnull);
+  fBeamBotVol->AddNode(IBeamTopFlange, tr1);
+  fBeamBotVol->AddNode(IBeamTopFlange, tr2);
+  fBeamBotVol->Voxelize();
+
+  G4MultiUnion* fBeamSideVol = new G4MultiUnion("IBeamSideVol");
+  fBeamSideVol->AddNode(IBeamSideMid, tnull);
+  fBeamSideVol->AddNode(IBeamSideFlange, tr1);
+  fBeamSideVol->AddNode(IBeamSideFlange, tr2);
+  fBeamSideVol->Voxelize();
+
+  // Logical Volumes (class members)
+  fIBeamTopLog  = new G4LogicalVolume(fBeamTopVol, materialSteel, "IBeamTopLog");
+  fIBeamBotLog  = new G4LogicalVolume(fBeamBotVol, materialSteel, "IBeamBotLog");
+  fIBeamSideLog = new G4LogicalVolume(fBeamSideVol, materialSteel, "IBeamSideLog");
+
+  // Visualization
+  G4VisAttributes* vis = new G4VisAttributes(G4Colour::Green());
+  vis->SetForceSolid(true);
+  vis->SetForceAuxEdgeVisible(true);
+  vis->SetDaughtersInvisible(true);
+
+  fIBeamTopLog->SetVisAttributes(vis);
+  fIBeamBotLog->SetVisAttributes(vis);
+  fIBeamSideLog->SetVisAttributes(vis);
+}
+
+void DetectorConstruction::Belts()
+{
+  const double ht = fht;  // meters
+  const double st = fst;
+  const double halfSpacingZ = (fSpacing / 2.0 - fIFlangeWaist / 2.0 - 0.001*m) ;
+
+  // Solids
+  G4Box* BeltFlange = new G4Box("BeltFlange", 0.1 * m, (fIFlangeWaist / 2.0) , halfSpacingZ - fIFlangeWidth/2);
+  G4Box* BeltMid    = new G4Box("BeltMid", (fIFlangeWaist / 2.0), (fIFlangeHeightInside / 2.0) , halfSpacingZ);
+  G4Tubs* BeltPort  = new G4Tubs("BeltPortHole", 0.0, 0.25*m , (fIFlangeThick / 2.0) , 0.0, 2.0 * CLHEP::pi);
+
+  G4Box* BeltFlangeTop = new G4Box("BeltFlangeTop", 0.1 * m, (fIFlangeWaist / 2.0) , halfSpacingZ);
+  G4Box* BeltMidTop    = new G4Box("BeltMidTop", (fIFlangeWaist / 2.0), (fIFlangeHeightInside / 4.0) , halfSpacingZ);
+
+  // Rotations
+  G4RotationMatrix* fc2 = new G4RotationMatrix();
+  fc2->rotateY(CLHEP::pi / 2.0);
+
+  // Belt with a hole
+  G4SubtractionSolid* BeltHole = new G4SubtractionSolid("BeltHole", BeltMid, BeltPort, fc2, G4ThreeVector(0, 0, 0));
+
+  // Transforms
+  HepGeom::Transform3D tnull = HepGeom::TranslateY3D(0.0);
+  HepGeom::Transform3D tr1   = HepGeom::TranslateY3D((fIFlangeHeightInside / 2.0 + fIFlangeThick/2.) );
+  HepGeom::Transform3D tr2   = HepGeom::TranslateY3D(-(fIFlangeHeightInside / 2.0 + + fIFlangeThick/2.));
+
+  // Transform tops
+  HepGeom::Transform3D tnullTop = HepGeom::TranslateY3D(0.0);
+  HepGeom::Transform3D tr1Top   = HepGeom::TranslateY3D((fIFlangeHeightInside / 4.0 + fIFlangeThick/2.) );
+  HepGeom::Transform3D tr2Top   = HepGeom::TranslateY3D(-(fIFlangeHeightInside / 4.0 + + fIFlangeThick/2.));
+
+  // Belt with hole
+  G4MultiUnion* BeltWithHole = new G4MultiUnion("BeltWithHole");
+  BeltWithHole->AddNode(BeltHole, tnull);
+  BeltWithHole->AddNode(BeltFlange, tr1);
+  BeltWithHole->AddNode(BeltFlange, tr2);
+  BeltWithHole->Voxelize();
+
+  // Belt without hole
+  G4MultiUnion* BeltWithoutHole = new G4MultiUnion("BeltWithoutHole");
+  BeltWithoutHole->AddNode(BeltMid, tnull);
+  BeltWithoutHole->AddNode(BeltFlange, tr1);
+  BeltWithoutHole->AddNode(BeltFlange, tr2);
+  BeltWithoutHole->Voxelize();
+
+  // Belt without hole top
+  G4MultiUnion* BeltWithoutHoleTop = new G4MultiUnion("BeltWithoutHoleTop");
+  BeltWithoutHoleTop->AddNode(BeltMidTop, tnullTop);
+  BeltWithoutHoleTop->AddNode(BeltFlangeTop, tr1Top);
+  BeltWithoutHoleTop->AddNode(BeltFlangeTop, tr2Top);
+  BeltWithoutHoleTop->Voxelize();
+
+
+  // Create logical volumes
+  fBeltWithHoleLog     = new G4LogicalVolume(BeltWithHole, materialSteel, "BeltWithHoleLog");
+  fBeltWithoutHoleLog  = new G4LogicalVolume(BeltWithoutHole, materialSteel, "BeltWithoutHoleLog");
+  fBeltWithoutHoleLogTop  = new G4LogicalVolume(BeltWithoutHoleTop, materialSteel, "BeltWithoutHoleLogTop");
+
+  // Visualization
+  G4VisAttributes* beltVis        = new G4VisAttributes(G4Colour::Cyan());
+  G4VisAttributes* beltHoleVis    = new G4VisAttributes(G4Colour::Brown());
+
+  beltVis->SetDaughtersInvisible(true);
+  beltVis->SetForceSolid(true);
+  beltVis->SetForceAuxEdgeVisible(true);
+
+  beltHoleVis->SetDaughtersInvisible(true);
+  beltHoleVis->SetForceSolid(true);
+  beltHoleVis->SetForceAuxEdgeVisible(true);
+
+  fBeltWithoutHoleLogTop->SetVisAttributes(beltVis);
+  fBeltWithoutHoleLog->SetVisAttributes(beltVis);
+  fBeltWithHoleLog->SetVisAttributes(beltHoleVis);
+}
+
+
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
@@ -380,6 +542,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Colour  green   (0.0, 1.0, 0.0) ;
   G4Colour  brown   (0.7, 0.4, 0.1) ;
 
+  //
+  IBeams();
+  Belts();
   /////// Detector + cryostat (7 layers) + shielding
   //First layer
   G4double box_size_ss_membrane_x = halfDetectorX + cryostatThicknessPrimMembraneSS;
@@ -480,9 +645,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // to be defined in another file since need to do quite some subtraction operations
   G4int n_h_bars = 5;
   G4int n_h_bars_top = 6;
-  G4int n_v_bars_long_side = int(2*box_shielding_inner_x/(200*cm));
+  G4int n_v_bars_long_side = 39;
   G4cout<<"n v bars: "<<n_v_bars_long_side<<G4endl;
-  G4int n_v_bars_short_side = int(2*box_shielding_inner_z/(200*cm));
+  G4int n_v_bars_short_side = 9;
   G4cout<<"n v short: "<<n_v_bars_short_side<<G4endl;
   G4double bar_x = 0.022/2 *m;
   G4double bar_y = box_steel_support_y;
@@ -500,9 +665,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Box* SteelSupportBarHorizontal = new G4Box("b_steel_support_H", bar_h_x, bar_x, bar_z);
   logicSteelSupportHorizontal = new G4LogicalVolume(SteelSupportBarHorizontal, materialSteel, "SteelSupports", 0, 0, 0);
 
-  G4double xBarSteel = bar_z + box_vapor_barrier_SS_x;//using bar_z since we use a rotation of 90 degrees, z->x
-  G4double yBarSteel = bar_z + box_vapor_barrier_SS_y;
-  G4double zBarSteel = bar_z + box_vapor_barrier_SS_z;
+  G4double xBarSteel = fIFlangeHeight/2 + box_vapor_barrier_SS_x + fIFlangeThick;
+  G4double yBarSteel = fIFlangeHeight/2 + box_vapor_barrier_SS_y + fIFlangeThick;
+  G4double zBarSteel = fIFlangeHeight/2 + box_vapor_barrier_SS_z + fIFlangeThick;
+  G4cout<<" zBarSteel: "<<zBarSteel<<" fIFlangeHeight/2: "<<fIFlangeHeight/2<<" fIFlangeThick: "<<fIFlangeThick<<G4endl;
   // 2) box vapor barrier 
   G4Box* CryoSSVaporBarrier = new G4Box("b_CryoSSVaporBarrier", box_vapor_barrier_SS_x, box_vapor_barrier_SS_y, box_vapor_barrier_SS_z);
   logicCryoSSVaporBarrier = new G4LogicalVolume(CryoSSVaporBarrier,materialSS304L,"VaporBarrier",0,0,0);
@@ -678,9 +844,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double pitch_y = 2*box_steel_support_y/5;
   G4double pitch_z = 2*box_steel_support_z/6;
 
-  G4double origin_x = - box_steel_support_x + pitch_x/2;
+  G4double origin_x = -19*fSpacing;
   G4double origin_y = - box_steel_support_y + pitch_y/2;
-  G4double origin_z = - box_steel_support_z + pitch_z/2;
+  G4double origin_z = -4*fSpacing;
 
   G4double FCpitch = 60*mm;
   G4int nFCbars = 110;
@@ -742,10 +908,27 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicWaffleBottomShielding->SetVisAttributes(vis_waffle);
   logicLeadWaffleLayer->SetVisAttributes(visLead);
 
-  G4RotationMatrix* rotationMatrixSourceContainer = new G4RotationMatrix(0,0,0);
-  rotationMatrixSourceContainer->rotateX(90*deg);
+  G4RotationMatrix* rotationMatrix0 = new G4RotationMatrix(0,0,0);
+  rotationMatrix0->rotateX(0*deg);
+  G4RotationMatrix* rotationMatrixX = new G4RotationMatrix(0,0,0);
+  rotationMatrixX->rotateX(90*deg);
+  G4RotationMatrix* rotationMatrixY = new G4RotationMatrix(0,0,0);
+  rotationMatrixY->rotateY(90*deg);
+  G4RotationMatrix* rotationMatrixZ = new G4RotationMatrix(0,0,0);
+  rotationMatrixZ->rotateZ(90*deg);
   G4RotationMatrix* rotationMatrixWaffleBoxes = new G4RotationMatrix(0,0,0);
   rotationMatrixWaffleBoxes->rotateX(180*deg);
+  G4RotationMatrix* rotationMatrixXminus = new G4RotationMatrix(0,0,0);
+  rotationMatrixXminus->rotateX(-90*deg);
+  G4RotationMatrix* rotationMatrixYX = new G4RotationMatrix(0,0,0);
+  rotationMatrixYX->rotateY(90*deg);
+  rotationMatrixYX->rotateX(-90*deg);
+  G4RotationMatrix* rotationMatrixXZ = new G4RotationMatrix(0,0,0);
+  rotationMatrixXZ->rotateX(90*deg);
+  rotationMatrixXZ->rotateZ(90*deg);
+  G4RotationMatrix* rotationMatrixYZ = new G4RotationMatrix(0,0,0);
+  rotationMatrixYZ->rotateY(90*deg);
+  rotationMatrixYZ->rotateZ(90*deg);
   //  ============================================================= Place volumes =============================================================
   
   // Place main detector always at center of world volume
@@ -965,12 +1148,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source containers
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition2,
                         logicSourceContainer,
                         "sourceContainer2",
@@ -1215,7 +1398,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicShieldingBoxLongLatWall,
 		"shielding_"+std::to_string(1),
 		logicCavern,false,1,false);
-	 */
 	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
 		logicShieldingBoxLongLatWall,
@@ -1239,6 +1421,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"shielding_walls_short"+std::to_string(1),
 		logicCavern,false,1,1);
 
+	 */
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
@@ -1251,128 +1434,145 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		logicshieldingBoxWaffle,
 		"waffle_shielding_"+std::to_string(1),
 		logicshieldingBoxInner,false,1,1);
-	 //place many copies of steel bar support inside shielding inner
-	 //vertical bars short sides +/- x
+	 //belts
+	 for(int i = 1 ; i <= n_v_bars_long_side + 1; i++){
+		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= n_v_bars_short_side; j++){
+			pos_z = origin_z + (j-1)*fSpacing;
+			//top without holes
+			new G4PVPlacement(
+              		rotationMatrixY,
+                	G4ThreeVector(pos_x, yBarSteel,pos_z),
+                	fBeltWithoutHoleLogTop,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+			//bottom with holes
+			new G4PVPlacement(
+              		rotationMatrixY,
+                	G4ThreeVector(pos_x, -yBarSteel,pos_z),
+                	fBeltWithHoleLog,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+		}
+		//border belts
+		for(int k = 1 ; k <= 4; k++){
+			//z side +
+			pos_y = yBarSteel - (k-1)*fht;
+			new G4PVPlacement(
+             		rotationMatrixYZ,
+                	G4ThreeVector(pos_x, pos_y, zBarSteel),
+                	fBeltWithHoleLog,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+			//z side -
+			new G4PVPlacement(
+             		rotationMatrixYZ,
+                	G4ThreeVector(pos_x, pos_y, -zBarSteel),
+                	fBeltWithHoleLog,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+		}
+	 }
+
+         //Short sides 
 	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
-		pos_z = origin_z + (i-1)*pitch_x;
- 		//side x+ 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xp_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,0);
-		  //G4cout<<" box_steel_support_x y z: "<<box_steel_support_x<<" "<<box_steel_support_y<<" "<<box_steel_support_z<<" x_BarSteel: "<<xBarSteel<<" pos_z: "<<pos_z<<G4endl;
- 		//side x- 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(-xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xm_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,0);
-         }
-	 
-	 //horizontal bars short sides
-         for(int i =1 ; i < n_v_bars_short_side ; i++){
-	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,0);
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(-xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,0);
-		}
-	}
-	 //vertical bars long sides +/- z
-	 for(int i =1 ; i <= n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
+		pos_z = origin_z + (i-1)*fSpacing;
+	 	new G4PVPlacement(rotationMatrixYX,
+                  G4ThreeVector(xBarSteel, 0, pos_z),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleXp",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zp_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,0);
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,-zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zm_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,0);
-	}
-	//Top long bars
-	for(int i = 2 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_t_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,0);
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,-yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_b_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,0);
+	 	new G4PVPlacement(rotationMatrixYX,
+                  G4ThreeVector(-xBarSteel, 0, pos_z),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleXm",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 	 }
-        
-
-	 //horizontal bars long sides
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,0);
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,0);
+	 for(int i = 0 ; i <= n_v_bars_short_side + 2; i++){
+		pos_z = origin_z + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= 4; j++){
+			pos_y = yBarSteel - (j-1)*fht;
+			//x plus
+			new G4PVPlacement(
+             		rotationMatrixZ,
+                	G4ThreeVector(xBarSteel, pos_y, pos_z),
+                	fBeltWithHoleLog,
+                	"BeltBotXp",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+			//x minus
+			new G4PVPlacement(
+             		rotationMatrixZ,
+                	G4ThreeVector(-xBarSteel, pos_y, pos_z),
+                	fBeltWithHoleLog,
+                	"BeltBotXp",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
 		}
-
 	 }
-	 //horizontal bars top sides
-	 //ongoing implementation
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		G4double posX_waffle = pos_x + bar_x; 
-         	///Testing waffle boxes
-		for(int j=1; j < n_h_bars_top; j++){
-	                G4double  posZ = origin_z + (j-1)*pitch_z + bar_x + waffleBoxZ/2;
-			new G4PVPlacement(rotationMatrixWaffleBoxes, 
-		  		G4ThreeVector(pos_x, yBarSteel, posZ),
-			  	logicWaffleBoxes,
-			  	"WaffleBox_yp_i"+std::to_string(i)+"_j_"+std::to_string(1),
-			  	logicshieldingBoxWaffle,false,1,0);
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, -yBarSteel, posZ),
-			  	logicWaffleBoxes,
-			  	"WaffleBox_ym_i"+std::to_string(i)+"_j_"+std::to_string(1),
-			  	logicshieldingBoxWaffle,false,1,0);
-		}
-		//////////////////
-		for(int j=1; j <= n_h_bars_top; j++){
-	                pos_z = origin_z + (j-1)*pitch_z;
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,0);
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,0);
-		}
+	 //Long sides
+	 for(int i = 1 ; i <= n_v_bars_long_side; i++){
+		pos_x = origin_x + (i-1)*fSpacing;
+	 	new G4PVPlacement(rotationMatrixXminus,
+                  G4ThreeVector(pos_x, 0, -zBarSteel),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleZm",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 
+		new G4PVPlacement(rotationMatrixXminus,
+                  G4ThreeVector(pos_x, 0, zBarSteel),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleZp",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
+
+	 	new G4PVPlacement(0,
+                  G4ThreeVector(pos_x, yBarSteel,0),  // example position
+                  fIBeamTopLog,
+                  "IBeamWithoutHoleTop",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
+
+		new G4PVPlacement(0,
+                  G4ThreeVector(pos_x, -yBarSteel,0),  // example position
+                  fIBeamBotLog,
+                  "IBeamWithtHoleBottom",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 	 }
+
 	 //SS vapor barrier inside shielding waffle box
 	 new G4PVPlacement(0,
                 G4ThreeVector(0,0,0),
@@ -1422,12 +1622,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition2,
                         logicSourceContainer,
                         "sourceContainer2",
@@ -1861,12 +2061,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition2,
                         logicSourceContainer,
                         "sourceContainer2",
@@ -2310,12 +2510,12 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"target_"+std::to_string(1),
 		logicCryoPrimMembrane,false,1,false);
 	 //Bi source container
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
                         logicSourceContainer,
                         "sourceContainer",
                         fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixSourceContainer,
+	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition2,
                         logicSourceContainer,
                         "sourceContainer2",
