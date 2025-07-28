@@ -592,9 +592,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //G4double box_shielding_outer_y = box_shielding_inner_y + shieldingThickness + n_captureLayerThickness;
   //G4double box_shielding_outer_z = box_shielding_inner_z + shieldingThickness + n_captureLayerThickness;
   //Air box
-  G4double box_air_cavern_x = box_shielding_inner_B4C_x + 1*m;//change here to remove box_shielding_outer
-  G4double box_air_cavern_y = box_shielding_inner_B4C_y + 1*m;
-  G4double box_air_cavern_z = box_shielding_inner_B4C_z + 1*m;
+  G4double box_air_cavern_x = box_shielding_inner_B4C_x + 0.5*m;//change here to remove box_shielding_outer
+  G4double box_air_cavern_y = box_shielding_inner_B4C_y + 0.1*m;
+  G4double box_air_cavern_z = box_shielding_inner_B4C_z + 0.5*m;
   //Rock box
   G4double box_rock_x = box_air_cavern_x + 10*m;
   G4double box_rock_y = box_air_cavern_y + 10*m;
@@ -819,7 +819,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   vis_waffle->SetForceAuxEdgeVisible(true);
   //logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
   logicShieldingBoxLongLatWall->SetVisAttributes(vis_waffle);
-  logicShieldingBoxShortLatWall->SetVisAttributes(vis_waffle);
+  //logicShieldingBoxShortLatWall->SetVisAttributes(vis_waffle);
 
   G4VisAttributes* vis_anode = new G4VisAttributes(orange);
   vis_anode->SetForceSolid(true);
@@ -923,441 +923,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   case 0:
-       
-	 //place rock cavern inside world   
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicRockBox,
-		"rock_"+std::to_string(1),
-		logicWorldBox,false,1,false);
-	 //place cavern hall inside rock 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicCavern,
-		"cavern_"+std::to_string(1),
-		logicRockBox,false,1,false);
-	 //place shielding wall for visualization logicShieldingBoxLongLatWall
-	 //uncommnet if you want to plot thw lateral wall
-	 //Should be always commented for running
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
-		logicShieldingBoxLongLatWall,
-		"shielding_walls_long"+std::to_string(1),
-		logicCavern,false,1,1);
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
-		logicShieldingBoxLongLatWall,
-		"shielding_walls_long"+std::to_string(1),
-		logicCavern,false,1,1);
-	 //Short walls
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
-		logicShieldingBoxShortLatWall,
-		"shielding_walls_short"+std::to_string(1),
-		logicCavern,false,1,1);
-
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
-		logicShieldingBoxShortLatWall,
-		"shielding_walls_short"+std::to_string(1),
-		logicCavern,false,1,1);
-	 //place shielding inside cavern  
-	 /*
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicShieldingBoxLongLatWall,
-		"shielding_"+std::to_string(1),
-		logicCavern,false,1,false);
-	 //place shielding inner inside shielding outer 
-	*/
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicshieldingBoxInner,
-		"inner_shielding_"+std::to_string(1),
-		logicCavern,false,1,false);
-	 //place many copies of steel bar support inside shielding inner
-	 //vertical bars short sides +/- x
-	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
-		pos_z = origin_z + (i-1)*pitch_x;
- 		//side x+ 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xp_"+std::to_string(i),
-                  logicshieldingBoxInner,false,1,1);
- 		//side x- 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(-xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xm_"+std::to_string(i),
-                  logicshieldingBoxInner,false,1,1);
-         }
-	 //horizontal bars short sides
-         for(int i =1 ; i < n_v_bars_short_side ; i++){
-	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxInner,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(-xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxInner,false,1,1);
-		}
-	}
-	 //vertical bars long sides +/- z
-	 for(int i =1 ; i <= n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zp_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,-zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zm_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-	}
-	//Top long bars
-	for(int i = 2 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_t_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,-yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_b_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-	 }
-         
-	 //horizontal bars long sides
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-		}
-
-	 }
-	 //horizontal bars top sides
-	 //ongoing implementation
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars_top; j++){
-	                pos_z = origin_z + (j-1)*pitch_z;
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-		}
-
-	 }
-	 //SS vapor barrier inside inner shielding box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoSSVaporBarrier,
-                "VaporBarrier_"+std::to_string(1),
-                logicshieldingBoxInner,false,1,false);
-	 //Outer plywood inside SS vapor barrier box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoOuterPlywood,
-                "Outer_Plywood"+std::to_string(1),
-                logicCryoSSVaporBarrier,false,1,false);
-	 //Outer PU foam inside plywood box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoOuterPUfoam,
-                "Outer_PUfoam"+std::to_string(1),
-                logicCryoOuterPlywood,false,1,false);
-	 //Secondary Al barrier inside outer PU foam box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoSecondaryBarrierAl,
-                "Secondary_Barrier_Al"+std::to_string(1),
-                logicCryoOuterPUfoam,false,1,false);
-	 //Inner PU foam inside secondary barrier box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoInnerPUfoam,
-                "Inner_PUfoam"+std::to_string(1),
-                logicCryoSecondaryBarrierAl,false,1,false);
-	 //Inner plywood inside inner PU foam box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoInnerPlywood,
-                "Inner_Plywood"+std::to_string(1),
-                logicCryoInnerPUfoam,false,1,false);
-	 //Primary membrane inside inner plywood box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoPrimMembrane,
-                "Inner_Plywood"+std::to_string(1),
-                logicCryoInnerPlywood,false,1,false);
-         //liquid argon volume inside primary membrane box
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		fd2LogicVolume,
-		"target_"+std::to_string(1),
-		logicCryoPrimMembrane,false,1,false);
-	 //Bi source containers
-	 new G4PVPlacement(rotationMatrixX,
-			 fBiSourcePosition,
-                        logicSourceContainer,
-                        "sourceContainer",
-                        fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixX,
-			 fBiSourcePosition2,
-                        logicSourceContainer,
-                        "sourceContainer2",
-                        fd2LogicVolume, false, 0, false);
-	//Anode
-	new G4PVPlacement(0,
-                G4ThreeVector(0,halfDetectorYActiveAr + 10.*mm,0),
-                fLogicAnode,
-                "anode",
-                fd2LogicVolume,false,1,true);
-	new G4PVPlacement(0,
-                G4ThreeVector(0,-halfDetectorYActiveAr - 10.*mm,0),
-                fLogicAnode,
-                "anode",
-                fd2LogicVolume,false,1,true);
-	//cathode
-	new G4PVPlacement(0,
-                G4ThreeVector(0,30.*mm,0),
-                fLogicCathode,
-                "cathode",
-                fd2LogicVolume,false,1,true);
-	new G4PVPlacement(0,
-                G4ThreeVector(0,-30.*mm,0),
-                fLogicCathode,
-                "cathode",
-                fd2LogicVolume,false,1,true);
-         //Arapucas in cathode
-        for(int i =1 ; i < 92; i++){
-        	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
-		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
-			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
-			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
-			   new G4PVPlacement(0,
-			   G4ThreeVector(pos_x,0,pos_z),
-  			   fLogicArapuca,     //its logical volume
-			   "Arapuca",
-  			   fd2LogicVolume,	false, 0, true);
-			}
-		}
-	}
-	//Arapucas long sides	 
-	 for(int i =1 ; i <= 20; i++){
-        	pos_x = -halfDetectorXActiveAr + (i - 1)*pitch_x_arapuca +  2*arapuca_x;
-		for(int j = 1; j <= 4; j++){
-			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
-			//Top side front
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Top side back
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side front
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side back
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-		}
-	}
-	//Arapucas short sides
-	for(int k = 1; k<=2; k++){
-        	pos_z = -halfDetectorZActiveAr + (k - 1)*pitch_z_arapuca +  4 * arapuca_x;
-		for(int j = 1; j <= 4; j++){
-			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
-			//Top side plus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Top side minus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side plus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side minus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-		}
-	}
-			
- 	 //Field cage inside iquid argon
-         //Longer lateral
-        
-        for(int i =1 ; i < 42; i++){
-        	pos_y =  FCpitch * i ; 
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr - 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-		
-		new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr - 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-	        //short sides up
-        	new G4PVPlacement(0,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-        	new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-		//short sides down
-        	new G4PVPlacement(0,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,-pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-        	new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,-pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-
-	}
-        for(int i =42 ; i < nFCbars; i++){
-
-        	pos_y =  FCpitch * i ; 
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1_long_slim_yp",
-  			fd2LogicVolume,	false, 0, true);
-
-		   new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1_long_slim_ym",
-  			fd2LogicVolume,	false, 0, true);
-
-		  new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1_long_slim_yp",
-  			fd2LogicVolume,	false, 0, true);
-
-		  new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1_long_slim_ym",
-  			fd2LogicVolume,	false, 0, true);
-
-		//Short sides up
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1_short",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1_short",
-  			fd2LogicVolume,	false, 0, true);
-		//Short sides down
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, -pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1_short",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, -pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1_short",
-  			fd2LogicVolume,	false, 0, true);
-	}
-         
-            
-     break;
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //                      Case 1 with shielding filling the waffle 
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   case 1:
-         //place rock cavern inside world   
+       //place rock cavern inside world   
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicRockBox,
@@ -1370,36 +936,29 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
 	 //place shielding inside cavern 
-	 /* 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicShieldingBoxLongLatWall,
-		"shielding_"+std::to_string(1),
-		logicCavern,false,1,false);
 	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 5*cm),
 		logicShieldingBoxLongLatWall,
 		"shielding_walls_long"+std::to_string(1),
 		logicCavern,false,1,1);
   	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 5*cm),
 		logicShieldingBoxLongLatWall,
 		"shielding_walls_long"+std::to_string(1),
 		logicCavern,false,1,1);
 	 //Short walls
   	 new G4PVPlacement(0, 
-		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 5*cm,0,0),
 		logicShieldingBoxShortLatWall,
 		"shielding_walls_short"+std::to_string(1),
 		logicCavern,false,1,1);
 
   	 new G4PVPlacement(0, 
-		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 -10*cm,0,0),
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 -5*cm,0,0),
 		logicShieldingBoxShortLatWall,
 		"shielding_walls_short"+std::to_string(1),
 		logicCavern,false,1,1);
 
-	 */
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
@@ -1843,458 +1402,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   			fd2LogicVolume,	false, 0, true);
 	}
          
-            
-     break;
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //                      Case 2 with shielding all around detector + layer of B4C
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  case 2:
-       
-	 //place rock cavern inside world   
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicRockBox,
-		"rock_"+std::to_string(1),
-		logicWorldBox,false,1,false);
-	 //place cavern hall inside rock 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicCavern,
-		"cavern_"+std::to_string(1),
-		logicRockBox,false,1,false);
-	 //place shielding inside cavern 
-	 /* 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicShieldingBoxLongLatWall,
-		"shielding_"+std::to_string(1),
-		logicCavern,false,1,false);
-	 */
-	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
-		logicShieldingBoxLongLatWall,
-		"shielding_walls_long"+std::to_string(1),
-		logicCavern,false,1,1);
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
-		logicShieldingBoxLongLatWall,
-		"shielding_walls_long"+std::to_string(1),
-		logicCavern,false,1,1);
-	//Short walls
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
-		logicShieldingBoxShortLatWall,
-		"shielding_walls_short"+std::to_string(1),
-		logicCavern,false,1,1);
 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
-		logicShieldingBoxShortLatWall,
-		"shielding_walls_short"+std::to_string(1),
-		logicCavern,false,1,1);
-
-
-	 //place shielding inside cavern  
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicshieldingBoxB4C,
-		"shielding_B4C"+std::to_string(1),
-		logicCavern,false,1,false);
-	 //place shielding inner inside shielding outer 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicshieldingBoxInner,
-		"inner_shielding_"+std::to_string(1),
-		logicshieldingBoxB4C,false,1,false);
-	 //place many copies of steel bar support inside shielding inner
-	 //vertical bars short sides +/- x
-	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
-		pos_z = origin_z + (i-1)*pitch_x;
- 		//side x+ 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xp_"+std::to_string(i),
-                  logicshieldingBoxInner,false,1,1);
- 		//side x- 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(-xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xm_"+std::to_string(i),
-                  logicshieldingBoxInner,false,1,1);
-         }
-	 //horizontal bars short sides
-         for(int i =1 ; i < n_v_bars_short_side ; i++){
-	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxInner,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(-xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxInner,false,1,1);
-		}
-	}
-	 //vertical bars long sides +/- z
-	 for(int i =1 ; i <= n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zp_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,-zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zm_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-	}
-	//Top long bars
-	for(int i = 2 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_t_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,-yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_b_"+std::to_string(i),
-		  logicshieldingBoxInner,false,1,1);
-	 }
-         
-	 //horizontal bars long sides
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxInner,false,1,1);
-		}
-
-	 }
-	 //horizontal bars top sides
-	 //ongoing implementation
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars_top; j++){
-	                pos_z = origin_z + (j-1)*pitch_z;
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-		}
-
-	 }
-	 //SS vapor barrier inside inner shielding box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoSSVaporBarrier,
-                "VaporBarrier_"+std::to_string(1),
-                logicshieldingBoxInner,false,1,false);
-	 //Outer plywood inside SS vapor barrier box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoOuterPlywood,
-                "Outer_Plywood"+std::to_string(1),
-                logicCryoSSVaporBarrier,false,1,false);
-	 //Outer PU foam inside plywood box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoOuterPUfoam,
-                "Outer_PUfoam"+std::to_string(1),
-                logicCryoOuterPlywood,false,1,false);
-	 //Secondary Al barrier inside outer PU foam box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoSecondaryBarrierAl,
-                "Secondary_Barrier_Al"+std::to_string(1),
-                logicCryoOuterPUfoam,false,1,false);
-	 //Inner PU foam inside secondary barrier box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoInnerPUfoam,
-                "Inner_PUfoam"+std::to_string(1),
-                logicCryoSecondaryBarrierAl,false,1,false);
-	 //Inner plywood inside inner PU foam box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoInnerPlywood,
-                "Inner_Plywood"+std::to_string(1),
-                logicCryoInnerPUfoam,false,1,false);
-	 //Primary membrane inside inner plywood box
-	 new G4PVPlacement(0,
-                G4ThreeVector(0,0,0),
-                logicCryoPrimMembrane,
-                "Inner_Plywood"+std::to_string(1),
-                logicCryoInnerPlywood,false,1,false);
-         //liquid argon volume inside primary membrane box
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		fd2LogicVolume,
-		"target_"+std::to_string(1),
-		logicCryoPrimMembrane,false,1,false);
-	 //Bi source container
-	 new G4PVPlacement(rotationMatrixX,
-			 fBiSourcePosition,
-                        logicSourceContainer,
-                        "sourceContainer",
-                        fd2LogicVolume, false, 0, false);
-	 new G4PVPlacement(rotationMatrixX,
-			 fBiSourcePosition2,
-                        logicSourceContainer,
-                        "sourceContainer2",
-                        fd2LogicVolume, false, 0, false);
-	//Anode
-	new G4PVPlacement(0,
-                G4ThreeVector(0,halfDetectorYActiveAr + 10.*mm,0),
-                fLogicAnode,
-                "anode",
-                fd2LogicVolume,false,1,true);
-	new G4PVPlacement(0,
-                G4ThreeVector(0,-halfDetectorYActiveAr - 10.*mm,0),
-                fLogicAnode,
-                "anode",
-                fd2LogicVolume,false,1,true);
-	//cathode
-	new G4PVPlacement(0,
-                G4ThreeVector(0,30.*mm,0),
-                fLogicCathode,
-                "cathode",
-                fd2LogicVolume,false,1,true);
-	new G4PVPlacement(0,
-                G4ThreeVector(0,-30.*mm,0),
-                fLogicCathode,
-                "cathode",
-                fd2LogicVolume,false,1,true);
-         //Arapucas in cathode
-        for(int i =1 ; i < 92; i++){
-        	pos_x = -halfDetectorXActiveAr + (i - 1)*arapuca_x +  arapuca_x/2;
-		for(int k = 1; k < 20; k++){
-			pos_z = -halfDetectorZActiveAr + arapuca_z/2 + (k-1)*arapuca_z;
-			if( (i + arapuca_row_x[k] - 1) % 4 == 0  ){
-			   //G4cout<<i<<" "<<arapuca_row_x[k]<<" k "<<k<<G4endl;
-			   new G4PVPlacement(0,
-			   G4ThreeVector(pos_x,0,pos_z),
-  			   fLogicArapuca,     //its logical volume
-			   "Arapuca",
-  			   fd2LogicVolume,	false, 0, true);
-			}
-		}
-	}
-	//Arapucas long sides	 
-	 for(int i =1 ; i <= 20; i++){
-        	pos_x = -halfDetectorXActiveAr + (i - 1)*pitch_x_arapuca +  2*arapuca_x;
-		for(int j = 1; j <= 4; j++){
-			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
-			//Top side front
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Top side back
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side front
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side back
-			new G4PVPlacement(rotationMatrixArapucaLongX,
-			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-		}
-	}
-	//Arapucas short sides
-	for(int k = 1; k<=2; k++){
-        	pos_z = -halfDetectorZActiveAr + (k - 1)*pitch_z_arapuca +  4 * arapuca_x;
-		for(int j = 1; j <= 4; j++){
-			pos_y = 330.*cm + arapuca_x/2 + (j-1)*arapuca_x + 10.*cm;
-			//Top side plus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Top side minus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side plus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-			//Bottom side minus
-			new G4PVPlacement(rotationMatrixArapucaShortZ,
-			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
-  			fLogicArapuca,     //its logical volume
-			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
-		}
-	}
-			
- 	 //Field cage inside iquid argon
-         //Longer lateral
-        
-        for(int i =1 ; i < 42; i++){
-        	pos_y =  FCpitch * i ; 
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr - 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-		
-		new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr - 7.*mm),
-  			fLogicFCLongWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-	        //short sides up
-        	new G4PVPlacement(0,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-        	new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-		//short sides down
-        	new G4PVPlacement(0,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,-pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-        	new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,-pos_y,0),
-  			fLogicFCShortWide,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-
-	}
-        for(int i =42 ; i < nFCbars; i++){
-
-        	pos_y =  FCpitch * i ; 
-		new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		   new G4PVPlacement(rotationMatrixFCzp,
-			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		  new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		  new G4PVPlacement(rotationMatrixFCzm,
-			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr + 7.*mm),
-  			fLogicFCLongSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		//Short sides up
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-		//Short sides down
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, -pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-
-		new G4PVPlacement(rotationMatrixFCx,
-			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, -pos_y,0),
-  			fLogicFCShortSlim,     //its logical volume
-			"FC1",
-  			fd2LogicVolume,	false, 0, true);
-	}
-         
-            
+	             
      break;
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   //                      Case 3 with shielding filling the waffle + B4C layer
+   //                      Case 1 with shielding filling the waffle 
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-   case 3:
+   case 1:
          //place rock cavern inside world   
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
@@ -2308,161 +1429,251 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"cavern_"+std::to_string(1),
 		logicRockBox,false,1,false);
 	 //place shielding inside cavern 
-	 /* 
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicShieldingBoxLongLatWall,
-		"shielding_"+std::to_string(1),
-	 	logicCavern,false,1,false);
-	*/
 	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 10*cm),
+		G4ThreeVector(0,0,box_air_cavern_z - shieldingThickness/2 - 5*cm),
 		logicShieldingBoxLongLatWall,
 		"shielding_walls_long"+std::to_string(1),
 		logicCavern,false,1,1);
   	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 10*cm),
+		G4ThreeVector(0,0,-box_air_cavern_z + shieldingThickness/2 + 5*cm),
 		logicShieldingBoxLongLatWall,
 		"shielding_walls_long"+std::to_string(1),
 		logicCavern,false,1,1);
-	//Short walls
+	 //Short walls
   	 new G4PVPlacement(0, 
-		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 10*cm,0,0),
+		G4ThreeVector(-box_air_cavern_x + shieldingThickness/2 + 5*cm,0,0),
 		logicShieldingBoxShortLatWall,
 		"shielding_walls_short"+std::to_string(1),
 		logicCavern,false,1,1);
 
   	 new G4PVPlacement(0, 
-		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 - 10*cm,0,0),
+		G4ThreeVector(box_air_cavern_x - shieldingThickness/2 -5*cm,0,0),
 		logicShieldingBoxShortLatWall,
 		"shielding_walls_short"+std::to_string(1),
 		logicCavern,false,1,1);
 
-
-	 /////////////////////////////////////////
-	 //place B4C or other layer here
-	 //place shielding inside cavern  
-  	 new G4PVPlacement(0, 
-		G4ThreeVector(0,0,0),
-		logicshieldingBoxB4C,
-		"shielding_B4C"+std::to_string(1),
-		logicCavern,false,1,false);
 	 //place shielding inner inside shielding outer 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxInner,
 		"inner_shielding_"+std::to_string(1),
-		logicshieldingBoxB4C,false,1,false);
-	 /////////////////////////////////////
+		logicCavern,false,1,false);
 	 //place shielding waffle box inside inside shielding inner 
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		logicshieldingBoxWaffle,
 		"waffle_shielding_"+std::to_string(1),
 		logicshieldingBoxInner,false,1,1);
-	 //place many copies of steel bar support inside shielding inner
-	 //vertical bars short sides +/- x
+	 //belts
+	 for(int i = 1 ; i <= n_v_bars_long_side + 1; i++){
+		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= n_v_bars_short_side; j++){
+			pos_z = origin_z + (j-1)*fSpacing;
+			//top without holes
+			new G4PVPlacement(
+              		rotationMatrixY,
+                	G4ThreeVector(pos_x, yBarSteel,pos_z),
+                	fBeltWithoutHoleLogTop,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+			//bottom with holes
+			new G4PVPlacement(
+              		rotationMatrixY,
+                	G4ThreeVector(pos_x, -yBarSteel,pos_z),
+                	fBeltWithHoleLog,
+                	"BeltBot",
+                	logicshieldingBoxWaffle,
+                	false,
+                	1,
+                	true);
+		}
+		//border belts
+		for(int k = 1 ; k <= 4; k++){
+			pos_y = yBarSteel - (k-1)*fht;
+
+			//z side +
+			if ( (i+k) % 3 == 0 || k == 4){
+				new G4PVPlacement(
+             			rotationMatrixYZ,
+                		G4ThreeVector(pos_x, pos_y, zBarSteel),
+	                	fBeltWithHoleLog,
+        	        	"BeltBot",
+                		logicshieldingBoxWaffle,
+                		false,
+	                	1,
+        	        	true);
+				//z side -
+				new G4PVPlacement(
+	             		rotationMatrixYZ,
+        	        	G4ThreeVector(pos_x, pos_y, -zBarSteel),
+                		fBeltWithHoleLog,
+                		"BeltBot",
+                		logicshieldingBoxWaffle,
+                		false,
+                		1,
+                		true);
+			}else{	
+				new G4PVPlacement(
+             			rotationMatrixYZ,
+                		G4ThreeVector(pos_x, pos_y, zBarSteel),
+	                	fBeltWithoutHoleLog,
+        	        	"BeltBot",
+                		logicshieldingBoxWaffle,
+                		false,
+	                	1,
+        	        	true);
+				//z side -
+				new G4PVPlacement(
+	             		rotationMatrixYZ,
+        	        	G4ThreeVector(pos_x, pos_y, -zBarSteel),
+                		fBeltWithoutHoleLog,
+                		"BeltBot",
+                		logicshieldingBoxWaffle,
+                		false,
+                		1,
+                		true);
+
+			}
+		}
+	 }
+
+         //Short sides 
 	 for(int i = 1 ; i <= n_v_bars_short_side; i++){
-		pos_z = origin_z + (i-1)*pitch_x;
- 		//side x+ 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xp_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,1);
-		  //G4cout<<" box_steel_support_x y z: "<<box_steel_support_x<<" "<<box_steel_support_y<<" "<<box_steel_support_z<<" x_BarSteel: "<<xBarSteel<<" pos_z: "<<pos_z<<G4endl;
- 		//side x- 
-		 new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                  G4ThreeVector(-xBarSteel,0,pos_z),
-                  logicSteelSupport,
-                  "SS_support_xm_"+std::to_string(i),
-                  logicshieldingBoxWaffle,false,1,1);
-         }
-	 
-	 //horizontal bars short sides
-         for(int i =1 ; i < n_v_bars_short_side ; i++){
-	        pos_z = origin_z + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsShortSides,
-                                G4ThreeVector(-xBarSteel, pos_y, pos_z),
-                                logicSteelSupportHorizontal,
-                                "SS_support_xm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-                                logicshieldingBoxWaffle,false,1,1);
-		}
-	}
-	 //vertical bars long sides +/- z
-	 for(int i =1 ; i <= n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
+		pos_z = origin_z + (i-1)*fSpacing;
+	 	new G4PVPlacement(rotationMatrixYX,
+                  G4ThreeVector(xBarSteel, 0, pos_z),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleXp",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zp_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
-
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,0,-zBarSteel),
-		  logicSteelSupport,
-		  "SS_support_zm_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
-	}
-	//Top long bars
-	for(int i = 2 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x;
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_t_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
-		new G4PVPlacement(0, 
-		  G4ThreeVector(pos_x,-yBarSteel,0),
-		  logicSteelSupportTop,
-		  "SS_support_b_"+std::to_string(i),
-		  logicshieldingBoxWaffle,false,1,1);
+	 	new G4PVPlacement(rotationMatrixYX,
+                  G4ThreeVector(-xBarSteel, 0, pos_z),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleXm",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 	 }
-         
-	 //horizontal bars long sides
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars; j++){
-	                pos_y = origin_y + (j-1)*pitch_y;
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-			new G4PVPlacement(0, 
-		  		G4ThreeVector(pos_x, pos_y, -zBarSteel),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_zm_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-		}
+	 for(int i = 0 ; i <= n_v_bars_short_side + 2; i++){
+		pos_z = origin_z + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= 4; j++){
+			pos_y = yBarSteel - (j-1)*fht;
+			//x plus
+			if ( (i+j) % 3 == 0 || j == 1){
+				new G4PVPlacement(
+             			rotationMatrixZ,
+	                	G4ThreeVector(xBarSteel, pos_y, pos_z),
+        	        	fBeltWithHoleLog,
+                		"BeltBotXp",
+                		logicshieldingBoxWaffle,
+	                	false,
+        	        	1,
+                		true);
+				//x minus
+				new G4PVPlacement(
+        	     		rotationMatrixZ,
+                		G4ThreeVector(-xBarSteel, pos_y, pos_z),
+                		fBeltWithHoleLog,
+	                	"BeltBotXp",
+        	        	logicshieldingBoxWaffle,
+                		false,
+                		1,
+	                	true);
+			}else{
+				new G4PVPlacement(
+             			rotationMatrixZ,
+	                	G4ThreeVector(xBarSteel, pos_y, pos_z),
+        	        	fBeltWithoutHoleLog,
+                		"BeltBotXp",
+                		logicshieldingBoxWaffle,
+	                	false,
+        	        	1,
+                		true);
+				//x minus
+				new G4PVPlacement(
+        	     		rotationMatrixZ,
+                		G4ThreeVector(-xBarSteel, pos_y, pos_z),
+                		fBeltWithoutHoleLog,
+	                	"BeltBotXp",
+        	        	logicshieldingBoxWaffle,
+                		false,
+                		1,
+	                	true);
 
+			}
+		}
 	 }
-	 //horizontal bars top sides
-	 //ongoing implementation
-         for(int i =1 ; i < n_v_bars_long_side; i++){
-	        pos_x = origin_x + (i-1)*pitch_x + bar_h_x + bar_x;
-		for(int j=1; j <= n_h_bars_top; j++){
-	                pos_z = origin_z + (j-1)*pitch_z;
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_yp_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-			new G4PVPlacement(rotationMatrixSteelSupportsTopShorts, 
-		  		G4ThreeVector(pos_x, -yBarSteel, pos_z),
-			  	logicSteelSupportHorizontal,
-			  	"SS_support_h_ym_i"+std::to_string(i)+"_j_"+std::to_string(j),
-			  	logicshieldingBoxWaffle,false,1,1);
-		}
+	 //Long sides
+	 for(int i = 1 ; i <= n_v_bars_long_side; i++){
+		pos_x = origin_x + (i-1)*fSpacing;
+	 	new G4PVPlacement(rotationMatrixXminus,
+                  G4ThreeVector(pos_x, 0, -zBarSteel),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleZm",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
 
+		new G4PVPlacement(rotationMatrixXminus,
+                  G4ThreeVector(pos_x, 0, zBarSteel),  // example position
+                  fIBeamSideLog,
+                  "IbeamtWithtHoleZp",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
+
+	 	new G4PVPlacement(0,
+                  G4ThreeVector(pos_x, yBarSteel,0),  // example position
+                  fIBeamTopLog,
+                  "IBeamWithoutHoleTop",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
+
+		new G4PVPlacement(0,
+                  G4ThreeVector(pos_x, -yBarSteel,0),  // example position
+                  fIBeamBotLog,
+                  "IBeamWithtHoleBottom",
+                  logicshieldingBoxWaffle,
+                  false,
+                  1,
+                  true);
+	 }
+
+	 //Bottom shielding
+	 pos_y = -yBarSteel - fIFlangeHeight/2 + BottomShieldingThickness/2;
+	 for(int i = 1 ; i <= n_v_bars_long_side + 1; i++){
+		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= n_v_bars_short_side + 1; j++){
+			pos_z = origin_z + (j-1)*fSpacing - fSpacing/2;
+			new G4PVPlacement(0,
+                  	G4ThreeVector(pos_x, pos_y, pos_z),  // example position
+                  	logicWaffleBottomShielding,
+                  	"BottomWaffleShileding",
+                  	logicshieldingBoxWaffle,
+                  	false,
+                  	1,
+                  	true);
+
+			new G4PVPlacement(0,
+                  	G4ThreeVector(pos_x, pos_y_lead, pos_z),  // example position
+                  	logicLeadWaffleLayer,
+                  	"BottomWaffleShileding",
+                  	logicshieldingBoxWaffle,
+                  	false,
+                  	1,
+                  	true);
+		}
 	 }
 	 //SS vapor barrier inside shielding waffle box
 	 new G4PVPlacement(0,
@@ -2556,7 +1767,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			   G4ThreeVector(pos_x,0,pos_z),
   			   fLogicArapuca,     //its logical volume
 			   "Arapuca",
-  			   fd2LogicVolume,	false, 0, true);
+  			   fd2LogicVolume,	false, 0, 0);
 			}
 		}
 	}
@@ -2570,25 +1781,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Top side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side front
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 		}
 	}
 	//Arapucas short sides
@@ -2601,25 +1812,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Top side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side plus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 			//Bottom side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, true);
+  			fd2LogicVolume,	false, 0, 0);
 		}
 	}
 			
@@ -2631,49 +1842,49 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr - 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 		
 		new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr - 7.*mm),
   			fLogicFCLongWide,     //its logical volume
-			"FC1",
+			"FC1_long",
   			fd2LogicVolume,	false, 0, true);
 	        //short sides up
         	new G4PVPlacement(0,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
         	new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 		//short sides down
         	new G4PVPlacement(0,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm,-pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
         	new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm,-pos_y,0),
   			fLogicFCShortWide,     //its logical volume
-			"FC1",
+			"FC1_short",
   			fd2LogicVolume,	false, 0, true);
 
 
@@ -2684,56 +1895,56 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		   new G4PVPlacement(rotationMatrixFCzp,
 			G4ThreeVector(0,-pos_y,halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		  new G4PVPlacement(rotationMatrixFCzm,
 			G4ThreeVector(0,-pos_y,-halfDetectorZActiveAr + 7.*mm),
   			fLogicFCLongSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		//Short sides up
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 		//Short sides down
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(halfDetectorXActiveAr + 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 
 		new G4PVPlacement(rotationMatrixFCx,
 			G4ThreeVector(-halfDetectorXActiveAr - 7.*mm, -pos_y,0),
   			fLogicFCShortSlim,     //its logical volume
-			"FC1",
+			"FC1_slim",
   			fd2LogicVolume,	false, 0, true);
 	}
          
             
      break;
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   }
 
