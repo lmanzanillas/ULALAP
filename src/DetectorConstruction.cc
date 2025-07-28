@@ -123,6 +123,7 @@ fd2LogicVolume(nullptr)
   fIPortSpacing = 4.0*m ;
   fIBotPortLoc = 5.0*m;
 
+  fBeltFlangeBotWidth = 0.2*m;
   fht = 4*m; // m, for beam and belt placement
   fst = (17.832/2 + 0.030)*m;
   fzpl = 64.732*m;
@@ -210,11 +211,11 @@ void DetectorConstruction::Belts()
   const double halfSpacingZ = (fSpacing / 2.0 - fIFlangeWaist / 2.0 - 0.001*m) ;
 
   // Solids
-  G4Box* BeltFlange = new G4Box("BeltFlange", 0.1 * m, (fIFlangeWaist / 2.0) , halfSpacingZ - fIFlangeWidth/2);
+  G4Box* BeltFlange = new G4Box("BeltFlange", fBeltFlangeBotWidth/2, (fIFlangeWaist / 2.0) , halfSpacingZ - fIFlangeWidth/2);
   G4Box* BeltMid    = new G4Box("BeltMid", (fIFlangeWaist / 2.0), (fIFlangeHeightInside / 2.0) , halfSpacingZ);
   G4Tubs* BeltPort  = new G4Tubs("BeltPortHole", 0.0, 0.25*m , (fIFlangeThick / 2.0) , 0.0, 2.0 * CLHEP::pi);
 
-  G4Box* BeltFlangeTop = new G4Box("BeltFlangeTop", 0.1 * m, (fIFlangeWaist / 2.0) , halfSpacingZ);
+  G4Box* BeltFlangeTop = new G4Box("BeltFlangeTop", fBeltFlangeBotWidth/2, (fIFlangeWaist / 2.0) , halfSpacingZ);
   G4Box* BeltMidTop    = new G4Box("BeltMidTop", (fIFlangeWaist / 2.0), (fIFlangeHeightInside / 4.0) , halfSpacingZ);
 
   // Rotations
@@ -232,7 +233,7 @@ void DetectorConstruction::Belts()
   // Transform tops
   HepGeom::Transform3D tnullTop = HepGeom::TranslateY3D(0.0);
   HepGeom::Transform3D tr1Top   = HepGeom::TranslateY3D((fIFlangeHeightInside / 4.0 + fIFlangeThick/2.) );
-  HepGeom::Transform3D tr2Top   = HepGeom::TranslateY3D(-(fIFlangeHeightInside / 4.0 + + fIFlangeThick/2.));
+  HepGeom::Transform3D tr2Top   = HepGeom::TranslateY3D(-(fIFlangeHeightInside / 4.0 +  fIFlangeThick/2.));
 
   // Belt with hole
   G4MultiUnion* BeltWithHole = new G4MultiUnion("BeltWithHole");
@@ -812,7 +813,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   fLogicArapuca->SetVisAttributes(vis_arapuca);
 
   //Shielding on waffle
-  G4VisAttributes* vis_waffle = new G4VisAttributes(lgreen);
+  G4VisAttributes* vis_waffle = new G4VisAttributes(white);
   vis_waffle->SetForceSolid(true);
   vis_waffle->SetVisibility(true);
   vis_waffle->SetForceAuxEdgeVisible(true);
@@ -852,32 +853,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4int nFCbars = 110;
 
   //Bottom waffle
-  G4double waffleBoxX = pitch_x - 2*bar_x;
-  G4double waffleBoxZ = pitch_z - 2*bar_x;
-  G4Box* BottomWaffleBoxes = new G4Box("b_waffle",waffleBoxX/2,cryostatThicknessOuterSteelSupport/2,waffleBoxZ/2);
-  logicWaffleBoxes = new G4LogicalVolume(BottomWaffleBoxes, materialAir, "BottomWaffles", 0, 0, 0);
+  G4double waffleBoxX = fSpacing - fIFlangeWaist;
+  G4double waffleBoxZ = fSpacing - fIFlangeWaist;
+  G4double waffleBoxXLead = fSpacing - fIFlangeWaist - fIFlangeWidth;//For lead since we have the flange
+  G4double waffleBoxZLead = fSpacing - fBeltFlangeBotWidth;//For lead since we have the flange
 
   //Volume for bottom shielding 
   G4Box* BoxInsideWaffle = new G4Box("b_waffle",waffleBoxX/2,BottomShieldingThickness/2,waffleBoxZ/2);
   logicWaffleBottomShielding = new G4LogicalVolume(BoxInsideWaffle, materialShieldingWaffle, "DaughterLV");
- 
 
-  //Place volume for bottom shielding
-  G4double yBoxWaffle = -cryostatThicknessOuterSteelSupport/2 + BottomShieldingThickness/2 + BottomLeadShieldingThickness;
-  new G4PVPlacement(nullptr,                     // no rotation
-                  G4ThreeVector(0,yBoxWaffle,0), // local position
-                  logicWaffleBottomShielding,    // LV of the daughter
-                  "BottomWaffleShieldPV",                  // PV name
-                  logicWaffleBoxes,              // *mother* LV
-                  false,                         // no boolean op
-                  0,                             // copy number
-                  1);                		 // check overlaps
-
-  //Volume for neutron absorver
-  //G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,0.00236/2*cm,waffleBoxZ/2);
+  //Volume for neutron absorber
   G4Box* BoxNcapture = new G4Box("b_waffle_n",waffleBoxX/2,n_captWaffleBottomThickness/2,waffleBoxZ/2);
   logicNeutronAbsorberWaffle = new G4LogicalVolume(BoxNcapture, materialNeutronCapture, "DaughterLV");
-  //Place neutron absorver
+  //Place neutron absorber inside shielding brick at middle
   new G4PVPlacement(nullptr,                 // no rotation
                   G4ThreeVector(0,0,0),      // local position in D1
                   logicNeutronAbsorberWaffle,      // LV we just created
@@ -888,21 +876,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   1);
 
   //Volume for lead layer in bottom waffle
-  G4Box* BoxLeadInsideWaffle = new G4Box("b_lead_waffle",waffleBoxX/2,BottomLeadShieldingThickness/2,waffleBoxZ/2);
+  G4Box* BoxLeadInsideWaffle = new G4Box("b_lead_waffle",waffleBoxXLead/2,BottomLeadShieldingThickness/2,waffleBoxZLead/2);
   logicLeadWaffleLayer = new G4LogicalVolume(BoxLeadInsideWaffle, materialLead, "DaughterLV");
-  G4double yBoxWaffleLead = -cryostatThicknessOuterSteelSupport/2 + BottomLeadShieldingThickness/2;
-  //Place volume 
-  new G4PVPlacement(nullptr,                     // no rotation
-                  G4ThreeVector(0,yBoxWaffleLead,0), // local position
-                  logicLeadWaffleLayer,    // LV of the daughter
-                  "LeadWafflePV",                  // PV name
-                  logicWaffleBoxes,              // *mother* LV
-                  false,                         // no boolean op
-                  0,                             // copy number
-                  1);                		 // check overlaps
-
 
   G4double pos_x, pos_y, pos_z;
+  G4double pos_y_lead = -yBarSteel - fIFlangeHeight/2 - fIFlangeThick + BottomLeadShieldingThickness;
 
   //logicWaffleBoxes->SetVisAttributes(vis_waffle);
   logicWaffleBottomShielding->SetVisAttributes(vis_waffle);
@@ -1573,6 +1551,31 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                   true);
 	 }
 
+	 //Bottom shielding
+	 pos_y = -yBarSteel - fIFlangeHeight/2 + BottomShieldingThickness/2;
+	 for(int i = 1 ; i <= n_v_bars_long_side + 1; i++){
+		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
+		for(int j = 1 ; j <= n_v_bars_short_side + 1; j++){
+			pos_z = origin_z + (j-1)*fSpacing - fSpacing/2;
+			new G4PVPlacement(0,
+                  	G4ThreeVector(pos_x, pos_y, pos_z),  // example position
+                  	logicWaffleBottomShielding,
+                  	"BottomWaffleShileding",
+                  	logicshieldingBoxWaffle,
+                  	false,
+                  	1,
+                  	true);
+
+			new G4PVPlacement(0,
+                  	G4ThreeVector(pos_x, pos_y_lead, pos_z),  // example position
+                  	logicLeadWaffleLayer,
+                  	"BottomWaffleShileding",
+                  	logicshieldingBoxWaffle,
+                  	false,
+                  	1,
+                  	true);
+		}
+	 }
 	 //SS vapor barrier inside shielding waffle box
 	 new G4PVPlacement(0,
                 G4ThreeVector(0,0,0),

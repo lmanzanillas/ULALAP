@@ -241,6 +241,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4double fIPortSpacing;
     G4double fIBotPortLoc;
     G4double fIFlangeHeightInside;
+    G4double fBeltFlangeBotWidth;
 
     G4double fSpacing;
     G4double fht;
