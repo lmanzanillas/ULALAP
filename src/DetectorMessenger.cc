@@ -24,6 +24,7 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
  commandSetshieldingThickness(0),
  commandSetWaffleThickness(0),
  commandSetTargetMaterial(0),
+ commandSetBottomLeadMaterial(0),
  commandSetShieldingMaterial(0),
  commandSetShieldingMaterialWaffle(0),
  commandSetShieldingWaffleNeutronAbsorberMaterial(0),
@@ -42,6 +43,12 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction * Det)
   commandSetTargetMaterial->SetParameterName("choice",false);
   commandSetTargetMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
   commandSetTargetMaterial->SetToBeBroadcasted(false);
+
+  commandSetBottomLeadMaterial = new G4UIcmdWithAString("/ULALAP/det/setBottomLeadMaterial",this);
+  commandSetBottomLeadMaterial->SetGuidance("Select material of the sample.");
+  commandSetBottomLeadMaterial->SetParameterName("choice",false);
+  commandSetBottomLeadMaterial->AvailableForStates(G4State_PreInit,G4State_Idle);
+  commandSetBottomLeadMaterial->SetToBeBroadcasted(false);
 
   commandSetShieldingMaterial = new G4UIcmdWithAString("/ULALAP/det/setShieldingMaterial",this);
   commandSetShieldingMaterial->SetGuidance("Select material of the sample.");
@@ -165,6 +172,7 @@ DetectorMessenger::~DetectorMessenger()
   delete commandSetshieldingThickness;
   delete commandSetWaffleThickness;
   delete commandSetTargetMaterial;
+  delete commandSetBottomLeadMaterial;
   delete commandSetShieldingMaterial;
   delete commandSetShieldingMaterialWaffle;
   delete commandSetShieldingWaffleNeutronAbsorberMaterial;
@@ -181,6 +189,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command,G4String newValue)
 {
    if( command == commandSetTargetMaterial ){
 	fDetector->SetTargetMaterial(newValue);
+   }
+
+   if( command == commandSetBottomLeadMaterial ){
+	fDetector->SetShieldingBottomLeadLayer(newValue);
    }
 
    if( command == commandSetShieldingMaterial ){

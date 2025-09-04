@@ -42,6 +42,7 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithADoubleAndUnit*  commandSetcryostatThickness;
     G4UIcmdWithADoubleAndUnit*  commandSetShieldingWaffleNeutronAbsorberThickness;
     G4UIcmdWithAString*         commandSetTargetMaterial;
+    G4UIcmdWithAString*         commandSetBottomLeadMaterial;
     G4UIcmdWithAString*         commandSetShieldingMaterial;
     G4UIcmdWithAString*         commandSetShieldingMaterialWaffle;
     G4UIcmdWithAString*         commandSetShieldingWaffleNeutronAbsorberMaterial;

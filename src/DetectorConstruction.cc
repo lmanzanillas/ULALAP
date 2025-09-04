@@ -107,6 +107,7 @@ fd2LogicVolume(nullptr)
   fShieldingMaterial = G4Material::GetMaterial("G4_AIR");
   materialShieldingWaffle = G4Material::GetMaterial("G4_WATER");
   materialNeutronCapture = G4Material::GetMaterial("Gd2O3_Powder");
+  materialLead = G4Material::GetMaterial("G4_AIR");
   //I beams
   // IBeams
   fIFlangeWidth = 0.402 * m; // all m here.
@@ -408,6 +409,22 @@ void DetectorConstruction::SetShieldingMaterial(G4String materialChoice)
   G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
 }
 
+void DetectorConstruction::SetShieldingBottomLeadLayer(G4String materialChoice)
+{ // search the material by its name
+  G4Material* pttoMaterial = G4Material::GetMaterial(materialChoice);
+
+  if (pttoMaterial) {
+    materialLead = pttoMaterial;
+    if(logicLeadWaffleLayer)logicLeadWaffleLayer->SetMaterial(materialLead);
+    G4cout<<" material Lead"<<materialLead->GetName()<<G4endl;  
+  } else {
+    G4cout << "\n--> warning from DetectorConstruction::SetMaterialLead : "
+           << materialChoice << " not found" << G4endl;
+  }
+  G4RunManager::GetRunManager()->ReinitializeGeometry();
+  G4MTRunManager::GetRunManager()->PhysicsHasBeenModified();
+
+}
 void DetectorConstruction::SetShieldingMaterialWaffle(G4String materialChoice)
 {
   // search the material by its name
@@ -487,7 +504,7 @@ void DetectorConstruction::DefineMaterials(){
   materialAlCryostat = G4Material::GetMaterial("Aluminium_6061");
   materialRock = G4Material::GetMaterial("G4_CONCRETE");
   materialTitanium = G4Material::GetMaterial("titanium");
-  materialLead = G4Material::GetMaterial("G4_Pb");
+  //materialLead = G4Material::GetMaterial("G4_Pb");
 
   G4cout<<" materials imported succesfully "<<G4endl;
 
@@ -972,20 +989,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		"waffle_shielding_"+std::to_string(1),
 		logicshieldingBoxInner,false,1,1);
 	 //belts
-	 for(int i = 1 ; i <= n_v_bars_long_side + 1; i++){
+	 for(int i = 0 ; i <= n_v_bars_long_side + 1; i++){
 		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
 		for(int j = 1 ; j <= n_v_bars_short_side; j++){
 			pos_z = origin_z + (j-1)*fSpacing;
-			//top without holes
-			new G4PVPlacement(
-              		rotationMatrixY,
-                	G4ThreeVector(pos_x, yBarSteel,pos_z),
-                	fBeltWithoutHoleLogTop,
-                	"BeltBot",
-                	logicshieldingBoxWaffle,
-                	false,
-                	1,
-                	true);
+			if ( i > 0){
+				//top without holes
+				new G4PVPlacement(
+              			rotationMatrixY,
+                		G4ThreeVector(pos_x, yBarSteel,pos_z),
+                		fBeltWithoutHoleLogTop,
+                		"BeltBot",
+                		logicshieldingBoxWaffle,
+                		false,
+                		1,
+                		true);
+			}
 			//bottom with holes
 			new G4PVPlacement(
               		rotationMatrixY,
@@ -1469,16 +1488,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 		pos_x = origin_x + (i-1)*fSpacing - fSpacing/2;
 		for(int j = 1 ; j <= n_v_bars_short_side; j++){
 			pos_z = origin_z + (j-1)*fSpacing;
-			//top without holes
-			new G4PVPlacement(
-              		rotationMatrixY,
-                	G4ThreeVector(pos_x, yBarSteel,pos_z),
-                	fBeltWithoutHoleLogTop,
-                	"BeltBot",
-                	logicshieldingBoxWaffle,
-                	false,
-                	1,
-                	true);
+			if ( i > 0){
+				//top without holes
+				new G4PVPlacement(
+        	      		rotationMatrixY,
+                		G4ThreeVector(pos_x, yBarSteel,pos_z),
+                		fBeltWithoutHoleLogTop,
+	                	"BeltBot",
+        	        	logicshieldingBoxWaffle,
+                		false,
+                		1,
+	                	true);
+			}
 			//bottom with holes
 			new G4PVPlacement(
               		rotationMatrixY,

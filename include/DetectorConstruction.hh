@@ -73,6 +73,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     void SetSize  (G4double);
     void SetTargetMaterial(G4String);
     void SetShieldingMaterial(G4String);
+    void SetShieldingBottomLeadLayer(G4String);
     void SetShieldingMaterialWaffle(G4String);
     void SetMaterialWaffleNeutronAbsorber(G4String);
     void SetOutputDirectory(G4String);
