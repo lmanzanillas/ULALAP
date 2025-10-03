@@ -269,9 +269,6 @@ void UlalapMaterials::Construct()
     // ------------------------------------------------------------------------
     nistManager->FindOrBuildMaterial("G4_lAr");
     // ------------------------------------------------------------------------
-    // B4C
-    // ------------------------------------------------------------------------
-    nistManager->FindOrBuildMaterial("G4_BORON_CARBIDE");
     // Silicon Oil
     // ------------------------------------------------------------------------
 
@@ -357,17 +354,49 @@ void UlalapMaterials::Construct()
     naturalRubber->AddElement(C, 5);
     naturalRubber->AddElement(H, 8);
 
+    //NIST PE
+    G4Material* PE = nistManager->FindOrBuildMaterial("G4_POLYETHYLENE");
+    //Define normal boron carbide
+    G4Material* B4C = nistManager->FindOrBuildMaterial("G4_BORON_CARBIDE");
     // Define Boron Carbide (B4C) using enriched Boron
     G4Material* enrichedB4C = new G4Material("EnrichedB4C", 2.52*g/cm3, 2); // real B4C density
     enrichedB4C->AddElement(enrichedB, 4);
     enrichedB4C->AddElement(C, 1);
+    
+    
+    // Target: 10% Elemental Boron (B) by weight in the final material.
+    // Elemental Boron (B) is ~78.3% of the B4C mass (B4/B4C molar mass ratio: 4*10.81 / (4*10.81 + 12.01) = 0.783)
+    // Required B4C mass fraction (w_B4C) to get w_B = 0.10:
+    // w_B = w_B4C * (Mass_B / Mass_B4C)
+    // w_B4C = w_B / (Mass_B / Mass_B4C) = 0.10 / 0.783 ≈ 0.1277
+    G4double w_B4C = 0.1277; // Mass fraction of B4C
+    G4double w_PE = 1.0 - w_B4C;   // Mass fraction of PE (1 - 0.1277 = 0.8723)
+
+    // The density of the composite can be estimated using the rule of mixtures.
+    // For a 10% BPE composite, the density is typically around 1.06 g/cm3.
+    G4double density_10BPE = 1.06 * g/cm3;
+    G4Material* BoratedPolyethylene_10pc = new G4Material("BoratedPolyethylene_10pc", density_10BPE, 2);
+    BoratedPolyethylene_10pc->AddMaterial(PE,  w_PE);  // Polyethylene: ~87.23% by weight
+    BoratedPolyethylene_10pc->AddMaterial(B4C, w_B4C); // Boron Carbide: ~12.77% by weight
+
+    BoratedPolyethylene_10pc->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
+
+    w_B4C = 0.0638;
+    w_PE = 1.0 - w_B4C;
+    // Typical Density for 5% BPE
+    G4double density_5BPE = 1.01 * g/cm3; 
+    G4Material* BoratedPolyethylene_5pc = new G4Material("BoratedPolyethylene_5pc", density_5BPE, 2);
+    BoratedPolyethylene_5pc->AddMaterial(PE,  w_PE);  
+    BoratedPolyethylene_5pc->AddMaterial(B4C, w_B4C); 
+
+    BoratedPolyethylene_5pc->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
 
     // Define FLEXIBORE with 50% enriched B4C by mass
     G4Material* FLEXIBORE = new G4Material("FLEXIBORE", 1.72*g/cm3, 2);
     // Estimated density: 0.5*0.92 + 0.5*2.52 ≈ 1.72 g/cm³
 
     FLEXIBORE->AddMaterial(naturalRubber, 50.*perCent);
-    FLEXIBORE->AddMaterial(enrichedB4C,   50.*perCent);
+    FLEXIBORE->AddMaterial(B4C,   50.*perCent);
 
      
     //polyurethane foam
@@ -625,8 +654,6 @@ void UlalapMaterials::Construct()
     //NIST POM, for CROSS
     nistManager->FindOrBuildMaterial("G4_POLYOXYMETHYLENE");
 
-    //NIST PE, for CROSS source capsule
-    nistManager->FindOrBuildMaterial("G4_POLYETHYLENE");
 
     G4int nelements;
     //  Peek chemical formula (C19H12O3)
