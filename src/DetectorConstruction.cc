@@ -835,7 +835,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   vis_waffle->SetVisibility(true);
   vis_waffle->SetForceAuxEdgeVisible(true);
   //logicshieldingBoxWaffle->SetVisAttributes(vis_waffle);
-  logicShieldingBoxLongLatWall->SetVisAttributes(vis_waffle);
+  //logicShieldingBoxLongLatWall->SetVisAttributes(vis_waffle);
   //logicShieldingBoxShortLatWall->SetVisAttributes(vis_waffle);
 
   G4VisAttributes* vis_anode = new G4VisAttributes(orange);

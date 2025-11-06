@@ -2,12 +2,9 @@
 #include "G4SystemOfUnits.hh" // For units if you print anything related to them
 
 MyTrackInfo::MyTrackInfo()
-: G4VUserTrackInformation(),
-  fEnteredTarget1(false)
-{
-}
+    : fEnteredTarget1Neutron(false),
+      fEnteredTarget1Gamma(false),
+      fFromCapture(false)
+{}
 
-MyTrackInfo::~MyTrackInfo()
-{
-}
-
+MyTrackInfo::~MyTrackInfo() = default;

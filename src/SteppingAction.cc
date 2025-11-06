@@ -142,36 +142,77 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
         );
     }
 
-    /* -------------   NEW: neutron-entry filter   -------------------- */
-    G4Track*       track     = theStep->GetTrack();
-    G4StepPoint*   postPoint = theStep->GetPostStepPoint();
 
-    // Get or create custom track information
-    MyTrackInfo* trackInfo = static_cast<MyTrackInfo*>(track->GetUserInformation());
-    if (!trackInfo) {
-        trackInfo = new MyTrackInfo();
-        track->SetUserInformation(trackInfo);
+    /* -------------   particle-entry filter (neutrons + gammas, including born inside)   -------------------- */
+   G4Track*       track     = theStep->GetTrack();
+   G4StepPoint*   prePoint  = theStep->GetPreStepPoint();
+   G4StepPoint*   postPoint = theStep->GetPostStepPoint();
+   
+   // Get or create custom track information
+   MyTrackInfo* trackInfo = static_cast<MyTrackInfo*>(track->GetUserInformation());
+   if (!trackInfo) {
+       trackInfo = new MyTrackInfo();
+       track->SetUserInformation(trackInfo);
+   }
+   
+   //auto particleDef = track->GetDefinition();
+   G4VPhysicalVolume* preVol  = prePoint->GetPhysicalVolume();
+   G4VPhysicalVolume* postVol = postPoint->GetPhysicalVolume();
+   
+   G4bool isInTarget1 = false;
+   
+   // Case 1: Particle crosses into target_1
+   if (postPoint->GetStepStatus() == fGeomBoundary &&
+       postVol && postVol->GetName() == "target_1")
+   {
+       isInTarget1 = true;
+   }
+   /*// Case 2: Particle born inside target_1
+   else if (track->GetCurrentStepNumber() == 1 &&
+            preVol && preVol->GetName() == "target_1")
+   {
+       isInTarget1 = true;
+   }
+   */ 
+   if (isInTarget1)
+   {
+       G4double ke = track->GetKineticEnergy() / keV;
+       G4ThreeVector pos = postPoint->GetPosition();
+       G4ThreeVector dir = track->GetMomentumDirection();
+   
+       G4double dirX = dir.x();
+       G4double dirY = dir.y();
+       G4double dirZ = dir.z();
+   
+       // --- Neutrons ---
+       if (particleDef == G4Neutron::Definition() && !trackInfo->HasEnteredTarget1Neutron())
+       {
+           if (fEventAction)
+               fEventAction->AddNeutronKinAtLAr(
+                   ke,
+                   pos.x() / cm, pos.y() / cm, pos.z() / cm,
+                   dirX, dirY, dirZ
+               );
+   
+           trackInfo->SetEnteredTarget1Neutron(true);
+       }
+   
+       // --- Gammas ---
+       else if (particleDef == G4Gamma::Definition() && !trackInfo->HasEnteredTarget1Gamma())
+       {
+           if (fEventAction)
+               fEventAction->AddGammaKinAtLAr(
+                   ke,
+                   pos.x() / cm, pos.y() / cm, pos.z() / cm,
+                   dirX, dirY, dirZ
+               );
+   
+           trackInfo->SetEnteredTarget1Gamma(true);
+       }
     }
 
-    if (track->GetDefinition() == G4Neutron::Definition()
-        && postPoint->GetStepStatus() == fGeomBoundary
-        && postPoint->GetPhysicalVolume()->GetName() == "target_1") // or pointer compare
-    {
 
-	if (!trackInfo->HasEnteredTarget1())
-        {
-        	G4double ke = track->GetKineticEnergy()/keV;
-		fEventAction->AddNeutronKinAtLAr(
-			ke,
-			postPoint->GetPosition().x() / cm,
-			postPoint->GetPosition().y() / cm,
-			postPoint->GetPosition().z() / cm
-			);
-        	//G4AnalysisManager::Instance()->FillH1(0, ke);
-		// Mark this track as having entered the target
-            	trackInfo->SetEnteredTarget1(true);
-	}
-    }
+    /* -------------  end filter   -------------------- */
 
     // Check if the post-step volume is valid
     G4StepPoint* thePostPoint = theStep->GetPostStepPoint();

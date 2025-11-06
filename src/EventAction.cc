@@ -121,14 +121,37 @@ void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add neutron kin E at LAr 
-void EventAction::AddNeutronKinAtLAr(G4double kinEneutron, G4double xLAr, G4double yLAr, G4double zLAr) {
+void EventAction::AddNeutronKinAtLAr(G4double kinEneutron,
+                                     G4double xLAr, G4double yLAr, G4double zLAr,
+                                     G4double dirX, G4double dirY, G4double dirZ)
+{
     auto analysisManager = G4AnalysisManager::Instance();
     analysisManager->FillNtupleIColumn(5, 0, eventNumber);
     analysisManager->FillNtupleDColumn(5, 1, kinEneutron);
     analysisManager->FillNtupleDColumn(5, 2, xLAr);
     analysisManager->FillNtupleDColumn(5, 3, yLAr);
     analysisManager->FillNtupleDColumn(5, 4, zLAr);
+    analysisManager->FillNtupleDColumn(5, 5, dirX);
+    analysisManager->FillNtupleDColumn(5, 6, dirY);
+    analysisManager->FillNtupleDColumn(5, 7, dirZ);
     analysisManager->AddNtupleRow(5);
+}
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// Add gamma kin E at LAr 
+void EventAction::AddGammaKinAtLAr(G4double kinEg,
+                                   G4double xLAr, G4double yLAr, G4double zLAr,
+                                   G4double dirX, G4double dirY, G4double dirZ)
+{
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleIColumn(6, 0, eventNumber);
+    analysisManager->FillNtupleDColumn(6, 1, kinEg);
+    analysisManager->FillNtupleDColumn(6, 2, xLAr);
+    analysisManager->FillNtupleDColumn(6, 3, yLAr);
+    analysisManager->FillNtupleDColumn(6, 4, zLAr);
+    analysisManager->FillNtupleDColumn(6, 5, dirX);
+    analysisManager->FillNtupleDColumn(6, 6, dirY);
+    analysisManager->FillNtupleDColumn(6, 7, dirZ);
+    analysisManager->AddNtupleRow(6);
 }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // End of Event Action

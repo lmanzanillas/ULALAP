@@ -10,6 +10,10 @@
 #include "G4RandomTools.hh"
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
+
+#include "G4UAtomicDeexcitation.hh"
+#include "G4NuclearLevelData.hh"
+#include "G4DeexPrecoParameters.hh"
 #include <ctime>
 #include <cstdlib>
 
@@ -111,7 +115,11 @@ int main(int argc, char** argv) {
 
     physList = factory.GetReferencePhysList(physListName);
     runManager->SetUserInitialization(physList);
-
+    
+    //For testing
+    //G4DeexPrecoParameters* deex = G4NuclearLevelData::GetInstance()->GetParameters();
+    //deex->SetCorrelatedGamma(false);  // Equivalent to /process/had/deex/correlatedGamma false
+    //deex->SetStoreAllLevels(true);
     // User action initialization
     runManager->SetUserInitialization(new ActionInitialization(det));
     runManager->Initialize();

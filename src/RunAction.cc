@@ -147,7 +147,22 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     fMan->CreateNtupleDColumn("xLAr");
     fMan->CreateNtupleDColumn("yLAr");
     fMan->CreateNtupleDColumn("zLAr");
+    fMan->CreateNtupleDColumn("dirX");
+    fMan->CreateNtupleDColumn("dirY");
+    fMan->CreateNtupleDColumn("dirZ");
     fMan->FinishNtuple();
+
+    fMan->CreateNtuple("GammakinE", "GammaKinE");
+    fMan->CreateNtupleIColumn("EventID");
+    fMan->CreateNtupleDColumn("kinEgamma");
+    fMan->CreateNtupleDColumn("xLAr");
+    fMan->CreateNtupleDColumn("yLAr");
+    fMan->CreateNtupleDColumn("zLAr");
+    fMan->CreateNtupleDColumn("dirX");
+    fMan->CreateNtupleDColumn("dirY");
+    fMan->CreateNtupleDColumn("dirZ");
+    fMan->FinishNtuple();
+
 
 
 }
