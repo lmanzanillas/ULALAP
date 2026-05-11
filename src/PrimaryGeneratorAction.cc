@@ -257,6 +257,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	if(particleType == 11){
 	        fSourceEnergy = fAction3->SampleEnergy() * keV;
 	}
+	if(particleType == 13){
+	        fSourceEnergy = G4UniformRand() * 15 * MeV;
+	}
 	if(particleType == 10){
 	        fSourceEnergy = fAction2->InverseCumul();
   		fParticleDefinition = G4ParticleTable::GetParticleTable()->FindParticle("mu+"); 
@@ -374,6 +377,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 			fParticleGun->SetParticleMomentumDirection(direction);
 			fParticleGun->GeneratePrimaryVertex(anEvent);
  			break;
+		case 13:
+			fParticleGun->SetParticleDefinition(particleTable->FindParticle("gamma"));
+			fParticleGun->SetParticleEnergy(fSourceEnergy);
+			fParticleGun->SetParticlePosition(position);
+			fParticleGun->SetParticleMomentumDirection(direction);
+			fParticleGun->GeneratePrimaryVertex(anEvent);
+ 			break;
 
 	}
 }
@@ -417,7 +427,7 @@ void PrimaryGeneratorAction::SetSourceDiameter(G4double newDiameter){
 
 void PrimaryGeneratorAction::SetSourceType(G4int newType)
 {
-	if (newType <= 12 && newType >= 0)
+	if (newType <= 13 && newType >= 0)
 	{
 		particleType = newType;
 	}

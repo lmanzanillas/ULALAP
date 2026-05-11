@@ -82,6 +82,17 @@ int main(int argc, char** argv) {
     auto* det = new DetectorConstruction;
     runManager->SetUserInitialization(det);
 
+    //Fix for H capture
+    //not working
+    //G4DeexPrecoParameters* prop = G4NuclearLevelData::GetInstance()->GetParameters();
+    // 1. Force discrete logic for everything under 5 MeV
+    //prop->SetMinEForStatisticalModel(5.0*CLHEP::MeV);
+    // 2. This is critical for NuDEX to handle light ions correctly
+    //prop->SetCorrelatedGamma(true);
+    // 3. Optional: explicitly tell it to use discrete levels first
+    //prop->SetInternalConversion(true);
+    //End of fix
+
     // Physics list
     G4HadronicParameters::Instance()->SetTypeTablePT("njoy");
     auto param = G4HadronicParameters::Instance();
