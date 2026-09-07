@@ -66,9 +66,10 @@ Constructs DetectorConstruction, defines default values.
 */
 
 DetectorConstruction::DetectorConstruction()
-: G4VUserDetectorConstruction(),  fd2DetectorBox(nullptr), 
+: G4VUserDetectorConstruction(),  fd2DetectorBox(nullptr), fd2DetectorBoxActive(nullptr),
 logicSteelSupport(nullptr), 
 logicCryoPrimMembrane(nullptr), 
+fd2LogicVolumeInactive(nullptr), 
 fd2LogicVolume(nullptr) 
 {
   fDetectorMessenger = new DetectorMessenger(this);
@@ -717,7 +718,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
   //LAr volume
   fd2DetectorBox = new G4Box("target", halfDetectorX, halfDetectorY, halfDetectorZ);
-  fd2LogicVolume = new G4LogicalVolume(fd2DetectorBox,fd2Material, "target",0,0,0);
+  fd2DetectorBoxActive = new G4Box("targetActive", halfDetectorXActiveAr + 2.0*cm, halfDetectorYActiveAr + 2.*cm, halfDetectorZActiveAr + 2.*cm);
+  fd2LogicVolumeInactive = new G4LogicalVolume(fd2DetectorBox,fd2Material, "target",0,0,0);
+  fd2LogicVolume = new G4LogicalVolume(fd2DetectorBoxActive,fd2Material, "targetActive",0,0,0);
   //Cathode
   G4Box* BoxCathode = new G4Box("BoxCathode",halfDetectorXActiveAr,0.5*mm,halfDetectorZActiveAr);
   G4LogicalVolume* fLogicCathode = new G4LogicalVolume(BoxCathode,materialSS304L,"cathode");
@@ -1196,12 +1199,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                 logicCryoPrimMembrane,
                 "Inner_Plywood"+std::to_string(1),
                 logicCryoInnerPlywood,false,1,false);
+         //Inactive liquid argon volume inside primary membrane box
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,0),
+		fd2LogicVolumeInactive,
+		"target_inactive_"+std::to_string(1),
+		logicCryoPrimMembrane,false,1,false);
          //liquid argon volume inside primary membrane box
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		fd2LogicVolume,
-		"target_"+std::to_string(1),
-		logicCryoPrimMembrane,false,1,false);
+		"target_active_"+std::to_string(1),
+		fd2LogicVolumeInactive,false,1,false);
 	 //Bi source container
 	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
@@ -1260,25 +1269,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Top side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side front
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 		}
 	}
 	//Arapucas short sides
@@ -1291,25 +1300,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Top side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side plus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 		}
 	}
 			
@@ -1738,12 +1747,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                 logicCryoPrimMembrane,
                 "Inner_Plywood"+std::to_string(1),
                 logicCryoInnerPlywood,false,1,false);
+         //Inactive liquid argon volume inside primary membrane box
+  	 new G4PVPlacement(0, 
+		G4ThreeVector(0,0,0),
+		fd2LogicVolumeInactive,
+		"target_inactive_"+std::to_string(1),
+		logicCryoPrimMembrane,false,1,false);
          //liquid argon volume inside primary membrane box
   	 new G4PVPlacement(0, 
 		G4ThreeVector(0,0,0),
 		fd2LogicVolume,
-		"target_"+std::to_string(1),
-		logicCryoPrimMembrane,false,1,false);
+		"target_active_"+std::to_string(1),
+		fd2LogicVolumeInactive,false,1,false);
 	 //Bi source container
 	 new G4PVPlacement(rotationMatrixX,
 			 fBiSourcePosition,
@@ -1802,25 +1817,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(pos_x,pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Top side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side front
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, halfDetectorZActiveAr + 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side back
 			new G4PVPlacement(rotationMatrixArapucaLongX,
 			G4ThreeVector(pos_x,-pos_y, -halfDetectorZActiveAr - 5.*cm),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 		}
 	}
 	//Arapucas short sides
@@ -1833,25 +1848,25 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Top side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side plus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(halfDetectorXActiveAr + 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 			//Bottom side minus
 			new G4PVPlacement(rotationMatrixArapucaShortZ,
 			G4ThreeVector(-halfDetectorXActiveAr - 5.*cm,-pos_y, pos_z),
   			fLogicArapuca,     //its logical volume
 			"Arapuca",
-  			fd2LogicVolume,	false, 0, 0);
+  			fd2LogicVolumeInactive,	false, 0, 0);
 		}
 	}
 			

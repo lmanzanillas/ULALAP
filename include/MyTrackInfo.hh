@@ -15,6 +15,10 @@ public:
     void SetEnteredTarget1Neutron(G4bool val) { fEnteredTarget1Neutron = val; }
     G4bool HasEnteredTarget1Neutron() const { return fEnteredTarget1Neutron; }
 
+    // --- Generic flags ---
+    void SetEnteredTarget1(G4bool val) { fEnteredTarget1 = val; }
+    G4bool HasEnteredTarget1() const { return fEnteredTarget1; }
+
     // --- Gamma flags ---
     void SetEnteredTarget1Gamma(G4bool val) { fEnteredTarget1Gamma = val; }
     G4bool HasEnteredTarget1Gamma() const { return fEnteredTarget1Gamma; }
@@ -27,6 +31,7 @@ private:
     // --- Per-track status flags ---
     G4bool fEnteredTarget1Neutron;  // True if neutron entered target_1
     G4bool fEnteredTarget1Gamma;    // True if gamma entered target_1
+    G4bool fEnteredTarget1;         // True if particle entered target_1
     G4bool fFromCapture;            // True if track (or parent) was created in nCapture
 };
 

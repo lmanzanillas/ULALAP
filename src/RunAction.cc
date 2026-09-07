@@ -109,6 +109,7 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     fMan->CreateNtupleDColumn("E");
     fMan->CreateNtupleDColumn("t");
     fMan->CreateNtupleIColumn("pdgCode");
+    fMan->CreateNtupleIColumn("volID");
     fMan->FinishNtuple();
 
     fMan->CreateNtuple("Gammas", "Gammas");
@@ -164,6 +165,24 @@ void RunAction::BeginOfRunAction(const G4Run* aRun) {
     fMan->FinishNtuple();
 
 
+    fMan->CreateNtuple("particlekinE", "particleKinE");
+    fMan->CreateNtupleIColumn("EventID");
+    fMan->CreateNtupleDColumn("kinEgamma");
+    fMan->CreateNtupleDColumn("xLAr");
+    fMan->CreateNtupleDColumn("yLAr");
+    fMan->CreateNtupleDColumn("zLAr");
+    fMan->CreateNtupleDColumn("dirX");
+    fMan->CreateNtupleDColumn("dirY");
+    fMan->CreateNtupleDColumn("dirZ");
+    fMan->CreateNtupleIColumn("pdgParticle");
+    fMan->FinishNtuple();
+   
+    /*
+    G4cout << "DEBUG RunAction: "
+       << "Ntuples = " << fMan->GetNofNtuples()
+       << ", FirstID = " << fMan->GetFirstNtupleId()
+       << G4endl;
+     */
 
 }
 

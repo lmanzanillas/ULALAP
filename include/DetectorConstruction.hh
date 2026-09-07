@@ -179,6 +179,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4String fSetupName;
     G4Box* fWorldBox;
     G4Box* fd2DetectorBox;
+    G4Box* fd2DetectorBoxActive;
     G4Box* shieldingBox;
     G4Box* CryostatBox;
 
@@ -203,6 +204,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
     G4LogicalVolume* logicCryoOuterPlywood;
     G4LogicalVolume* logicCryoSSVaporBarrier;
     G4LogicalVolume* fd2LogicVolume;
+    G4LogicalVolume* fd2LogicVolumeInactive;
     G4LogicalVolume* logicCryostat;
     G4LogicalVolume* logicKaptonWindow;
     G4LogicalVolume* logicMetalWindow;

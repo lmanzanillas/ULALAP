@@ -76,9 +76,17 @@ void EventAction::SetVertex(G4ThreeVector v_vertex) {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add Energy Deposition Info
-void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE, G4int pdgCode) {
+void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, G4double t_depE, G4int pdgCode, G4int volID) {
     if (depE > 1.0 ) { // Threshold and PDG check
         auto analysisManager = G4AnalysisManager::Instance();
+   
+	/*
+	G4cout << "DEBUG EventAction: "
+       << "Ntuples = " << analysisManager->GetNofNtuples()
+       << ", FirstID = " << analysisManager->GetFirstNtupleId()
+       << ", Event = " << eventNumber
+       << G4endl;
+       */
         analysisManager->FillNtupleIColumn(1, 0, eventNumber);
         analysisManager->FillNtupleDColumn(1, 1, xF);
         analysisManager->FillNtupleDColumn(1, 2, yF);
@@ -86,6 +94,7 @@ void EventAction::AddInfo(G4double xF, G4double yF, G4double zF, G4double depE, 
         analysisManager->FillNtupleDColumn(1, 4, depE);
         analysisManager->FillNtupleDColumn(1, 5, t_depE);
         analysisManager->FillNtupleIColumn(1, 6, pdgCode);
+        analysisManager->FillNtupleIColumn(1, 7, volID);
         analysisManager->AddNtupleRow(1);
     }
 }
@@ -118,7 +127,24 @@ void EventAction::AddInfoCaptureGammas(std::vector<G4double> gamma_vector) {
     analysisManager->FillNtupleDColumn(2, 2, timeDecay);
     analysisManager->AddNtupleRow(2);
 }
-
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+// Add particle kin E at LAr 
+void EventAction::AddParticleKinAtLAr(G4double kinEneutron, 
+                                     G4double xLAr, G4double yLAr, G4double zLAr,
+                                     G4double dirX, G4double dirY, G4double dirZ, G4int pdgParticle)
+{
+    auto analysisManager = G4AnalysisManager::Instance();
+    analysisManager->FillNtupleIColumn(7, 0, eventNumber);
+    analysisManager->FillNtupleDColumn(7, 1, kinEneutron);
+    analysisManager->FillNtupleDColumn(7, 2, xLAr);
+    analysisManager->FillNtupleDColumn(7, 3, yLAr);
+    analysisManager->FillNtupleDColumn(7, 4, zLAr);
+    analysisManager->FillNtupleDColumn(7, 5, dirX);
+    analysisManager->FillNtupleDColumn(7, 6, dirY);
+    analysisManager->FillNtupleDColumn(7, 7, dirZ);
+    analysisManager->FillNtupleIColumn(7, 8, pdgParticle);
+    analysisManager->AddNtupleRow(7);
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 // Add neutron kin E at LAr 
 void EventAction::AddNeutronKinAtLAr(G4double kinEneutron,

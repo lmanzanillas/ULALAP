@@ -4,6 +4,7 @@
 MyTrackInfo::MyTrackInfo()
     : fEnteredTarget1Neutron(false),
       fEnteredTarget1Gamma(false),
+      fEnteredTarget1(false),
       fFromCapture(false)
 {}
 

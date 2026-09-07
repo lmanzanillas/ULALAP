@@ -54,7 +54,7 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
     // Check conditions for specific processing
     if (theTrack->GetCurrentStepNumber() == 1 &&
         theTrack->GetCreatorProcess() &&
-        thePrePV && thePrePV->GetName() == "target_1" &&
+        thePrePV && thePrePV->GetName() == "target_active_1" &&
         particleDef->GetParticleType() == "nucleus" &&
         particleDef->GetParticleSubType() == "generic") {
 
@@ -129,8 +129,33 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
         fEventAction->AddInfoCaptureGammas(gamma_vector);
     }
 
+    if (thePrePV) {
+	const G4String& name = thePrePV->GetName();
+	G4int volumeID = -1;
+
+    	if (name == "target_inactive_1"){ 
+		volumeID = 0;
+	}
+    	else if (name == "target_active_1"){volumeID = 1;}
+        //if energy deposition in LAr then store information and volumeID
+   	if (volumeID >= 0) {
+
+           G4double time_dep = theStep->GetPostStepPoint()->GetGlobalTime() / us;
+
+           fEventAction->AddInfo(
+            	thePrePoint->GetPosition().x() / cm,
+            	thePrePoint->GetPosition().y() / cm,
+            	thePrePoint->GetPosition().z() / cm,
+            	edepStep,
+            	time_dep,
+            	pdgCode,
+            	volumeID
+       	   );
+   	 }
+     }
+    /*
     // Store energy deposition for target_1
-    if (thePrePV && thePrePV->GetName() == "target_1") {
+    if (thePrePV && thePrePV->GetName() == "target") {
         G4double time_dep = theStep->GetPostStepPoint()->GetGlobalTime() / us;
         fEventAction->AddInfo(
             thePrePoint->GetPosition().x() / cm,
@@ -141,6 +166,7 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
 	    pdgCode
         );
     }
+    */
 
 
     /* -------------   particle-entry filter (neutrons + gammas, including born inside)   -------------------- */
@@ -163,7 +189,7 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
    
    // Case 1: Particle crosses into target_1
    if (postPoint->GetStepStatus() == fGeomBoundary &&
-       postVol && postVol->GetName() == "target_1")
+       postVol && postVol->GetName() == "target_active_1")
    {
        isInTarget1 = true;
    }
@@ -179,10 +205,26 @@ void SteppingAction::UserSteppingAction(const G4Step* theStep) {
        G4double ke = track->GetKineticEnergy() / keV;
        G4ThreeVector pos = postPoint->GetPosition();
        G4ThreeVector dir = track->GetMomentumDirection();
+       pdgCode = particleDef->GetPDGEncoding();
    
        G4double dirX = dir.x();
        G4double dirY = dir.y();
        G4double dirZ = dir.z();
+
+       // -- generic ---
+       if (!trackInfo->HasEnteredTarget1())
+	{
+    		fEventAction->AddParticleKinAtLAr(
+	        	ke,
+        		pos.x()/cm,
+	        	pos.y()/cm,
+	        	pos.z()/cm,
+		        dirX, dirY, dirZ,
+        		pdgCode
+	    	);
+
+    		trackInfo->SetEnteredTarget1(true);
+	}
    
        // --- Neutrons ---
        if (particleDef == G4Neutron::Definition() && !trackInfo->HasEnteredTarget1Neutron())
