@@ -380,6 +380,23 @@ void UlalapMaterials::Construct()
     BoratedPolyethylene_10pc->AddMaterial(B4C, w_B4C); // Boron Carbide: ~12.77% by weight
 
     BoratedPolyethylene_10pc->GetIonisation()->SetMeanExcitationEnergy(75.0*eV);
+   
+    //Pellets
+    G4double rho_pellet = 1.06 * g/cm3;
+    G4double packing_fraction = 0.50;
+
+    G4double density_pellets =  rho_pellet * packing_fraction;
+
+    // B4C contains approximately 78.26% elemental boron
+    w_B4C = 0.05 / 0.7826;
+    w_PE  = 1.0 - w_B4C;
+
+    G4Material* BoratedPolyethylene_Pellets =  new G4Material("BoratedPolyethylene_Pellets", density_pellets, 2);
+
+    BoratedPolyethylene_Pellets->AddMaterial(PE, w_PE);
+    BoratedPolyethylene_Pellets->AddMaterial(B4C, w_B4C);
+
+    BoratedPolyethylene_Pellets->GetIonisation()->SetMeanExcitationEnergy(75.0 * eV);
 
     w_B4C = 0.0638;
     w_PE = 1.0 - w_B4C;
