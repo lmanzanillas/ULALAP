@@ -383,7 +383,7 @@ void UlalapMaterials::Construct()
    
     //Pellets
     G4double rho_pellet = 1.06 * g/cm3;
-    G4double packing_fraction = 0.50;
+    G4double packing_fraction = 0.60;
 
     G4double density_pellets =  rho_pellet * packing_fraction;
 
